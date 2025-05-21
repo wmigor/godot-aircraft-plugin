@@ -1,6 +1,12 @@
 # Aircraft plugin for Godot
 
-This demo simulates 2 aircraft using [`VehicleWing3D`] nodes.
+## Documentation
+
+See [`addons/aircraft/README.md`](./addons/aircraft/README.md).
+
+## Demo
+
+This demo simulates 2 aircraft using `VehicleWing3D` nodes.
 
 Wings are displayed as multiple debug sections in different colors:
 - Green - normal state
