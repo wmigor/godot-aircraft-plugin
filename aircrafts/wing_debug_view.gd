@@ -18,6 +18,14 @@ var sections: Array[Section]
 
 
 func _ready() -> void:
+	if wing_material == null:
+		wing_material = create_material(Color(0.25, 1.0, 0.25))
+	if control_surface_material == null:
+		control_surface_material = create_material(Color(0.25, 0.25, 1.0))
+	if warning_material == null:
+		warning_material = create_material(Color(1.0, 0.25, 0.25))
+	if stall_material == null:
+		stall_material = create_material(Color(1.0, 0.25, 0.25))
 	build()
 
 
@@ -90,3 +98,9 @@ func get_control_surface_material(index: int) -> Material:
 	if wing.is_section_stall(index):
 		return stall_material
 	return control_surface_material
+
+
+func create_material(color: Color) -> Material:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	return material
