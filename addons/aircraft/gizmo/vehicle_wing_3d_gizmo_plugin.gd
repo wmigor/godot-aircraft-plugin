@@ -58,7 +58,7 @@ func _add_wing_lines(wing: VehicleWing3D, mirror: bool, lines: PackedVector3Arra
 	lines.append(w1)
 	lines.append(w2)
 
-	var sections := wing.build_control_surface_sections()
+	var sections := wing._build_control_surface_sections()
 	var last_end := 0.0
 
 	for i in len(sections):
@@ -90,7 +90,7 @@ func _add_wing_lines(wing: VehicleWing3D, mirror: bool, lines: PackedVector3Arra
 				lines.append(d4)
 			lines.append(d2)
 			lines.append(d4)
-			var angle := wing.get_flap_angle() if section.type == VehicleWing3D.ControlSurfaceType.Flap else wing.get_aileron_angle(mirror)
+			var angle := wing.get_control_surface_angle(section.type, mirror)
 			if mirror:
 				angle *= -1.0
 			var axis := (d4 - d2).normalized()

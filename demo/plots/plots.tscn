@@ -9,8 +9,8 @@ script = ExtResource("1_ta4xi")
 [node name="Wing" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0, 0)
 script = ExtResource("2_tf1bq")
-chord = 1.494
 span = 11.0
+chord = 1.494
 dihedral = 0.0302466
 zero_lift_angle = -0.0436332
 stall_angle_max = 0.261799

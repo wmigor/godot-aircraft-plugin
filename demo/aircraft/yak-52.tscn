@@ -41,8 +41,8 @@ camera_distance = 11.0
 [node name="Wing" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0.831, 0.1)
 script = ExtResource("5_hocnw")
-chord = 2.095
 span = 9.3
+chord = 2.095
 taper = 0.5
 twist = -0.0436332
 sweep = -0.0174533
@@ -63,8 +63,8 @@ metadata/_custom_type_script = "uid://bugtnfunnraoj"
 [node name="Elevator" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.999656, 0.0261769, 0, -0.0261769, 0.999656, 0, 1.387, 4.54)
 script = ExtResource("5_hocnw")
-chord = 1.184
 span = 3.214
+chord = 1.184
 taper = 0.6
 sweep = 0.0349066
 flap_start = 0.0
@@ -84,8 +84,8 @@ metadata/_custom_type_script = "uid://bugtnfunnraoj"
 [node name="Rudder" type="Node3D" parent="."]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 1.085, 4.54)
 script = ExtResource("5_hocnw")
-chord = 1.441
 span = 1.554
+chord = 1.441
 taper = 0.7
 sweep = 0.122173
 mirror = false
