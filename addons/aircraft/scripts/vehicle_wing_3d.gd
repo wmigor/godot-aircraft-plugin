@@ -170,6 +170,15 @@ class_name VehicleWing3D
 		update_gizmos()
 
 
+@export_group("Debug")
+## Enables debug view of wing sections
+@export var debug: bool:
+	set(value):
+		if value != debug:
+			debug = value
+			_update_debug_view()
+
+
 enum ControlSurfaceType { None, Flap, Aileron }
 
 
@@ -212,6 +221,7 @@ var _body: RigidBody3D
 var _dirty := true
 var _aspect_ratio: float
 var _sections: Array[Section]
+var _debug_view: Node3D
 
 
 func _enter_tree() -> void:
@@ -441,6 +451,8 @@ func _try_rebuild() -> void:
 	_dirty = false
 	_update_aspect_ratio()
 	_build_wing_sections()
+	if _debug_view != null:
+		_debug_view.build()
 
 
 func _update_aspect_ratio() -> void:
@@ -654,3 +666,13 @@ func is_section_stall_warning(index: int) -> bool:
 ## Returns the control surface angle of the wing section.
 func get_section_control_surface_angle(index: int) -> float:
 	return _sections[index].control_surface_angle
+
+
+var VehicleWing3DDebugView := preload("uid://ep1ok4t4lxt0")
+func _update_debug_view() -> void:
+	if _debug_view != null:
+		_debug_view.queue_free()
+		_debug_view = null
+	if debug:
+		_debug_view = VehicleWing3DDebugView.new()
+		add_child(_debug_view)

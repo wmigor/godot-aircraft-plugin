@@ -1,7 +1,6 @@
-[gd_scene load_steps=12 format=3 uid="uid://cymcchdpmb3iy"]
+[gd_scene load_steps=11 format=3 uid="uid://cymcchdpmb3iy"]
 
 [ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_0vr8e"]
-[ext_resource type="PackedScene" uid="uid://1qg3ppeqbu8s" path="res://demo/aircraft/wing_debug_view.tscn" id="2_qxvgi"]
 [ext_resource type="Script" uid="uid://dvy1kn7uynwi6" path="res://demo/aircraft/motor.gd" id="3_c4w4o"]
 [ext_resource type="Material" uid="uid://5eef4n8blwgb" path="res://demo/aircraft/materials/fuselage_material.tres" id="4_hb7vo"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_auhpd"]
@@ -55,8 +54,6 @@ aileron_angle_max = 0.174533
 aileron_angle_min = -0.349066
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
-[node name="WingDebugView" parent="Wing" instance=ExtResource("2_qxvgi")]
-
 [node name="Elevator" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.999656, 0.0261769, 0, -0.0261769, 0.999656, 0, 1, 4.82)
 script = ExtResource("5_auhpd")
@@ -74,8 +71,6 @@ aileron_fraction = 0.0
 aileron_angle_max = 0.0
 aileron_angle_min = 0.0
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
-
-[node name="WingDebugView" parent="Elevator" instance=ExtResource("2_qxvgi")]
 
 [node name="Rudder" type="Node3D" parent="."]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 1.1, 4.665)
@@ -96,8 +91,6 @@ aileron_fraction = 0.0
 aileron_angle_max = 0.0
 aileron_angle_min = 0.0
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
-
-[node name="WingDebugView" parent="Rudder" instance=ExtResource("2_qxvgi")]
 
 [node name="Motor" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -1.16)
