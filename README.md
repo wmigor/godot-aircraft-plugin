@@ -2,9 +2,38 @@
 
 This plugin adds wing physics to `VehicleBody3D` via the `VehicleWing3D` node.
 
+## Installation
+
+Copy `addons/aircraft` directory to project.
+
 ## Documentation
 
-See [`addons/aircraft/README.md`](./addons/aircraft/README.md).
+Detailed documentation can be found in the plugin scripts or Godot Editor: go to the script editor, click `Search Help` in the top bar and search for `VehicleWing3D`.
+
+How to setup an airplane:
+- Add VehicleWing3D to VehicleBody3D:
+<br>![Add wing](./showcase/add_vehicle_wing.png)
+- Adjust the wing shape:
+<br>![Shape parameters1](./showcase/shape_parameters1.png)
+<br>![Wing shape1](./showcase/shape1.png)
+<br>![Shape parameters2](./showcase/shape_parameters2.png)
+<br>![Wing shape2](./showcase/shape2.png)
+- Adjust control surfaces:
+<br>![Control surfaces](./showcase/control_surface_parameters.png)
+<br>![Control surfaces](./showcase/control_surfaces.png)
+- Similarly, add tail empennage:
+<br>![Control surfaces](./showcase/elevator.png)
+<br>![Control surfaces](./showcase/rudder.png)
+- Controls for each `VehicleWing3D`:
+  - Ailerons deflect in different directions on different sides of the wing
+  - Flaps deflect in same directions on different sides of the wing. They should be used for tail empennage.
+<br>![Controls](./showcase/input.png)
+- Aerodynamic settings:
+  - By default, it's configured for a standard wing, except for zero_lift_angle - this should be set to about -2.5 degrees on the main wing and 0.0 on tail empennage
+<br>![Aerodynamics](./showcase/aerodynamics.png)
+
+Position the center of mass near the wing location, setup the mass corresponding to the wing size, disable damping, apply aircraft thrust, and enjoy the flight
+![Takeoff](./showcase/takeoff.png)
 
 ## Demo
 
@@ -50,7 +79,3 @@ Basic parameters of aircraft:
 Language: GDScript
 
 Renderer: Forward+
-
-## How does it work?
-
-The base aircraft uses a [`VehicleBody3D`] node. Wing aerodynamics are implemented in a [`VehicleWing3D`] node.
