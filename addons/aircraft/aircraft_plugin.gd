@@ -1,8 +1,9 @@
 @tool
 extends EditorPlugin
 
+var VehicleWing3DGizmoPlugin := preload("uid://bn51yyq6ui0ym")
 
-var _vehicle_wing_gizmo: VehicleWing3DGizmoPlugin
+var _vehicle_wing_gizmo: EditorNode3DGizmoPlugin
 
 
 func _enter_tree() -> void:

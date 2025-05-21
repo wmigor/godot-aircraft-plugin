@@ -1,5 +1,4 @@
 extends EditorNode3DGizmoPlugin
-class_name VehicleWing3DGizmoPlugin
 
 
 func _init() -> void:

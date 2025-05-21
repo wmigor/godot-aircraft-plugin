@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cs15w4fjixsu1"]
 
-[ext_resource type="Script" uid="uid://cfcue8y0x5t6l" path="res://plots/plots.gd" id="1_ta4xi"]
+[ext_resource type="Script" uid="uid://cfcue8y0x5t6l" path="res://demo/plots/plots.gd" id="1_ta4xi"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_tf1bq"]
 
 [node name="Plots" type="Node2D"]

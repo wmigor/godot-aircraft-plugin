@@ -1,9 +1,9 @@
 [gd_scene load_steps=10 format=3 uid="uid://b1o38th6yrrkr"]
 
-[ext_resource type="Script" uid="uid://dx61qfcyxjl4b" path="res://levels/ground.gd" id="1_h3u77"]
-[ext_resource type="Texture2D" uid="uid://cnoyteuhkm2jf" path="res://levels/texture/ground.webp" id="2_nwecp"]
-[ext_resource type="Texture2D" uid="uid://c0e1ep146qoji" path="res://levels/texture/road.png" id="3_e55bn"]
-[ext_resource type="Material" uid="uid://5eef4n8blwgb" path="res://aircrafts/materials/fuselage_material.tres" id="4_nwecp"]
+[ext_resource type="Script" uid="uid://dx61qfcyxjl4b" path="res://demo/levels/ground.gd" id="1_h3u77"]
+[ext_resource type="Texture2D" uid="uid://cnoyteuhkm2jf" path="res://demo/levels/texture/ground.webp" id="2_nwecp"]
+[ext_resource type="Texture2D" uid="uid://c0e1ep146qoji" path="res://demo/levels/texture/road.png" id="3_e55bn"]
+[ext_resource type="Material" uid="uid://5eef4n8blwgb" path="res://demo/aircraft/materials/fuselage_material.tres" id="4_nwecp"]
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_h3u77"]
 
