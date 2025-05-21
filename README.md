@@ -1,5 +1,7 @@
 # Aircraft plugin for Godot
 
+This plugin adds wing physics to `VehicleBody3D` via the `VehicleWing3D` node.
+
 ## Documentation
 
 See [`addons/aircraft/README.md`](./addons/aircraft/README.md).
