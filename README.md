@@ -12,29 +12,29 @@ Detailed documentation can be found in the plugin scripts or Godot Editor: go to
 
 How to setup an airplane:
 - Add VehicleWing3D to VehicleBody3D:
-<br>![Add wing](./showcase/add_vehicle_wing.png)
+<br>![Add wing](images/add_vehicle_wing.png)
 - Adjust the wing shape:
-<br>![Shape parameters1](./showcase/shape_parameters1.png)
-<br>![Wing shape1](./showcase/shape1.png)
-<br>![Shape parameters2](./showcase/shape_parameters2.png)
-<br>![Wing shape2](./showcase/shape2.png)
+<br>![Shape parameters1](images/shape_parameters1.png)
+<br>![Wing shape1](images/shape1.png)
+<br>![Shape parameters2](images/shape_parameters2.png)
+<br>![Wing shape2](images/shape2.png)
 - Adjust control surfaces:
-<br>![Control surfaces](./showcase/control_surface_parameters.png)
-<br>![Control surfaces](./showcase/control_surfaces.png)
+<br>![Control surfaces](images/control_surface_parameters.png)
+<br>![Control surfaces](images/control_surfaces.png)
 - Similarly, add tail empennage:
-<br>![Control surfaces](./showcase/elevator.png)
+<br>![Control surfaces](images/elevator.png)
 Turn off the `mirror` property of the rudder and rotate 90 degrees around the z-axis
-<br>![Control surfaces](./showcase/rudder.png)
+<br>![Control surfaces](images/rudder.png)
 - Controls for each `VehicleWing3D`:
   - Ailerons deflect in different directions on different sides of the wing
   - Flaps deflect in same directions on different sides of the wing. They should be used for tail empennage.
-<br>![Controls](./showcase/input.png)
+<br>![Controls](images/input.png)
 - Aerodynamic settings:
   - By default, it's configured for a standard wing, except for zero_lift_angle - this should be set to about -2.5 degrees on the main wing and 0.0 on tail empennage
-<br>![Aerodynamics](./showcase/aerodynamics.png)
+<br>![Aerodynamics](images/aerodynamics.png)
 
 Position the center of mass near the wing location, setup the mass corresponding to the wing size, disable damping, apply aircraft thrust, and enjoy the flight
-![Takeoff](./showcase/takeoff.png)
+![Takeoff](images/takeoff.png)
 
 ## Demo
 
