@@ -191,106 +191,106 @@ func _physics_process(delta: float) -> void:
 		_body.apply_torque(_torque)
 
 
-func calculate(p_linear_velocity: Vector3, p_angular_velocity: Vector3, p_center_of_mass: Vector3) -> void:
+func calculate(linear_velocity: Vector3, angular_velocity: Vector3, center_of_mass: Vector3) -> void:
 	_try_rebuild()
 	_force = Vector3.ZERO
 	_torque = Vector3.ZERO
 
 	for section in _sections:
 		section.global_transform = global_transform * section.transform
-		var arm := section.global_transform.origin - p_center_of_mass
-		var wind := -(p_linear_velocity + p_angular_velocity.cross(arm))
+		var arm := section.global_transform.origin - center_of_mass
+		var wind := -(linear_velocity + angular_velocity.cross(arm))
 		_calculate_section_forces(section, wind)
 		_force += section.force
 		_torque += section.torque + arm.cross(section.force)
 
 
-func _calculate_section_forces(p_section: Section, p_wind: Vector3) -> void:
-	var right := p_section.global_transform.basis.x
-	var drag_direction := p_wind.normalized()
+func _calculate_section_forces(section: Section, wind: Vector3) -> void:
+	var right := section.global_transform.basis.x
+	var drag_direction := wind.normalized()
 	var lift_direction := drag_direction.cross(right)
-	_update_section_parameters(p_section, p_wind)
-	_calculate_section_factors(p_section, p_wind)
-	var pressure := 0.5 * density * p_wind.length_squared() * p_section.chord * p_section.length
-	var lift := lift_direction * p_section.lift_factor * pressure
-	var drag := drag_direction * p_section.drag_factor * pressure
+	_update_section_parameters(section, wind)
+	_calculate_section_factors(section, wind)
+	var pressure := 0.5 * density * wind.length_squared() * section.chord * section.length
+	var lift := lift_direction * section.lift_factor * pressure
+	var drag := drag_direction * section.drag_factor * pressure
 	var force := lift + drag
-	var torque := -right * p_section.torque_factor * pressure * p_section.chord
-	force = p_section.force + (force - p_section.force) * 0.5
-	torque = p_section.torque + (torque - p_section.torque) * 0.5
-	p_section.force = force
-	p_section.torque = torque
+	var torque := -right * section.torque_factor * pressure * section.chord
+	force = section.force + (force - section.force) * 0.5
+	torque = section.torque + (torque - section.torque) * 0.5
+	section.force = force
+	section.torque = torque
 
 
-func _update_section_parameters(p_section: Section, p_wind: Vector3) -> void:
-	var to_local := p_section.global_transform.affine_inverse()
-	var local_wind := to_local * p_wind - to_local * Vector3.ZERO
-	p_section.angle_of_attack = get_angle_of_attack(local_wind)
-	p_section.control_surface_angle = get_control_surface_angle(p_section.type, p_section.mirror)
-	p_section.corrected_lift_slope = lift_slope * _aspect_ratio / (_aspect_ratio + 2.0 * (_aspect_ratio + 4.0) / (_aspect_ratio + 2.0))
+func _update_section_parameters(section: Section, wind: Vector3) -> void:
+	var to_local := section.global_transform.affine_inverse()
+	var local_wind := to_local * wind - to_local * Vector3.ZERO
+	section.angle_of_attack = get_angle_of_attack(local_wind)
+	section.control_surface_angle = get_control_surface_angle(section.type, section.mirror)
+	section.corrected_lift_slope = lift_slope * _aspect_ratio / (_aspect_ratio + 2.0 * (_aspect_ratio + 4.0) / (_aspect_ratio + 2.0))
 
-	var control_surface_effectivness_factor := acos(2.0 * p_section.control_surface_fraction - 1.0)
+	var control_surface_effectivness_factor := acos(2.0 * section.control_surface_fraction - 1.0)
 	var control_surface_effectivness := 1.0 - (control_surface_effectivness_factor - sin(control_surface_effectivness_factor)) / PI
 
-	p_section.control_surface_lift = p_section.corrected_lift_slope * control_surface_effectivness * get_control_surface_lift_factor(p_section.control_surface_angle) * p_section.control_surface_angle
-	p_section.corrected_zero_lift_angle = zero_lift_angle - p_section.control_surface_lift / p_section.corrected_lift_slope
+	section.control_surface_lift = section.corrected_lift_slope * control_surface_effectivness * get_control_surface_lift_factor(section.control_surface_angle) * section.control_surface_angle
+	section.corrected_zero_lift_angle = zero_lift_angle - section.control_surface_lift / section.corrected_lift_slope
 
-	var control_surface_lift_max := get_control_surface_lift_max(p_section.control_surface_fraction)
-	var lift_max := p_section.corrected_lift_slope * (stall_angle_max - zero_lift_angle) + p_section.control_surface_lift * control_surface_lift_max
-	var lift_min := p_section.corrected_lift_slope * (stall_angle_min - zero_lift_angle) + p_section.control_surface_lift * control_surface_lift_max
+	var control_surface_lift_max := get_control_surface_lift_max(section.control_surface_fraction)
+	var lift_max := section.corrected_lift_slope * (stall_angle_max - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
+	var lift_min := section.corrected_lift_slope * (stall_angle_min - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
 
-	p_section.corrected_stall_angle_max = p_section.corrected_zero_lift_angle + lift_max / p_section.corrected_lift_slope
-	p_section.corrected_stall_angle_min = p_section.corrected_zero_lift_angle + lift_min / p_section.corrected_lift_slope
+	section.corrected_stall_angle_max = section.corrected_zero_lift_angle + lift_max / section.corrected_lift_slope
+	section.corrected_stall_angle_min = section.corrected_zero_lift_angle + lift_min / section.corrected_lift_slope
 
-	_update_section_hysteresis_stall(p_section, p_wind)
+	_update_section_hysteresis_stall(section, wind)
 
 
-func _calculate_section_factors(p_section: Section, p_wind: Vector3) -> void:
-	var stall_angle_max := p_section.restore_stall_angle_max if p_section.stall else p_section.corrected_stall_angle_max
-	var stall_angle_min := p_section.restore_stall_angle_min if p_section.stall else p_section.corrected_stall_angle_min
+func _calculate_section_factors(section: Section, wind: Vector3) -> void:
+	var stall_angle_max := section.restore_stall_angle_max if section.stall else section.corrected_stall_angle_max
+	var stall_angle_min := section.restore_stall_angle_min if section.stall else section.corrected_stall_angle_min
 
-	if p_section.angle_of_attack >= stall_angle_min and p_section.angle_of_attack <= stall_angle_max:
-		var factors := _calculate_normal_factors(p_section, p_section.angle_of_attack)
-		p_section.lift_factor = factors.x
-		p_section.drag_factor = factors.y
-		p_section.torque_factor = factors.z
-		p_section.stall_warning = false
+	if section.angle_of_attack >= stall_angle_min and section.angle_of_attack <= stall_angle_max:
+		var factors := _calculate_normal_factors(section, section.angle_of_attack)
+		section.lift_factor = factors.x
+		section.drag_factor = factors.y
+		section.torque_factor = factors.z
+		section.stall_warning = false
 		return
 
-	p_section.stall_warning = p_wind.length_squared() >= chord * chord
-	var full_stall_angle_max := p_section.corrected_stall_angle_max + stall_width
-	var full_stall_angle_min := p_section.corrected_stall_angle_min - stall_width
+	section.stall_warning = wind.length_squared() >= chord * chord
+	var full_stall_angle_max := section.corrected_stall_angle_max + stall_width
+	var full_stall_angle_min := section.corrected_stall_angle_min - stall_width
 
-	if p_section.angle_of_attack > full_stall_angle_max or p_section.angle_of_attack < full_stall_angle_min:
-		var factors := _calculate_stall_factors(p_section, p_section.angle_of_attack)
-		p_section.lift_factor = factors.x
-		p_section.drag_factor = factors.y
-		p_section.torque_factor = factors.z
+	if section.angle_of_attack > full_stall_angle_max or section.angle_of_attack < full_stall_angle_min:
+		var factors := _calculate_stall_factors(section, section.angle_of_attack)
+		section.lift_factor = factors.x
+		section.drag_factor = factors.y
+		section.torque_factor = factors.z
 		return
 
 	var factors1: Vector3
 	var factors2: Vector3
 	var w: float
 
-	if p_section.angle_of_attack > stall_angle_max:
-		factors1 = _calculate_normal_factors(p_section, stall_angle_max)
-		factors2 = _calculate_stall_factors(p_section, full_stall_angle_max)
-		w = (p_section.angle_of_attack - stall_angle_max) / (full_stall_angle_max - stall_angle_max)
+	if section.angle_of_attack > stall_angle_max:
+		factors1 = _calculate_normal_factors(section, stall_angle_max)
+		factors2 = _calculate_stall_factors(section, full_stall_angle_max)
+		w = (section.angle_of_attack - stall_angle_max) / (full_stall_angle_max - stall_angle_max)
 	else:
-		factors1 = _calculate_normal_factors(p_section, stall_angle_min)
-		factors2 = _calculate_stall_factors(p_section, full_stall_angle_min)
-		w = (p_section.angle_of_attack - stall_angle_min) / (full_stall_angle_min - stall_angle_min)
+		factors1 = _calculate_normal_factors(section, stall_angle_min)
+		factors2 = _calculate_stall_factors(section, full_stall_angle_min)
+		w = (section.angle_of_attack - stall_angle_min) / (full_stall_angle_min - stall_angle_min)
 
 	w = w * w * (3 - 2 * w)
-	p_section.lift_factor = lerpf(factors1.x, factors2.x, w)
-	p_section.drag_factor = lerpf(factors1.y, factors2.y, w)
-	p_section.torque_factor = lerpf(factors1.z, factors2.z, w)
+	section.lift_factor = lerpf(factors1.x, factors2.x, w)
+	section.drag_factor = lerpf(factors1.y, factors2.y, w)
+	section.torque_factor = lerpf(factors1.z, factors2.z, w)
 
 
-func _calculate_normal_factors(p_section: Section, p_angle_of_attack: float) -> Vector3:
-	var lift := p_section.corrected_lift_slope * (p_angle_of_attack - p_section.corrected_zero_lift_angle)
+func _calculate_normal_factors(section: Section, angle_of_attack: float) -> Vector3:
+	var lift := section.corrected_lift_slope * (angle_of_attack - section.corrected_zero_lift_angle)
 	var induced_angle := lift / (PI * _aspect_ratio)
-	var effective_angle := p_angle_of_attack - p_section.corrected_zero_lift_angle - induced_angle
+	var effective_angle := angle_of_attack - section.corrected_zero_lift_angle - induced_angle
 	var cos_ea := cos(effective_angle)
 	var sin_ea := sin(effective_angle)
 	var tangent := surface_friction * cos_ea
@@ -301,23 +301,23 @@ func _calculate_normal_factors(p_section: Section, p_angle_of_attack: float) -> 
 		drag = surface_friction + k * lift * lift
 	else:
 		drag = normal * sin_ea + tangent * cos_ea
-	var torque := p_section.control_surface_lift / 6.0 - normal * get_torque_factor(effective_angle)
+	var torque := section.control_surface_lift / 6.0 - normal * get_torque_factor(effective_angle)
 	return Vector3(lift, drag, torque)
 
 
-func _calculate_stall_factors(p_section: Section, p_angle_of_attack: float) -> Vector3:
-	var stall_angle := p_section.corrected_stall_angle_max if p_angle_of_attack > p_section.corrected_stall_angle_max else p_section.corrected_stall_angle_min
-	var stall_lift := p_section.corrected_lift_slope * (stall_angle - p_section.corrected_zero_lift_angle)
+func _calculate_stall_factors(section: Section, angle_of_attack: float) -> Vector3:
+	var stall_angle := section.corrected_stall_angle_max if angle_of_attack > section.corrected_stall_angle_max else section.corrected_stall_angle_min
+	var stall_lift := section.corrected_lift_slope * (stall_angle - section.corrected_zero_lift_angle)
 	var induced_angle := stall_lift / (PI * _aspect_ratio)
 	var half_pi := PI / 2.0
-	var z := half_pi - p_section.corrected_stall_angle_max if p_angle_of_attack > p_section.corrected_stall_angle_max else -half_pi - p_section.corrected_stall_angle_min
-	var w := (half_pi - clampf(p_angle_of_attack, -half_pi, half_pi)) / z if absf(z) >= 0.001 else 0.0
+	var z := half_pi - section.corrected_stall_angle_max if angle_of_attack > section.corrected_stall_angle_max else -half_pi - section.corrected_stall_angle_min
+	var w := (half_pi - clampf(angle_of_attack, -half_pi, half_pi)) / z if absf(z) >= 0.001 else 0.0
 	induced_angle = lerpf(0.0, induced_angle, w)
-	var effective_angle := p_angle_of_attack - p_section.corrected_zero_lift_angle - induced_angle
+	var effective_angle := angle_of_attack - section.corrected_zero_lift_angle - induced_angle
 	var sin_ea := sin(effective_angle)
 	var cos_ea := cos(effective_angle)
 
-	var normal := get_drag_max(p_section.control_surface_angle) * sin_ea * (1.0 / (0.56 + 0.44 * absf(sin_ea)) - 0.41 * (1.0 - exp(-17.0 / _aspect_ratio)))
+	var normal := get_drag_max(section.control_surface_angle) * sin_ea * (1.0 / (0.56 + 0.44 * absf(sin_ea)) - 0.41 * (1.0 - exp(-17.0 / _aspect_ratio)))
 	var tangent := 0.5 * surface_friction * cos_ea
 
 	var lift := normal * cos_ea - tangent * sin_ea
@@ -326,23 +326,23 @@ func _calculate_stall_factors(p_section: Section, p_angle_of_attack: float) -> V
 	return Vector3(lift, drag, torque)
 
 
-func _update_section_hysteresis_stall(p_section: Section, p_wind: Vector3) -> void:
-	if p_wind.length_squared() < chord * chord:
-		p_section.stall = false
+func _update_section_hysteresis_stall(section: Section, wind: Vector3) -> void:
+	if wind.length_squared() < chord * chord:
+		section.stall = false
 		return
 
-	var start_hysteresis_angle_max := p_section.corrected_stall_angle_max + stall_width
-	var start_hysteresis_angle_min := p_section.corrected_stall_angle_min - stall_width
-	p_section.restore_stall_angle_max = minf(p_section.corrected_stall_angle_max, restore_stall_angle)
-	p_section.restore_stall_angle_min = minf(p_section.corrected_stall_angle_min, -restore_stall_angle)
-	if not p_section.stall and (p_section.angle_of_attack >= start_hysteresis_angle_max or p_section.angle_of_attack <= start_hysteresis_angle_min):
-		p_section.stall = true
-	elif p_section.stall and p_section.angle_of_attack <= restore_stall_angle and p_section.angle_of_attack >= -restore_stall_angle:
-		p_section.stall = false
+	var start_hysteresis_angle_max := section.corrected_stall_angle_max + stall_width
+	var start_hysteresis_angle_min := section.corrected_stall_angle_min - stall_width
+	section.restore_stall_angle_max = minf(section.corrected_stall_angle_max, restore_stall_angle)
+	section.restore_stall_angle_min = minf(section.corrected_stall_angle_min, -restore_stall_angle)
+	if not section.stall and (section.angle_of_attack >= start_hysteresis_angle_max or section.angle_of_attack <= start_hysteresis_angle_min):
+		section.stall = true
+	elif section.stall and section.angle_of_attack <= restore_stall_angle and section.angle_of_attack >= -restore_stall_angle:
+		section.stall = false
 
 
-func get_angle_of_attack(p_wind: Vector3) -> float:
-	var angle := atan2(p_wind.y, p_wind.z)
+func get_angle_of_attack(wind: Vector3) -> float:
+	var angle := atan2(wind.y, wind.z)
 	if angle > PI / 2.0:
 		angle -= PI
 	elif angle < -PI / 2.0:
@@ -350,16 +350,16 @@ func get_angle_of_attack(p_wind: Vector3) -> float:
 	return angle
 
 
-func get_control_surface_angle(p_type: ControlSurfaceType, p_mirror: bool) -> float:
-	if p_type == ControlSurfaceType.Aileron:
-		return get_aileron_angle(p_mirror)
-	elif p_type == ControlSurfaceType.Flap:
+func get_control_surface_angle(type: ControlSurfaceType, is_mirror: bool) -> float:
+	if type == ControlSurfaceType.Aileron:
+		return get_aileron_angle(is_mirror)
+	elif type == ControlSurfaceType.Flap:
 		return get_flap_angle()
 	return 0.0
 
 
-func get_aileron_angle(p_mirror: bool) -> float:
-	if p_mirror:
+func get_aileron_angle(is_mirror: bool) -> float:
+	if is_mirror:
 		return (aileron_angle_min if aileron_value > 0.0 else -aileron_angle_max) * aileron_value
 	return (aileron_angle_max if aileron_value > 0.0 else -aileron_angle_min) * aileron_value
 
@@ -367,20 +367,20 @@ func get_flap_angle() -> float:
 	return (flap_angle_max if flap_value >= 0.0 else -flap_angle_min) * flap_value
 
 
-func get_torque_factor(p_effective_angle: float) -> float:
-	return 0.25 - 0.175 * (1.0 - 2.0 * p_effective_angle / PI)
+func get_torque_factor(effective_angle: float) -> float:
+	return 0.25 - 0.175 * (1.0 - 2.0 * effective_angle / PI)
 
 
-func get_control_surface_lift_max(p_control_surface_fraction: float) -> float:
-	return clampf(1.0 - 0.5 * (p_control_surface_fraction - 0.1) / 0.3, 0.0, 1.0)
+func get_control_surface_lift_max(control_surface_fraction: float) -> float:
+	return clampf(1.0 - 0.5 * (control_surface_fraction - 0.1) / 0.3, 0.0, 1.0)
 
 
-func get_drag_max(p_control_surface_angle: float) -> float:
-	return 1.98 - 4.26e-2 * p_control_surface_angle * p_control_surface_angle + 2.1e-1 * p_control_surface_angle
+func get_drag_max(control_surface_angle: float) -> float:
+	return 1.98 - 4.26e-2 * control_surface_angle * control_surface_angle + 2.1e-1 * control_surface_angle
 
 
-func get_control_surface_lift_factor(p_control_surface_angle: float) -> float:
-	return lerpf(0.8, 0.4, (absf(rad_to_deg(p_control_surface_angle)) - 10.0) / 50.0)
+func get_control_surface_lift_factor(control_surface_angle: float) -> float:
+	return lerpf(0.8, 0.4, (absf(rad_to_deg(control_surface_angle)) - 10.0) / 50.0)
 
 
 func _try_rebuild() -> void:
@@ -481,13 +481,13 @@ func build_control_surface_sections() -> Array[ControlSurface]:
 	return sections
 
 
-func _create_wing_section(p_control_surface: ControlSurface, p_position: Vector3, p_chord: float, p_length: float, p_twist: float, p_mirror: bool) -> Section:
+func _create_wing_section(p_control_surface: ControlSurface, p_position: Vector3, p_chord: float, p_length: float, p_twist: float, is_mirror: bool) -> Section:
 	var section := Section.new()
-	section.transform = Transform3D(Basis.from_euler(Vector3(p_twist, 0.0, -dihedral if p_mirror else dihedral)), p_position)
+	section.transform = Transform3D(Basis.from_euler(Vector3(p_twist, 0.0, -dihedral if is_mirror else dihedral)), p_position)
 	section.chord = p_chord
 	section.length = p_length
 	section.type = p_control_surface.type
-	section.mirror = p_mirror
+	section.mirror = is_mirror
 	section.stall = false
 	if p_control_surface.type != ControlSurfaceType.None and p_control_surface.fraction > 0.0:
 		section.control_surface_fraction = p_control_surface.fraction
