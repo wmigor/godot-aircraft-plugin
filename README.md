@@ -23,6 +23,7 @@ How to setup an airplane:
 <br>![Control surfaces](./showcase/control_surfaces.png)
 - Similarly, add tail empennage:
 <br>![Control surfaces](./showcase/elevator.png)
+Turn off the `mirror` property of the rudder and rotate 90 degrees around the z-axis
 <br>![Control surfaces](./showcase/rudder.png)
 - Controls for each `VehicleWing3D`:
   - Ailerons deflect in different directions on different sides of the wing
