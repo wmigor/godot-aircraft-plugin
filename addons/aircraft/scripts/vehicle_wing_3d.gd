@@ -1,4 +1,5 @@
 @tool
+@icon("uid://dgp1egfjl2whe")
 extends Node3D
 class_name VehicleWing3D
 
