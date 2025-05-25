@@ -3,8 +3,8 @@
 This plugin adds wing physics to `VehicleBody3D` via the `VehicleWing3D` node.
 
 ## Installation
-
-Copy `addons/aircraft` directory to project.
+- Download addon from [Godot Asset Library](https://godotengine.org/asset-library/asset/4049)
+- Copy `addons/aircraft` directory to project.
 
 ## Documentation
 
