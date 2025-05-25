@@ -17,6 +17,5 @@ var flap_mode := 0
 
 
 func _ready() -> void:
-	wing.debug = debug
-	elevator.debug = debug
-	rudder.debug = debug
+	for w in find_children("*", "VehicleWing3D"):
+		w.debug = debug

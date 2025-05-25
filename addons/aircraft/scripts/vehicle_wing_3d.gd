@@ -75,6 +75,13 @@ class_name VehicleWing3D
 		_dirty = true
 		update_gizmos()
 
+## Next part of wing
+@export var next_wing: NodePath = "":
+	set(value):
+		next_wing = value
+		_dirty = true;
+		update_gizmos()
+
 @export_group("Aerodynamic")
 ## Determines how quickly the lift increases with the angle of rotation. For a normal wing it is 2 * PI.
 @export var lift_slope := TAU
@@ -161,12 +168,16 @@ class_name VehicleWing3D
 @export_range(-1, 1, 0.001) var aileron_value: float:
 	set(value):
 		aileron_value = value
+		if _next_wing != null:
+			_next_wing.aileron_value = value
 		update_gizmos()
 
 ## Controls the flap angle. Values in the range (-1, 1) change the flap angle from minimum to maximum angle. Flaps on opposite ends of the wing deflect in the same direction.
 @export_range(-1, 1, 0.001) var flap_value: float:
 	set(value):
 		flap_value = value
+		if _next_wing != null:
+			_next_wing.flap_value = value
 		update_gizmos()
 
 
@@ -178,6 +189,7 @@ class_name VehicleWing3D
 			debug = value
 			_update_debug_view()
 
+@onready var _next_wing: VehicleWing3D = get_node(next_wing) if next_wing else null
 
 enum ControlSurfaceType { None, Flap, Aileron }
 
