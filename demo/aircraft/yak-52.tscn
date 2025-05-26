@@ -164,7 +164,3 @@ suspension_max_force = 600000.0
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.25
 height = 0.2
-
-[node name="VehicleWing3D" type="Node3D" parent="."]
-script = ExtResource("5_hocnw")
-metadata/_custom_type_script = "uid://bugtnfunnraoj"
