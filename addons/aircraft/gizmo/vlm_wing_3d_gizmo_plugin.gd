@@ -32,15 +32,32 @@ func _redraw(gizmo: EditorNode3DGizmo) -> void:
 
 	lines.clear()
 	_add_mac(wing, lines)
+	for panel in wing._panels:
+		_add_point(panel.control_point, lines)
+		_add_point(panel.vortex_point_left, lines)
+		_add_point(panel.vortex_point_right, lines)
+
 	gizmo.add_lines(lines, get_material("mac_material", gizmo), false, Color.WHITE)
 
 
 func _add_panels(wing: VlmWing3D, mirror: bool, lines: PackedVector3Array) -> void:
 	wing._try_rebuild()
 	for panel in wing._panels:
-		for i in len(panel.points):
-			lines.append(panel.points[i])
-			lines.append(panel.points[(i + 1) % len(panel.points)])
+		lines.append(panel.forward_left)
+		lines.append(panel.forward_right)
+		lines.append(panel.forward_right)
+		lines.append(panel.rear_right)
+		lines.append(panel.rear_right)
+		lines.append(panel.rear_left)
+		lines.append(panel.rear_left)
+		lines.append(panel.forward_left)
+
+
+func _add_point(point: Vector3, lines: PackedVector3Array, size := 0.01) -> void:
+	lines.append(point - Vector3.RIGHT * size)
+	lines.append(point + Vector3.RIGHT * size)
+	lines.append(point - Vector3.FORWARD * size)
+	lines.append(point + Vector3.FORWARD * size)
 
 
 func _add_wing_lines(wing: VlmWing3D, mirror: bool, lines: PackedVector3Array) -> bool:

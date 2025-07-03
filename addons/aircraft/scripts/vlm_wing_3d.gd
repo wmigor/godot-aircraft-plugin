@@ -71,7 +71,13 @@ class_name VlmWing3D
 
 
 class WingPanel:
-	var points: Array[Vector3]
+	var forward_left: Vector3
+	var forward_right: Vector3
+	var rear_right: Vector3
+	var rear_left: Vector3
+	var vortex_point_left: Vector3
+	var vortex_point_right: Vector3
+	var control_point: Vector3
 
 
 var _force: Vector3
@@ -159,25 +165,26 @@ func _build_panels() -> void:
 			var start_z2 := (j + 1) * start_chord / chord_panel_count - start_chord * 0.5
 			var end_z1 := j * end_chord / chord_panel_count - end_chord * 0.5
 			var end_z2 := (j + 1) * end_chord / chord_panel_count - end_chord * 0.5
-			var p1 := _get_wing_point(base, tip, start, start_z1, twist * start)
-			var p2 := _get_wing_point(base, tip, end, end_z1, twist * end)
-			var p3 := _get_wing_point(base, tip, end, end_z2, twist * end)
-			var p4 := _get_wing_point(base, tip, start, start_z2, twist * end)
-			panel.points.append(p1)
-			panel.points.append(p2)
-			panel.points.append(p3)
-			panel.points.append(p4)
+			panel.forward_left = _get_wing_point(base, tip, start, start_z1, twist * start)
+			panel.forward_right = _get_wing_point(base, tip, end, end_z1, twist * end)
+			panel.rear_right = _get_wing_point(base, tip, end, end_z2, twist * end)
+			panel.rear_left = _get_wing_point(base, tip, start, start_z2, twist * end)
 			_panels.append(panel)
 	if mirror:
 		for i in len(_panels):
+			var original := _panels[i]
 			var panel := WingPanel.new()
-			for point in _panels[i].points:
-				panel.points.append(Vector3(-point.x, point.y, point.z))
-			for j in len(panel.points) / 2:
-				var point := panel.points[j * 2]
-				panel.points[j * 2] = panel.points[j * 2 + 1]
-				panel.points[j * 2 + 1] = point
+			panel.forward_left = original.forward_right * Vector3(-1, 1, 1)
+			panel.forward_right = original.forward_left * Vector3(-1, 1, 1)
+			panel.rear_left = original.rear_right * Vector3(-1, 1, 1)
+			panel.rear_right = original.rear_left * Vector3(-1, 1, 1)
 			_panels.append(panel)
+	for panel in _panels:
+		panel.vortex_point_left = panel.forward_left + (panel.rear_left - panel.forward_left) * 0.25
+		panel.vortex_point_right = panel.forward_right + (panel.rear_right - panel.forward_right) * 0.25
+		var forward_mid := (panel.forward_left + panel.forward_right) * 0.5
+		var rear_mid := (panel.rear_left + panel.rear_right) * 0.5
+		panel.control_point = forward_mid + (rear_mid - forward_mid) * 0.75
 
 
 func _get_wing_point(base: Vector3, tip: Vector3, pos: float, chord: float, twist: float) -> Vector3:
