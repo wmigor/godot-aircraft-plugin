@@ -1,6 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://pt5e5ymsx528"]
+[gd_scene load_steps=12 format=3 uid="uid://pt5e5ymsx528"]
 
 [ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_ivdla"]
+[ext_resource type="Script" uid="uid://don1t4sac55qk" path="res://addons/aircraft/scripts/vlm_wing_3d.gd" id="2_2460t"]
 [ext_resource type="Script" uid="uid://dvy1kn7uynwi6" path="res://demo/aircraft/motor.gd" id="3_hocnw"]
 [ext_resource type="Material" uid="uid://5eef4n8blwgb" path="res://demo/aircraft/materials/fuselage_material.tres" id="4_7bubi"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
@@ -36,6 +37,17 @@ brake_value = 10.0
 horizontal_height = 0.274
 horizontal_rotation = -4.7
 camera_distance = 11.0
+
+[node name="VlmWing3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0.831, 0.1)
+script = ExtResource("2_2460t")
+span = 9.3
+chord = 2.095
+taper = 0.5
+twist = -0.0436332
+sweep = -0.0174533
+dihedral = 0.0349066
+metadata/_custom_type_script = "uid://don1t4sac55qk"
 
 [node name="Wing" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0.831, 0.1)

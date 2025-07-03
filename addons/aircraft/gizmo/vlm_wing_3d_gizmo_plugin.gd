@@ -23,12 +23,12 @@ func _redraw(gizmo: EditorNode3DGizmo) -> void:
 
 	var lines := PackedVector3Array()
 	_add_panels(wing, false, lines)
-	var valid := _add_wing_lines(wing, false, lines);
-	if wing.mirror:
-		_add_wing_lines(wing, true, lines);
-
-	var material := "wing_material" if valid else "error_material"
-	gizmo.add_lines(lines, get_material(material, gizmo), false, Color.WHITE)
+	#var valid := _add_wing_lines(wing, false, lines);
+	#if wing.mirror:
+		#_add_wing_lines(wing, true, lines);
+#
+	#var material := "wing_material" if valid else "error_material"
+	gizmo.add_lines(lines, get_material("wing_material", gizmo), false, Color.WHITE)
 
 	lines.clear()
 	_add_mac(wing, lines)

@@ -3,6 +3,20 @@
 extends Node3D
 class_name VlmWing3D
 
+@export_group("Airfoil")
+@export_range(0.0, 9.5) var camber_max := 2.0:
+	set(value):
+		camber_max = value
+		_dirty = true
+		update_gizmos()
+
+@export_range(0.0, 9.0) var camber_max_position := 4.0:
+	set(value):
+		camber_max_position = value
+		_dirty = true
+		update_gizmos()
+
+
 @export_group("Shape")
 ## Wing span. Distance between wingtips.
 @export var span := 4.0:
@@ -142,8 +156,8 @@ func _try_rebuild() -> void:
 
 func _build_panels() -> void:
 	_panels.clear()
-	var chord_panel_count := 5
-	var span_panel_count := 10
+	var chord_panel_count := 8
+	var span_panel_count := 16
 	var length := span / 2.0 if mirror else span
 	var dx := length / span_panel_count
 	var ds := 1.0 / span_panel_count
@@ -170,6 +184,14 @@ func _build_panels() -> void:
 			panel.rear_right = _get_wing_point(base, tip, end, end_z2, twist * end)
 			panel.rear_left = _get_wing_point(base, tip, start, start_z2, twist * end)
 			_panels.append(panel)
+			var forward_left := _get_wing_point(base, tip, start, -chord * 0.5, twist * start) - _get_wing_point(base, tip, start, chord * 0.5, twist * start)
+			var normal_left := (tip - base).cross(forward_left).normalized()
+			panel.forward_left += normal_left * _get_camber_line(1.0 - (start_chord / 2.0 - start_z1) / start_chord)
+			panel.rear_left += normal_left * _get_camber_line(1.0 - (start_chord / 2.0 - start_z2) / start_chord)
+			var forward_right := _get_wing_point(base, tip, end, -chord * 0.5, twist * end) - _get_wing_point(base, tip, end, chord * 0.5, twist * end)
+			var normal_right := (tip - base).cross(forward_right).normalized()
+			panel.forward_right += normal_right * _get_camber_line(1.0 - (end_chord / 2.0 - end_z1) / end_chord)
+			panel.rear_right += normal_right * _get_camber_line(1.0 - (end_chord / 2.0 - end_z2) / end_chord)
 	if mirror:
 		for i in len(_panels):
 			var original := _panels[i]
@@ -192,6 +214,17 @@ func _get_wing_point(base: Vector3, tip: Vector3, pos: float, chord: float, twis
 	var twist_dir := Vector3.BACK.rotated(Vector3.RIGHT, twist)
 	point += twist_dir * chord
 	return point
+
+
+func _get_camber_line(x: float) -> float:
+	x = clampf(x, 0.0, 1.0)
+	var m := camber_max / 100.0
+	var p := camber_max_position / 10.0
+	if p <= 0.0:
+		return 0.0
+	if x < p:
+		return (m / (p * p)) * x * (2.0 * p - x)
+	return (m / (1.0 - p) / (1.0 - p)) * (1.0 - 2.0 * p + x * (2.0 * p - x))
 
 
 ## Returns position of wing base
@@ -243,11 +276,11 @@ func get_torque() -> Vector3:
 	return _torque
 
 
-var VehicleWing3DDebugView := preload("uid://ep1ok4t4lxt0")
+var VlmWing3DDebugView := preload("uid://dbiuk00c8y5gs")
 func _update_debug_view() -> void:
 	if _debug_view != null:
 		_debug_view.queue_free()
 		_debug_view = null
 	if debug:
-		_debug_view = VehicleWing3DDebugView.new()
+		_debug_view = VlmWing3DDebugView.new()
 		add_child(_debug_view)
