@@ -38,19 +38,19 @@ func build() -> void:
 func _add_panel_to_mesh(panel: VlmWing3D.WingPanel) -> void:
 	if _mesh == null:
 		return
-	var v1 := panel.rear_left - panel.forward_left
-	var v2 := panel.forward_right - panel.forward_left
+	var v1 := panel.back_left - panel.front_left
+	var v2 := panel.front_right - panel.front_left
 	var normal := v1.cross(v2).normalized()
 
 	_mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
 	_mesh.surface_set_normal(normal)
-	_mesh.surface_add_vertex(panel.forward_left)
-	_mesh.surface_add_vertex(panel.forward_right)
-	_mesh.surface_add_vertex(panel.rear_left)
+	_mesh.surface_add_vertex(panel.front_left)
+	_mesh.surface_add_vertex(panel.front_right)
+	_mesh.surface_add_vertex(panel.back_left)
 	
-	_mesh.surface_add_vertex(panel.rear_left)
-	_mesh.surface_add_vertex(panel.forward_right)
-	_mesh.surface_add_vertex(panel.rear_right)
+	_mesh.surface_add_vertex(panel.back_left)
+	_mesh.surface_add_vertex(panel.front_right)
+	_mesh.surface_add_vertex(panel.back_right)
 	_mesh.surface_end()
 
 func _clear() -> void:

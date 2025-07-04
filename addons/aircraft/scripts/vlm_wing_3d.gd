@@ -85,13 +85,16 @@ class_name VlmWing3D
 
 
 class WingPanel:
-	var forward_left: Vector3
-	var forward_right: Vector3
-	var rear_right: Vector3
-	var rear_left: Vector3
-	var vortex_point_left: Vector3
-	var vortex_point_right: Vector3
+	var front_left: Vector3
+	var front_right: Vector3
+	var back_right: Vector3
+	var back_left: Vector3
+	var vortex_left: Vector3
+	var vortex_right: Vector3
+	var vortex_center: Vector3
 	var control_point: Vector3
+	var normal: Vector3
+	var area: float
 
 
 var _force: Vector3
@@ -179,34 +182,40 @@ func _build_panels() -> void:
 			var start_z2 := (j + 1) * start_chord / chord_panel_count - start_chord * 0.5
 			var end_z1 := j * end_chord / chord_panel_count - end_chord * 0.5
 			var end_z2 := (j + 1) * end_chord / chord_panel_count - end_chord * 0.5
-			panel.forward_left = _get_wing_point(base, tip, start, start_z1, twist * start)
-			panel.forward_right = _get_wing_point(base, tip, end, end_z1, twist * end)
-			panel.rear_right = _get_wing_point(base, tip, end, end_z2, twist * end)
-			panel.rear_left = _get_wing_point(base, tip, start, start_z2, twist * end)
+			panel.front_left = _get_wing_point(base, tip, start, start_z1, twist * start)
+			panel.front_right = _get_wing_point(base, tip, end, end_z1, twist * end)
+			panel.back_right = _get_wing_point(base, tip, end, end_z2, twist * end)
+			panel.back_left = _get_wing_point(base, tip, start, start_z2, twist * end)
 			_panels.append(panel)
-			var forward_left := _get_wing_point(base, tip, start, -chord * 0.5, twist * start) - _get_wing_point(base, tip, start, chord * 0.5, twist * start)
-			var normal_left := (tip - base).cross(forward_left).normalized()
-			panel.forward_left += normal_left * _get_camber_line(1.0 - (start_chord / 2.0 - start_z1) / start_chord)
-			panel.rear_left += normal_left * _get_camber_line(1.0 - (start_chord / 2.0 - start_z2) / start_chord)
-			var forward_right := _get_wing_point(base, tip, end, -chord * 0.5, twist * end) - _get_wing_point(base, tip, end, chord * 0.5, twist * end)
-			var normal_right := (tip - base).cross(forward_right).normalized()
-			panel.forward_right += normal_right * _get_camber_line(1.0 - (end_chord / 2.0 - end_z1) / end_chord)
-			panel.rear_right += normal_right * _get_camber_line(1.0 - (end_chord / 2.0 - end_z2) / end_chord)
+			var front_left := _get_wing_point(base, tip, start, -chord * 0.5, twist * start) - _get_wing_point(base, tip, start, chord * 0.5, twist * start)
+			var normal_left := (tip - base).cross(front_left).normalized()
+			panel.front_left += normal_left * _get_camber_line(1.0 - (start_chord / 2.0 - start_z1) / start_chord)
+			panel.back_left += normal_left * _get_camber_line(1.0 - (start_chord / 2.0 - start_z2) / start_chord)
+			var front_right := _get_wing_point(base, tip, end, -chord * 0.5, twist * end) - _get_wing_point(base, tip, end, chord * 0.5, twist * end)
+			var normal_right := (tip - base).cross(front_right).normalized()
+			panel.front_right += normal_right * _get_camber_line(1.0 - (end_chord / 2.0 - end_z1) / end_chord)
+			panel.back_right += normal_right * _get_camber_line(1.0 - (end_chord / 2.0 - end_z2) / end_chord)
 	if mirror:
 		for i in len(_panels):
 			var original := _panels[i]
 			var panel := WingPanel.new()
-			panel.forward_left = original.forward_right * Vector3(-1, 1, 1)
-			panel.forward_right = original.forward_left * Vector3(-1, 1, 1)
-			panel.rear_left = original.rear_right * Vector3(-1, 1, 1)
-			panel.rear_right = original.rear_left * Vector3(-1, 1, 1)
+			panel.front_left = original.front_right * Vector3(-1, 1, 1)
+			panel.front_right = original.front_left * Vector3(-1, 1, 1)
+			panel.back_left = original.back_right * Vector3(-1, 1, 1)
+			panel.back_right = original.back_left * Vector3(-1, 1, 1)
 			_panels.append(panel)
 	for panel in _panels:
-		panel.vortex_point_left = panel.forward_left + (panel.rear_left - panel.forward_left) * 0.25
-		panel.vortex_point_right = panel.forward_right + (panel.rear_right - panel.forward_right) * 0.25
-		var forward_mid := (panel.forward_left + panel.forward_right) * 0.5
-		var rear_mid := (panel.rear_left + panel.rear_right) * 0.5
+		panel.vortex_left = panel.front_left + (panel.back_left - panel.front_left) * 0.25
+		panel.vortex_right = panel.front_right + (panel.back_right - panel.front_right) * 0.25
+		panel.vortex_center = (panel.vortex_left + panel.vortex_right) * 0.5
+		var forward_mid := (panel.front_left + panel.front_right) * 0.5
+		var rear_mid := (panel.back_left + panel.back_right) * 0.5
 		panel.control_point = forward_mid + (rear_mid - forward_mid) * 0.75
+		var diagonal1 := panel.front_right - panel.back_left
+		var diagonal2 := panel.front_left - panel.back_right
+		var cross := diagonal1.cross(diagonal2)
+		panel.normal = cross.normalized()
+		panel.area = cross.length() / 2.0
 
 
 func _get_wing_point(base: Vector3, tip: Vector3, pos: float, chord: float, twist: float) -> Vector3:
