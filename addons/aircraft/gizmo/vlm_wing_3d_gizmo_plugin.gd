@@ -41,7 +41,7 @@ func _redraw(gizmo: EditorNode3DGizmo) -> void:
 
 
 func _add_panels(wing: VlmWing3D, mirror: bool, lines: PackedVector3Array) -> void:
-	wing._try_rebuild()
+	wing._try_rebuild_shape()
 	for panel in wing._panels:
 		lines.append(panel.front_left)
 		lines.append(panel.front_right)
