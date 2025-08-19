@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_to4ok"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_ccpia"]
 [ext_resource type="Script" uid="uid://dvy1kn7uynwi6" path="res://demo/aircraft/motor.gd" id="3_7e5sj"]
-[ext_resource type="Material" uid="uid://5eef4n8blwgb" path="res://demo/aircraft/materials/fuselage_material.tres" id="4_u73xe"]
+[ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_ccpia"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qxvgi"]
 albedo_color = Color(0.863436, 5.31845e-06, 7.70092e-07, 1)
@@ -102,8 +102,19 @@ aileron_angle_max = 0.0
 aileron_angle_min = 0.0
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
+[node name="Fuselage" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.97, 1.8)
+script = ExtResource("3_ccpia")
+length = 6.8
+front_width = 0.2
+rear_width = 0.2
+midpoint_width = 1.1
+midpoint = 0.12
+cylinder = true
+metadata/_custom_type_script = "uid://i7qb6e7eelmo"
+
 [node name="Motor" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.97, -1.16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.97, -1.7)
 script = ExtResource("3_7e5sj")
 thrust_max = 5000.0
 max_velocity_kmph = 320.0
@@ -115,11 +126,6 @@ material = SubResource("StandardMaterial3D_qxvgi")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.525)
 shape = SubResource("CylinderShape3D_c4w4o")
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CollisionShape3D"]
-radius = 0.25
-height = 5.0
-material = ExtResource("4_u73xe")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.831, 0.138134)

@@ -1,11 +1,13 @@
 extends Node2D
 
 @export var plot_size := Vector2(180, 2)
+@export var show_fuselage := true
 
 @onready var wing := $Wing as VehicleWing3D
 @onready var flap := $VBoxContainer/Flap as HSlider
 @onready var forward := $VBoxContainer/Forward as CheckBox
 @onready var backward := $VBoxContainer/Backward as CheckBox
+@onready var fuselage := $Fuselage as VehicleFuselage3D
 
 
 func _ready() -> void:
@@ -41,7 +43,10 @@ func _make_plots(forward_direction: bool, lift: Array[Vector2], drag: Array[Vect
 	var d := 1.0 if forward_direction else - 1.0
 	var x := -plot_size.x if forward_direction else plot_size.x
 	while true:
-		_add_plot_point(x, lift, drag, torque)
+		if show_fuselage:
+			_add_plot_point_fuselage(x, lift, drag, torque)
+		else:
+			_add_plot_point(x, lift, drag, torque)
 		x += d
 		if forward_direction && x > plot_size.x:
 			break
@@ -60,6 +65,18 @@ func _add_plot_point(x: float, lift: Array[Vector2], drag: Array[Vector2], torqu
 	lift.append(_to_viewport(Vector2(x, force.y * to_factor)))
 	drag.append(_to_viewport(Vector2(x, force.z * to_factor)))
 	torque.append(_to_viewport(Vector2(x, wing.get_torque().x * to_factor)))
+
+
+func _add_plot_point_fuselage(x: float, lift: Array[Vector2], drag: Array[Vector2], torque: Array[Vector2]) -> void:
+	var linear_velocity := Vector3.FORWARD * fuselage.length
+	var to_factor := 2.0 / (fuselage.length * fuselage.center_width * fuselage.density * linear_velocity.length_squared())
+	fuselage.rotation_degrees.x = x
+	for i in 4:
+		fuselage.calculate(linear_velocity, Vector3.ZERO, fuselage.position)
+	var force :=  fuselage.get_force()
+	lift.append(_to_viewport(Vector2(x, force.y * to_factor)))
+	drag.append(_to_viewport(Vector2(x, force.z * to_factor)))
+	torque.append(_to_viewport(Vector2(x, fuselage.get_torque().x * to_factor)))
 
 
 func _draw_plot_segment(x: float, x2: float) -> void:
