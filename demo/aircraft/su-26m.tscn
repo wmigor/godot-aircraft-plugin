@@ -1,9 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://pt5e5ymsx528"]
+[gd_scene load_steps=11 format=3 uid="uid://byms7r5tty5kg"]
 
-[ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_ivdla"]
-[ext_resource type="Script" uid="uid://dvy1kn7uynwi6" path="res://demo/aircraft/motor.gd" id="3_hocnw"]
-[ext_resource type="Material" uid="uid://5eef4n8blwgb" path="res://demo/aircraft/materials/fuselage_material.tres" id="4_7bubi"]
-[ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
+[ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_to4ok"]
+[ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_ccpia"]
+[ext_resource type="Script" uid="uid://dvy1kn7uynwi6" path="res://demo/aircraft/motor.gd" id="3_7e5sj"]
+[ext_resource type="Material" uid="uid://5eef4n8blwgb" path="res://demo/aircraft/materials/fuselage_material.tres" id="4_u73xe"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qxvgi"]
 albedo_color = Color(0.863436, 5.31845e-06, 7.70092e-07, 1)
@@ -13,7 +13,7 @@ height = 5.0
 radius = 0.25
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c4w4o"]
-size = Vector3(9.14, 0.1, 1.494)
+size = Vector3(7.8, 0.1, 1.494)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qxvgi"]
 size = Vector3(1, 1, 1.56226)
@@ -24,49 +24,53 @@ size = Vector3(3.108, 0.1, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_7bubi"]
 size = Vector3(0.001, 1.74402, 1.17969)
 
-[node name="Yak-52" type="VehicleBody3D"]
-mass = 1000.0
+[node name="Su-26m" type="VehicleBody3D"]
+mass = 750.0
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 1, 0)
-inertia = Vector3(3000, 3500, 1200)
+inertia = Vector3(1800, 2000, 800)
 linear_damp_mode = 1
 angular_damp_mode = 1
-script = ExtResource("1_ivdla")
+script = ExtResource("1_to4ok")
 brake_value = 10.0
 horizontal_height = 0.274
 horizontal_rotation = -4.7
 camera_distance = 11.0
 
 [node name="Wing" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0.831, 0.1)
-script = ExtResource("5_hocnw")
-span = 9.3
-chord = 2.095
-taper = 0.5
-twist = -0.0436332
-sweep = -0.0174533
-dihedral = 0.0349066
-zero_lift_angle = -0.0349066
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86, -0.12)
+script = ExtResource("2_ccpia")
+span = 7.8
+chord = 1.992
+taper = 0.523
+sweep = -0.0523599
+stall_angle_max = 0.244346
 stall_angle_min = -0.244346
-stall_width = 0.0698132
+stall_width = 0.20944
+flap_start = 0.0
+flap_end = 0.0
+flap_fraction = 0.0
+flap_angle_max = 0.0
 flap_angle_min = 0.0
-aileron_start = 0.45
+aileron_start = 0.308
 aileron_end = 1.0
 aileron_fraction = 0.3
-aileron_angle_max = 0.279253
+aileron_angle_max = 0.436332
 aileron_angle_min = -0.383972
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
 [node name="Elevator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.999656, 0.0261769, 0, -0.0261769, 0.999656, 0, 1.387, 4.54)
-script = ExtResource("5_hocnw")
-span = 3.214
-chord = 1.184
-taper = 0.6
-sweep = 0.0349066
+transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 0.999999, 0, 1.41, 4.072)
+script = ExtResource("2_ccpia")
+span = 2.9
+chord = 1.1
+taper = 0.673
+stall_angle_max = 0.244346
+stall_angle_min = -0.244346
+stall_width = 0.20944
 flap_start = 0.0
 flap_end = 1.0
-flap_fraction = 0.4
+flap_fraction = 0.5
 flap_angle_max = 0.436332
 flap_angle_min = -0.436332
 aileron_start = 0.0
@@ -77,18 +81,20 @@ aileron_angle_min = 0.0
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
 [node name="Rudder" type="Node3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 1.085, 4.54)
-script = ExtResource("5_hocnw")
-span = 1.554
-chord = 1.441
-taper = 0.7
-sweep = 0.122173
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 1, 4.072)
+script = ExtResource("2_ccpia")
+span = 1.49
+chord = 1.65
+taper = 0.333
 mirror = false
+stall_angle_max = 0.244346
+stall_angle_min = -0.244346
+stall_width = 0.20944
 flap_start = 0.0
 flap_end = 1.0
 flap_fraction = 0.5
-flap_angle_max = 0.471239
-flap_angle_min = -0.471239
+flap_angle_max = 0.558505
+flap_angle_min = -0.558505
 aileron_start = 0.0
 aileron_end = 0.0
 aileron_fraction = 0.0
@@ -97,10 +103,10 @@ aileron_angle_min = 0.0
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
 [node name="Motor" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -1.16)
-script = ExtResource("3_hocnw")
-thrust_max = 4000.0
-max_velocity_kmph = 220.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.97, -1.16)
+script = ExtResource("3_7e5sj")
+thrust_max = 5000.0
+max_velocity_kmph = 320.0
 
 [node name="Propeller" type="CSGBox3D" parent="Motor"]
 size = Vector3(0.1, 2, 0.05)
@@ -113,10 +119,10 @@ shape = SubResource("CylinderShape3D_c4w4o")
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="CollisionShape3D"]
 radius = 0.25
 height = 5.0
-material = ExtResource("4_7bubi")
+material = ExtResource("4_u73xe")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.831, 0.595937)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.831, 0.138134)
 shape = SubResource("BoxShape3D_c4w4o")
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="."]

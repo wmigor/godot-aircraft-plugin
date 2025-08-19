@@ -38,7 +38,7 @@ horizontal_rotation = -4.7
 camera_distance = 11.0
 
 [node name="Wing" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 1.509, 0.05)
+transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 1.509, -0.06)
 script = ExtResource("5_auhpd")
 span = 11.0
 chord = 1.494
