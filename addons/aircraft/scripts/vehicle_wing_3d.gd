@@ -94,7 +94,7 @@ class_name VehicleWing3D
 ## Distance in degrees between the beginning of the stall and the complete stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(6.0)
 ## Surface friction factor.
-@export_range(0, 0, 0.001) var surface_friction := 0.023
+@export_range(0, 0.3, 0.001) var surface_friction := 0.023
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(5.0)
 ## Air density.
@@ -128,7 +128,7 @@ class_name VehicleWing3D
 		update_gizmos()
 
 ## Мinimum negative flap angle.
-@export_range(0, -90, 0.001, "radians_as_degrees") var flap_angle_min := deg_to_rad(-30.0):
+@export_range(-90, 0, 0.001, "radians_as_degrees") var flap_angle_min := deg_to_rad(-30.0):
 	set(value):
 		flap_angle_min = value
 		update_gizmos()
@@ -158,7 +158,7 @@ class_name VehicleWing3D
 		update_gizmos()
 
 ## Мinimum negative aileron angle.
-@export_range(0, -90, 0.001, "radians_as_degrees") var aileron_angle_min := deg_to_rad(-15.0):
+@export_range(-90, 0, 0.001, "radians_as_degrees") var aileron_angle_min := deg_to_rad(-15.0):
 	set(value):
 		aileron_angle_min = value
 		update_gizmos()
