@@ -100,7 +100,7 @@ class_name VehicleWing3D
 ## Air density.
 @export var density := 1.2255
 ## Enables an alternative drag calculation method. If the aircraft seems to have too much drag, enable this option. Also, make sure to disable damping in the VehicleBody3D.
-@export var alternative_drag := false
+@export var alternative_drag := true
 
 @export_group("Control surfaces")
 ## Flap start relative to wing length.
