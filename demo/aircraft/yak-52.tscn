@@ -1,8 +1,8 @@
 [gd_scene load_steps=12 format=3 uid="uid://pt5e5ymsx528"]
 
 [ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_ivdla"]
-[ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_3r63h"]
 [ext_resource type="Script" uid="uid://don1t4sac55qk" path="res://addons/aircraft/scripts/vlm_wing_3d.gd" id="2_2460t"]
+[ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_3r63h"]
 [ext_resource type="Script" uid="uid://dvy1kn7uynwi6" path="res://demo/aircraft/motor.gd" id="3_hocnw"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
 
