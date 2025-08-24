@@ -75,6 +75,13 @@ class_name VehicleWing3D
 		_dirty = true
 		update_gizmos()
 
+## Next part of wing
+@export var next_wing: NodePath = "":
+	set(value):
+		next_wing = value
+		_dirty = true;
+		update_gizmos()
+
 @export_group("Aerodynamic")
 ## Determines how quickly the lift increases with the angle of rotation. For a normal wing it is 2 * PI.
 @export var lift_slope := TAU
@@ -87,13 +94,13 @@ class_name VehicleWing3D
 ## Distance in degrees between the beginning of the stall and the complete stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(6.0)
 ## Surface friction factor.
-@export_range(0, 0, 0.001) var surface_friction := 0.023
+@export_range(0, 0.3, 0.001) var surface_friction := 0.023
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(5.0)
 ## Air density.
 @export var density := 1.2255
 ## Enables an alternative drag calculation method. If the aircraft seems to have too much drag, enable this option. Also, make sure to disable damping in the VehicleBody3D.
-@export var alternative_drag := false
+@export var alternative_drag := true
 
 @export_group("Control surfaces")
 ## Flap start relative to wing length.
@@ -121,7 +128,7 @@ class_name VehicleWing3D
 		update_gizmos()
 
 ## Мinimum negative flap angle.
-@export_range(0, -90, 0.001, "radians_as_degrees") var flap_angle_min := deg_to_rad(-30.0):
+@export_range(-90, 0, 0.001, "radians_as_degrees") var flap_angle_min := deg_to_rad(-30.0):
 	set(value):
 		flap_angle_min = value
 		update_gizmos()
@@ -151,7 +158,7 @@ class_name VehicleWing3D
 		update_gizmos()
 
 ## Мinimum negative aileron angle.
-@export_range(0, -90, 0.001, "radians_as_degrees") var aileron_angle_min := deg_to_rad(-15.0):
+@export_range(-90, 0, 0.001, "radians_as_degrees") var aileron_angle_min := deg_to_rad(-15.0):
 	set(value):
 		aileron_angle_min = value
 		update_gizmos()
@@ -161,12 +168,16 @@ class_name VehicleWing3D
 @export_range(-1, 1, 0.001) var aileron_value: float:
 	set(value):
 		aileron_value = value
+		if _next_wing != null:
+			_next_wing.aileron_value = value
 		update_gizmos()
 
 ## Controls the flap angle. Values in the range (-1, 1) change the flap angle from minimum to maximum angle. Flaps on opposite ends of the wing deflect in the same direction.
 @export_range(-1, 1, 0.001) var flap_value: float:
 	set(value):
 		flap_value = value
+		if _next_wing != null:
+			_next_wing.flap_value = value
 		update_gizmos()
 
 
@@ -178,6 +189,7 @@ class_name VehicleWing3D
 			debug = value
 			_update_debug_view()
 
+@onready var _next_wing: VehicleWing3D = get_node(next_wing) if next_wing else null
 
 enum ControlSurfaceType { None, Flap, Aileron }
 
