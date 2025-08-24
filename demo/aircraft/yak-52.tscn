@@ -112,10 +112,9 @@ metadata/_custom_type_script = "uid://bugtnfunnraoj"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 1.7)
 script = ExtResource("3_3r63h")
 length = 7.75
-front_width = 0.2
+front_width = 1.0
 rear_width = 0.2
-midpoint_width = 1.25
-midpoint = 0.1
+midpoint = 0.3
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 

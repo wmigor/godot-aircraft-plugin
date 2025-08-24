@@ -12,9 +12,9 @@ var _vlm_wing_gizmo: EditorNode3DGizmoPlugin
 
 func _enter_tree() -> void:
 	_vehicle_wing_gizmo = VehicleWing3DGizmoPlugin.new()
+	_vehicle_fuselage_gizmo = VehicleFuselage3DGizmoPlugin.new()
 	_vlm_wing_gizmo = VlmWing3DGizmoPlugin.new()
 	add_node_3d_gizmo_plugin(_vehicle_wing_gizmo)
-	_vehicle_fuselage_gizmo = VehicleFuselage3DGizmoPlugin.new()
 	add_node_3d_gizmo_plugin(_vehicle_fuselage_gizmo)
 	add_node_3d_gizmo_plugin(_vlm_wing_gizmo)
 

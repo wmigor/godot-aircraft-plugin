@@ -60,7 +60,7 @@ aileron_angle_min = -0.383972
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
 [node name="Elevator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 0.999999, 0, 1.41, 4.072)
+transform = Transform3D(1, 0, 0, 0, 0.999656, 0.0261769, 0, -0.0261769, 0.999656, 0, 1.41, 4.072)
 script = ExtResource("2_ccpia")
 span = 2.9
 chord = 1.1
@@ -106,10 +106,9 @@ metadata/_custom_type_script = "uid://bugtnfunnraoj"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.97, 1.8)
 script = ExtResource("3_ccpia")
 length = 6.8
-front_width = 0.2
+front_width = 1.0
 rear_width = 0.2
-midpoint_width = 1.1
-midpoint = 0.12
+midpoint = 0.2
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
