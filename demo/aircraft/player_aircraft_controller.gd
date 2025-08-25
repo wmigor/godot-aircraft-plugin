@@ -14,23 +14,33 @@ func _process(delta: float) -> void:
 
 	process_keyboard_values(delta)
 
-	aircraft.wing.aileron_value = clampf(aileron_key + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
-	aircraft.elevator.flap_value = clampf(elevator_key + Input.get_axis("elevator_down", "elevator_up"), -1.0, 1.0)
-	aircraft.rudder.flap_value = clampf(rudder_key + Input.get_axis("rudder_left", "rudder_right"), -1.0, 1.0)
+	if aircraft.wing != null:
+		aircraft.wing.aileron_value = clampf(aileron_key + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
+		var flap_target := aircraft.flap_modes[aircraft.flap_mode] if aircraft.flap_mode < len(aircraft.flap_modes) else 0.0
+		aircraft.wing.flap_value = move_toward(aircraft.wing.flap_value, clampf(flap_target, -1.0, 1.0), delta)
+	if aircraft.elevator != null:
+		aircraft.elevator.flap_value = clampf(elevator_key + Input.get_axis("elevator_down", "elevator_up"), -1.0, 1.0)
+	if aircraft.rudder != null:
+		aircraft.rudder.flap_value = clampf(rudder_key + Input.get_axis("rudder_left", "rudder_right"), -1.0, 1.0)
+		aircraft.steering = deg_to_rad(-aircraft.rudder.flap_value)
 	aircraft.brake = Input.get_action_strength("brake") * aircraft.brake_value
-
-	aircraft.steering = deg_to_rad(-aircraft.rudder.flap_value)
-
-	var flap_target := aircraft.flap_modes[aircraft.flap_mode] if aircraft.flap_mode < len(aircraft.flap_modes) else 0.0
-	aircraft.wing.flap_value = move_toward(aircraft.wing.flap_value, clampf(flap_target, -1.0, 1.0), delta)
 
 	if aircraft.motor != null:
 		if Input.is_action_pressed("throttle_down"):
 			aircraft.motor.throttle = move_toward(aircraft.motor.throttle, 0.0, delta)
 		if Input.is_action_pressed("throttle_up"):
 			aircraft.motor.throttle = move_toward(aircraft.motor.throttle, 1.0, delta)
+	if aircraft.rotor != null:
+		var stick := Vector2.ZERO
+		stick.y = clampf(elevator_key + Input.get_axis("elevator_down", "elevator_up"), -1.0, 1.0)
+		stick.x = clampf(aileron_key + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
+		aircraft.rotor.stick_angle = atan2(stick.y, stick.x)
+		aircraft.rotor.stick_len = stick.length()
 
-
+		if Input.is_action_pressed("throttle_down"):
+			aircraft.rotor.pitch = move_toward(aircraft.rotor.pitch, 0.0, delta)
+		if Input.is_action_pressed("throttle_up"):
+			aircraft.rotor.pitch = move_toward(aircraft.rotor.pitch, 1.0, delta)
 
 func _input(event: InputEvent) -> void:
 	if aircraft == null:

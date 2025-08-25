@@ -13,9 +13,9 @@ class_name Aircraft
 @onready var rudder := $Rudder as VehicleWing3D
 @onready var fuselage := $Fuselage as VehicleFuselage3D
 @onready var motor := $Motor as Motor
+@onready var rotor := $Rotor as VehicleRotor3D
 
 var flap_mode := 0
-
 
 func _ready() -> void:
 	for w in find_children("*", "VehicleWing3D"):

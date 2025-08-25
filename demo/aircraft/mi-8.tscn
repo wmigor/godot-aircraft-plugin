@@ -1,0 +1,94 @@
+[gd_scene load_steps=8 format=3 uid="uid://cog35xpdqehjv"]
+
+[ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_1sdnb"]
+[ext_resource type="Script" uid="uid://blc3x0y8gvux8" path="res://addons/aircraft/scripts/vehicle_rotor_3d.gd" id="2_0x04r"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
+height = 5.0
+radius = 0.25
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c4w4o"]
+size = Vector3(7.8, 0.1, 1.494)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qxvgi"]
+size = Vector3(1, 1, 1.56226)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ivdla"]
+size = Vector3(3.108, 0.1, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7bubi"]
+size = Vector3(0.001, 1.74402, 1.17969)
+
+[node name="Mi-8" type="VehicleBody3D"]
+mass = 6000.0
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, 1, 0)
+inertia = Vector3(1800, 2000, 800)
+linear_damp_mode = 1
+angular_damp_mode = 1
+script = ExtResource("1_1sdnb")
+brake_value = 10.0
+horizontal_height = 0.274
+horizontal_rotation = -4.7
+camera_distance = 11.0
+
+[node name="Rotor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("2_0x04r")
+blade_count = 4
+blade_twist_power = 3.0
+collective_angle_max = 16.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.525)
+shape = SubResource("CylinderShape3D_c4w4o")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.831, 0.138134)
+shape = SubResource("BoxShape3D_c4w4o")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.627915, -0.165173)
+shape = SubResource("BoxShape3D_qxvgi")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.387, 4.78886)
+shape = SubResource("BoxShape3D_ivdla")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.75901, 4.8787)
+shape = SubResource("BoxShape3D_7bubi")
+
+[node name="WheelF" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
+use_as_steering = true
+wheel_radius = 0.25
+suspension_stiffness = 50.0
+suspension_max_force = 600000.0
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelF"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.25
+height = 0.2
+
+[node name="WheelL" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0.7)
+wheel_radius = 0.25
+suspension_stiffness = 50.0
+suspension_max_force = 600000.0
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelL"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.25
+height = 0.2
+
+[node name="WheelR" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.7)
+wheel_radius = 0.25
+suspension_stiffness = 50.0
+suspension_max_force = 600000.0
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelR"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.25
+height = 0.2
