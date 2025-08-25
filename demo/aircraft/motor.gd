@@ -9,6 +9,7 @@ class_name Motor
 
 const TO_KMPH = 3.6
 const TO_RPM := 60.0 / TAU
+const HP_TO_W := 745.7
 
 var throttle := 1.0
 var thrust := 0.0

@@ -2,20 +2,20 @@ extends Node3D
 class_name VehicleRotor3D
 
 @export var radius := 10.5
-@export var blade_count := 2
+@export var blade_count := 4
 @export var blade_chord := 0.5
 @export var blade_twist := -12.0
-@export var blade_twist_power := 1.0
+@export var blade_twist_power := 3.0
 @export var stall_angle := 14.0
 @export var stall_width := 2.0
 @export var blade_zero_lift_angle := -2.0
 @export var collective_angle_min := 2.0
-@export var collective_angle_max := 14.5
+@export var collective_angle_max := 16.0
 @export var azimuthal_angle_min := -6.0
 @export var azimuthal_angle_max := 6.0
 @export var rpm_max := 192.0
-@export var inertia := 3000.0
-@export var engine_torque_max := 110000
+@export var inertia := 25000.0
+@export var engine_power_hp := 3000.0
 @export var debug := true
 
 var force: Vector3
@@ -84,23 +84,14 @@ func _calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, 
 	var rotor_av := angular_velocity * up
 	for blade in _blades:
 		blade.calculate(aircraft_velocity.dot(up) * up, aircraft_angular_velocity + rotor_av, mass_center)
-		#blade.rotation_degrees.z = 0.0
+		blade.rotation_degrees.z = 0.0
 		var collective_angle := lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
 		var azimut_angle := lerpf(azimuthal_angle_min, azimuthal_angle_max, _get_dynamic_pitch(blade))
 		blade.rotation_degrees.x = collective_angle + azimut_angle
 		force += blade.get_force()
 		torque += blade.get_torque() - blade.get_torque().dot(up) * up
-		var blade_lift := blade.get_force().dot(up) * 0.0
+		var blade_lift := blade.get_force().dot(up) * 0
 		rotor_torque += blade.get_torque().dot(up)
-		#for i in blade.get_section_count():
-			#var section_global_transform := blade.global_transform * blade.get_section_transform(i)
-			#var radius_vector := section_global_transform.origin - mass_center
-			#var wind := _get_surface_wind(surface, up, radius_vector, aircraft_velocity, aircraft_angular_velocity)
-			#surface.calculate_forces(wind, density)
-			#force += surface.force
-			#blade_lift += surface.force.dot(up)
-			#torque += _get_surface_aircraft_torque(surface, up, radius_vector)
-			#rotor_torque += _get_surface_rotor_torque(surface, up)
 		blade.rotation_degrees.z = _get_blade_bend_angle(blade_lift)
 	_calc_fake_rudder(aircraft_angular_velocity, up)
 	_integrate_engine(delta, rotor_torque)
@@ -115,7 +106,8 @@ func _get_blade_bend_angle(blade_lift: float) -> float:
 func _integrate_engine(delta: float, rotor_torque: float) -> void:
 	if running:
 		var rpm := maxf(0.0, angular_velocity * Motor.TO_RPM)
-		var min_torque := 0.01 * engine_torque_max
+		var engine_torque_max := engine_power_hp * Motor.HP_TO_W / rpm_max * Motor.TO_RPM
+		var min_torque := 0.1 * engine_torque_max
 		if rpm <= rpm_max:
 			var rpm_factor := rpm / rpm_max
 			var lerp_param := rpm_factor * rpm_factor * (3.0 - 2.0 * rpm_factor)
@@ -128,13 +120,12 @@ func _integrate_engine(delta: float, rotor_torque: float) -> void:
 	else:
 		_engine_torque = 0.0
 	angular_velocity += (rotor_torque + _engine_torque) / inertia * delta
-	print(angular_velocity * Motor.TO_RPM)
 	rotate_y(angular_velocity * delta)
 
 
 func _calc_fake_rudder(aircraft_angular_velocity: Vector3, up: Vector3) -> void:
 	var up_omega := 6 * (PI / 2 * rudder - aircraft_angular_velocity.dot(up))
-	torque += up * 3000 * up_omega * absf(up_omega)
+	torque += up * 9000 * up_omega * absf(up_omega)
 
 
 func _get_dynamic_pitch(blade: VehicleWing3D) -> float:

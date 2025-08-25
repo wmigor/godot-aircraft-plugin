@@ -31,20 +31,18 @@ script = ExtResource("1_1sdnb")
 brake_value = 10.0
 horizontal_height = 0.274
 horizontal_rotation = -4.7
-camera_distance = 22.0
+camera_distance = 15.0
 
 [node name="Rotor" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 script = ExtResource("2_0x04r")
-blade_count = 4
-blade_twist_power = 3.0
-collective_angle_max = 16.0
 
-[node name="VehicleFuselage3D" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.27333)
+[node name="Fuselage" type="Node3D" parent="."]
 script = ExtResource("3_rkqbg")
-length = 10.0
+length = 5.0
 front_width = 1.0
+rear_width = 1.0
+midpoint = 1.0
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
