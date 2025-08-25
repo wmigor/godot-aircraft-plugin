@@ -33,9 +33,10 @@ func _process(delta: float) -> void:
 	if aircraft.rotor != null:
 		var stick := Vector2.ZERO
 		stick.y = clampf(elevator_key + Input.get_axis("elevator_down", "elevator_up"), -1.0, 1.0)
-		stick.x = clampf(aileron_key + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
+		stick.x = -clampf(aileron_key + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
 		aircraft.rotor.stick_angle = atan2(stick.y, stick.x)
 		aircraft.rotor.stick_len = stick.length()
+		aircraft.rotor.rudder = -clampf(rudder_key + Input.get_axis("rudder_left", "rudder_right"), -1.0, 1.0)
 
 		if Input.is_action_pressed("throttle_down"):
 			aircraft.rotor.pitch = move_toward(aircraft.rotor.pitch, 0.0, delta)

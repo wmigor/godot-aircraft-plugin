@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://cog35xpdqehjv"]
+[gd_scene load_steps=9 format=3 uid="uid://cog35xpdqehjv"]
 
 [ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_1sdnb"]
 [ext_resource type="Script" uid="uid://blc3x0y8gvux8" path="res://addons/aircraft/scripts/vehicle_rotor_3d.gd" id="2_0x04r"]
+[ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_rkqbg"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
 height = 5.0
@@ -20,17 +21,17 @@ size = Vector3(3.108, 0.1, 1)
 size = Vector3(0.001, 1.74402, 1.17969)
 
 [node name="Mi-8" type="VehicleBody3D"]
-mass = 6000.0
+mass = 12000.0
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 1, 0)
-inertia = Vector3(1800, 2000, 800)
+inertia = Vector3(20000, 15000, 12000)
 linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_1sdnb")
 brake_value = 10.0
 horizontal_height = 0.274
 horizontal_rotation = -4.7
-camera_distance = 11.0
+camera_distance = 22.0
 
 [node name="Rotor" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
@@ -38,6 +39,14 @@ script = ExtResource("2_0x04r")
 blade_count = 4
 blade_twist_power = 3.0
 collective_angle_max = 16.0
+
+[node name="VehicleFuselage3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.27333)
+script = ExtResource("3_rkqbg")
+length = 10.0
+front_width = 1.0
+cylinder = true
+metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.525)
