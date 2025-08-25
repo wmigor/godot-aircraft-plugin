@@ -47,6 +47,14 @@ class_name VehicleWing3D
 		_dirty = true
 		update_gizmos()
 
+
+## Wing twist power.
+@export_range(0.0, 6, 0.001) var twist_power := 1.0:
+	set(value):
+		twist_power = value
+		_dirty = true
+		update_gizmos()
+
 ## Wing sweep angle.
 @export_range(-70, 70, 0.001, "radians_as_degrees") var sweep := 0.0:
 	set(value):
@@ -487,7 +495,7 @@ func _build_wing_sections() -> void:
 			var fraction := control_surface.start + (i + 0.5) * bound_size / section_count
 			var section_pos := base + (tip - base) * fraction
 			var section_chord := chord * (1.0 - (1.0 - taper) * fraction)
-			var section_twist = twist * fraction
+			var section_twist = twist * pow(fraction, twist_power)
 			_sections.append(_create_wing_section(control_surface, section_pos, section_chord, section_length, section_twist, false))
 			if mirror:
 				section_pos.x = -section_pos.x

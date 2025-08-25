@@ -48,11 +48,12 @@ func _ready() -> void:
 		blade.span = radius
 		blade.chord = blade_chord
 		blade.twist = deg_to_rad(blade_twist)
-		#blade.twist_power = _rotor.blade_twist_power
+		blade.twist_power = blade_twist_power
 		blade.zero_lift_angle = deg_to_rad(blade_zero_lift_angle)
 		blade.stall_angle_max = deg_to_rad(stall_angle)
 		blade.stall_angle_min = -deg_to_rad(stall_angle - blade_zero_lift_angle)
 		blade.stall_width = deg_to_rad(stall_width)
+		blade.restore_stall_angle = deg_to_rad(30)
 		blade.flap_angle_min = 0.0
 		blade.flap_angle_max = 0.0
 		blade.flap_start = 0.0
