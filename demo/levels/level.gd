@@ -21,7 +21,7 @@ func spawn_aircraft(index: int) -> void:
 	aircraft = aircrafts[index].instantiate() as Aircraft
 	if aircraft == null:
 		return
-	aircraft.position.y = aircraft.horizontal_height + 1000
+	aircraft.position.y = aircraft.horizontal_height
 	aircraft.rotation.x = deg_to_rad(aircraft.horizontal_rotation)
 	var camera := AircraftCamera.new()
 	camera.distance = aircraft.camera_distance
