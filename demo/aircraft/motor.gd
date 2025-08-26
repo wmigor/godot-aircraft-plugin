@@ -34,7 +34,8 @@ func _physics_process(delta: float) -> void:
 	rpm += torque / inertia * delta * TO_RPM
 	if rpm < 0.0:
 		rpm = 0.0
-	thrust = _get_thrust(j, velocity, engine_power)
+	#thrust = _get_thrust(j, velocity, engine_power)
+	thrust = _get_thrust2(j)
 	aircraft.apply_force(thrust * forward, global_position - aircraft.global_position)
 	rotation.z += angular_velocity * delta
 	print(int(rpm), '   ', thrust, '   ', torque, '   ', j)
@@ -55,10 +56,26 @@ func _get_thrust(j: float, velocity: float, power: float) -> float:
 	return nu * power / velocity if absf(velocity) > 0.01 else nu * power
 
 
+func _get_thrust2(j: float) -> float:
+	if j <= 0.1:
+		j = 0.1
+	var x := j * 1.2 - 0.93
+	var nu := 0.85 - x * x
+	var cp := _get_cp(j)
+	var ct := nu * cp / j if absf(j) > 0.01 else nu * cp
+	var n := rpm / 60.0
+	return ct * density * pow(n, 2) * pow(diameter, 4)
+
+
 func _get_required_power(j: float) -> float:
-	var x := j / 1.2
-	var cp := 0.07 * (1.0 - x)
+	var cp := _get_cp(j)
 	return cp * density * pow(diameter, 5) * pow(rps, 3)
+
+
+func _get_cp(j: float) -> float:
+	var x := j / 1.2
+	var cp := 0.06 * (1.0 - x * x)
+	return cp
 
 #
 #func _get_thrust(j: float) -> float:
