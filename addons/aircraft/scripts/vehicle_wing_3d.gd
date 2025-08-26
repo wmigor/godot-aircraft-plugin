@@ -380,7 +380,7 @@ func _calculate_stall_factors(section: Section, angle_of_attack: float) -> Vecto
 	var half_pi := PI / 2.0
 	var z := half_pi - section.corrected_stall_angle_max if angle_of_attack > section.corrected_stall_angle_max else -half_pi - section.corrected_stall_angle_min
 	var w := (half_pi - clampf(angle_of_attack, -half_pi, half_pi)) / z if absf(z) >= 0.001 else 0.0
-	induced_angle = lerpf(0.0, induced_angle, w)
+	induced_angle = lerpf(0.0, induced_angle, clampf(w, 0.0, 1.0))
 	var effective_angle := angle_of_attack - section.corrected_zero_lift_angle - induced_angle
 	var sin_ea := sin(effective_angle)
 	var cos_ea := cos(effective_angle)
