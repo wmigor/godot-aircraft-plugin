@@ -90,7 +90,7 @@ func _calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, 
 		blade.rotation_degrees.x = collective_angle + azimut_angle
 		force += blade.get_force()
 		torque += blade.get_torque() - blade.get_torque().dot(up) * up
-		var blade_lift := blade.get_force().dot(up) * 0
+		var blade_lift := blade.get_force().dot(up)
 		rotor_torque += blade.get_torque().dot(up)
 		blade.rotation_degrees.z = _get_blade_bend_angle(blade_lift)
 	_calc_fake_rudder(aircraft_angular_velocity, up)
@@ -100,7 +100,9 @@ func _calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, 
 
 
 func _get_blade_bend_angle(blade_lift: float) -> float:
-	return clampf(5.0 * blade_lift / (6000.0 * 9.8 / blade_count), -20, 20)
+	if _body == null:
+		return 0.0
+	return clampf(5.0 * blade_lift / (_body.mass * 9.8 / blade_count), -20, 20)
 
 
 func _integrate_engine(delta: float, rotor_torque: float) -> void:
@@ -109,12 +111,9 @@ func _integrate_engine(delta: float, rotor_torque: float) -> void:
 		var engine_torque_max := engine_power_hp * Motor.HP_TO_W / rpm_max * Motor.TO_RPM
 		var min_torque := 0.1 * engine_torque_max
 		if rpm <= rpm_max:
-			var rpm_factor := rpm / rpm_max
-			var lerp_param := rpm_factor * rpm_factor * (3.0 - 2.0 * rpm_factor)
-			_engine_torque = lerpf(min_torque, engine_torque_max, lerp_param)
+			_engine_torque = lerpf(min_torque, engine_torque_max, rpm / rpm_max)
 		else:
-			var rpm_factor = (rpm - rpm_max) / 2.0
-			_engine_torque = lerpf(engine_torque_max, 0.0, rpm_factor)
+			_engine_torque = lerpf(engine_torque_max, 0.0, (rpm - rpm_max) / 2.0)
 		if _engine_torque < min_torque:
 			_engine_torque += min_torque
 	else:
