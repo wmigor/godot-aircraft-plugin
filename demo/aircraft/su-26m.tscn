@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_to4ok"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_ccpia"]
-[ext_resource type="Script" uid="uid://dvy1kn7uynwi6" path="res://demo/aircraft/motor.gd" id="3_7e5sj"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_ccpia"]
+[ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_to4ok"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qxvgi"]
 albedo_color = Color(0.863436, 5.31845e-06, 7.70092e-07, 1)
@@ -112,11 +112,12 @@ midpoint = 0.2
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
-[node name="Motor" type="Node3D" parent="."]
+[node name="Propeller" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.97, -1.7)
-script = ExtResource("3_7e5sj")
+script = ExtResource("4_to4ok")
+metadata/_custom_type_script = "uid://1ure55g3chtu"
 
-[node name="Propeller" type="CSGBox3D" parent="Motor"]
+[node name="Propeller" type="CSGBox3D" parent="Propeller"]
 size = Vector3(0.1, 2, 0.05)
 material = SubResource("StandardMaterial3D_qxvgi")
 

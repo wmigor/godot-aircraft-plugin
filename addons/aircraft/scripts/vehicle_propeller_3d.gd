@@ -1,5 +1,5 @@
-extends Node3D
-class_name Motor
+extends VehicleThruster3D
+class_name VehiclePropeller3D
 
 @export var max_rpm := 2900.0
 @export var max_engine_power_hp := 360.0
@@ -9,19 +9,7 @@ class_name Motor
 @export var density := 1.2255
 @export_range(0.0, 1.0) var efficiency := 0.85
 
-@onready var aircraft := get_parent() as Aircraft
-
-const TO_KMPH = 3.6
-const TO_RPM := 60.0 / TAU
-const HP_TO_W := 745.7
-
-var throttle := 1.0
-var thrust := 0.0
-var torque := 0.0
 var pitch := 0.5
-var rpm := 0.0
-var rps: float:
-	get(): return rpm / 60.0
 
 var _lambda_peak: float
 var _beta: float
@@ -42,17 +30,18 @@ func  _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var forward := -aircraft.basis.z
-	var velocity := aircraft.linear_velocity.dot(forward)
+	if _body == null or not visible:
+		return
+	var forward := -_body.basis.z
+	var velocity := _body.linear_velocity.dot(forward)
 	var engine_power := _get_engine_power()
-	var angular_velocity := rpm / TO_RPM
 	var engine_torque := 0.0
-	if rpm < 200:
-		engine_torque = inertia * 10 if throttle > 0 else 0.0
-	else:
+	if rpm >= max_rpm * 0.1:
 		engine_torque = engine_power / angular_velocity
+	else:
+		engine_torque = inertia * 10.0 if throttle > 0.0 else 0.0
 	_calculate(velocity)
-	aircraft.apply_force(thrust * forward, global_position - aircraft.global_position)
+	_body.apply_force(thrust * forward, global_position - _body.global_position)
 	angular_velocity += (engine_torque - torque) / inertia * delta
 	rpm = angular_velocity * TO_RPM
 	rotation.z += angular_velocity * delta
@@ -63,7 +52,7 @@ func _calculate(velocity: float) -> void:
 		velocity = 0.0
 
 	var radius := diameter * 0.5
-	var omega := rpm / TO_RPM
+	var omega := angular_velocity
 	if omega < 0.1:
 		omega = 0.1
 

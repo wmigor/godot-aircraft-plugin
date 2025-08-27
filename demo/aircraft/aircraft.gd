@@ -12,12 +12,23 @@ class_name Aircraft
 @onready var elevator := $Elevator as VehicleWing3D
 @onready var rudder := $Rudder as VehicleWing3D
 @onready var fuselage := $Fuselage as VehicleFuselage3D
-@onready var motor := $Motor as Motor
 
+var thrusters: Array[VehicleThruster3D]
 var flap_mode := 0
+
+var rpm: float:
+	get(): return thrusters[0].rpm if len(thrusters) > 0 else 0.0
+
+var throttle: float:
+	get(): return thrusters[0].throttle if len(thrusters) > 0 else 0.0
+	set(value):
+		for thruster in thrusters:
+			thruster.throttle = value
 
 
 func _ready() -> void:
+	for thruster in find_children("*", "VehicleThruster3D"):
+		thrusters.append(thruster)
 	for w in find_children("*", "VehicleWing3D"):
 		w.debug = debug
 	for f in find_children("*", "VehicleFuselage3D"):

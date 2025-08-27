@@ -15,13 +15,12 @@ func _process(_delta: float) -> void:
 	if aircraft == null:
 		return
 	var forward := -aircraft.basis.z
-	if aircraft.motor != null:
-		throttle.text = str(roundi(100 * aircraft.motor.throttle)) + " %"
-	speed.text = str(roundi(aircraft.linear_velocity.dot(forward) * Motor.TO_KMPH)) + " km/h"
+	throttle.text = str(roundi(100 * aircraft.throttle)) + " %"
+	speed.text = str(roundi(aircraft.linear_velocity.dot(forward) * VehicleThruster3D.TO_KMPH)) + " km/h"
 	vertical_speed.text = str(snappedf(aircraft.linear_velocity.dot(Vector3.UP), 0.1)) + " m/s"
 	altitude.text = str(snappedf(aircraft.position.y, 0.1)) + " m"
 	angle_of_attack.text = str(snappedf(get_attack_angle(), 0.1))
-	rpm.text = str(int(get_rpm()))
+	rpm.text = str(int(aircraft.rpm))
 
 
 func get_attack_angle() -> float:
@@ -29,9 +28,3 @@ func get_attack_angle() -> float:
 		return 0.0
 	var wind = -(aircraft.basis.transposed() * aircraft.linear_velocity)
 	return rad_to_deg(atan2(wind.y, wind.z))
-
-
-func get_rpm() -> float:
-	if aircraft.motor != null:
-		return aircraft.motor.rpm
-	return 0.0

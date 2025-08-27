@@ -24,12 +24,10 @@ func _process(delta: float) -> void:
 	var flap_target := aircraft.flap_modes[aircraft.flap_mode] if aircraft.flap_mode < len(aircraft.flap_modes) else 0.0
 	aircraft.wing.flap_value = move_toward(aircraft.wing.flap_value, clampf(flap_target, -1.0, 1.0), delta)
 
-	if aircraft.motor != null:
-		if Input.is_action_pressed("throttle_down"):
-			aircraft.motor.throttle = move_toward(aircraft.motor.throttle, 0.0, delta)
-		if Input.is_action_pressed("throttle_up"):
-			aircraft.motor.throttle = move_toward(aircraft.motor.throttle, 1.0, delta)
-
+	if Input.is_action_pressed("throttle_down"):
+		aircraft.throttle = move_toward(aircraft.throttle, 0.0, delta)
+	if Input.is_action_pressed("throttle_up"):
+		aircraft.throttle = move_toward(aircraft.throttle, 1.0, delta)
 
 
 func _input(event: InputEvent) -> void:
