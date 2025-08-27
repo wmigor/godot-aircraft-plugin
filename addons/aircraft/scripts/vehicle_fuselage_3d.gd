@@ -204,7 +204,7 @@ func _create_section(section_position, section_width, section_length, section_cy
 
 func _get_nominal_section_length(width_base: float, tip_width: float, part_length: float) -> float:
 	var max_width := maxf(width_base, maxf(tip_width, midpoint_width))
-	var section_length := max_width / part_length / 2.0
+	var section_length := max_width / part_length
 	if section_length <= 0.0:
 		return 0.0
 	var section_count := ceili(1.0 / section_length)
