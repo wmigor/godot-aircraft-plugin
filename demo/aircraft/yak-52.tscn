@@ -109,6 +109,7 @@ metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 [node name="Motor" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -2.3)
 script = ExtResource("3_hocnw")
+velocity_max_kmph = 240.0
 
 [node name="Propeller" type="CSGBox3D" parent="Motor"]
 size = Vector3(0.1, 2, 0.05)
