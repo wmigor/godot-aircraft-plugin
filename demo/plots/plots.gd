@@ -69,7 +69,7 @@ func _add_plot_point(x: float, lift: Array[Vector2], drag: Array[Vector2], torqu
 
 func _add_plot_point_fuselage(x: float, lift: Array[Vector2], drag: Array[Vector2], torque: Array[Vector2]) -> void:
 	var linear_velocity := Vector3.FORWARD * fuselage.length
-	var to_factor := 2.0 / (fuselage.length * fuselage.center_width * fuselage.density * linear_velocity.length_squared())
+	var to_factor := 2.0 / (fuselage.length * fuselage.midpoint_width * fuselage.density * linear_velocity.length_squared())
 	fuselage.rotation_degrees.x = x
 	for i in 4:
 		fuselage.calculate(linear_velocity, Vector3.ZERO, fuselage.position)

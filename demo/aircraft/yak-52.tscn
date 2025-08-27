@@ -100,16 +100,17 @@ metadata/_custom_type_script = "uid://bugtnfunnraoj"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 1.7)
 script = ExtResource("3_3r63h")
 length = 7.75
-forward_width = 0.2
-center_width = 1.25
-center_position = 0.2
+front_width = 1.0
+rear_width = 0.2
+midpoint = 0.3
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
 [node name="Motor" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -2.3)
 script = ExtResource("3_hocnw")
-velocity_max_kmph = 240.0
+thrust_max = 4000.0
+max_velocity_kmph = 220.0
 
 [node name="Propeller" type="CSGBox3D" parent="Motor"]
 size = Vector3(0.1, 2, 0.05)

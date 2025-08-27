@@ -6,6 +6,7 @@
 
 [node name="Plots" type="Node2D"]
 script = ExtResource("1_ta4xi")
+show_fuselage = false
 
 [node name="Wing" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0, 0)
@@ -18,7 +19,6 @@ zero_lift_angle = -0.0436332
 stall_angle_max = 0.261799
 stall_angle_min = -0.261799
 restore_stall_angle = 0.0543496
-alternative_drag = true
 flap_start = 0.0
 flap_end = 1.0
 aileron_start = 0.0
@@ -29,9 +29,6 @@ metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
 [node name="Fuselage" type="Node3D" parent="."]
 script = ExtResource("3_s5pkl")
-forward_width = 1.0
-backward_width = 1.0
-center_position = 0.5
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]

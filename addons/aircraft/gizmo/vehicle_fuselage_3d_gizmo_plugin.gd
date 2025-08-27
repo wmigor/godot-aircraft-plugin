@@ -33,25 +33,25 @@ func _add_fuselage_lines(fuselage: VehicleFuselage3D, lines: PackedVector3Array,
 	var forward := -fuselage.transform.basis.z.normalized()
 	var forward_point := forward * fuselage.length * 0.5
 	var backward_point := -forward_point
-	var center_point := forward * fuselage.length * (0.5 - fuselage.center_position)
+	var center_point := forward * fuselage.length * (0.5 - fuselage.midpoint)
 
 	var start_index = len(lines)
-	lines.append(forward_point + right * fuselage.forward_width * 0.5)
-	lines.append(forward_point - right * fuselage.forward_width * 0.5)
+	lines.append(forward_point + right * fuselage.front_width * 0.5)
+	lines.append(forward_point - right * fuselage.front_width * 0.5)
 
-	if fuselage.center_position > 0.0 and fuselage.center_position < 1.0:
+	if fuselage.midpoint > 0.0 and fuselage.midpoint < 1.0:
 		lines.append(lines[len(lines) - 1])
-		lines.append(center_point - right * fuselage.center_width * 0.5)
+		lines.append(center_point - right * fuselage.midpoint_width * 0.5)
 	
 	lines.append(lines[len(lines) - 1])
-	lines.append(backward_point - right * fuselage.backward_width * 0.5)
+	lines.append(backward_point - right * fuselage.rear_width * 0.5)
 
 	lines.append(lines[len(lines) - 1])
-	lines.append(backward_point + right * fuselage.backward_width * 0.5)
+	lines.append(backward_point + right * fuselage.rear_width * 0.5)
 
-	if fuselage.center_position > 0.0 and fuselage.center_position < 1.0:
+	if fuselage.midpoint > 0.0 and fuselage.midpoint < 1.0:
 		lines.append(lines[len(lines) - 1])
-		lines.append(center_point + right * fuselage.center_width * 0.5)
+		lines.append(center_point + right * fuselage.midpoint_width * 0.5)
 	
 	lines.append(lines[len(lines) - 1])
 	lines.append(lines[start_index])
