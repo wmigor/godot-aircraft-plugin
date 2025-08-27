@@ -34,11 +34,8 @@ func _physics_process(delta: float) -> void:
 		return
 	var forward := -_body.basis.z
 	var velocity := _body.linear_velocity.dot(forward)
-	var engine_power := _get_engine_power()
-	var engine_torque := 0.0
-	if rpm >= max_rpm * 0.1:
-		engine_torque = engine_power / angular_velocity
-	else:
+	var engine_torque := throttle * _get_engine_torque()
+	if rpm < max_rpm * 0.1:
 		engine_torque = inertia * 10.0 if throttle > 0.0 else 0.0
 	if auto_rpm:
 		_process_pitch(delta)
@@ -88,10 +85,16 @@ func _calculate(velocity: float) -> void:
 		torque *= 0.5 * density * v2 * _f0
 
 
-func _get_engine_power() -> float:
-	var max_engine_power := max_engine_power_hp * HP_TO_W
-	if rpm > max_rpm:
-		return throttle * lerpf(max_engine_power, 0.0, (rpm - max_rpm) / (max_rpm * 0.2))
-	var min_engine_power := max_engine_power * 0.1
-	var engine_power := throttle * minf(max_engine_power, maxf(min_engine_power, lerpf(min_engine_power, max_engine_power, rpm / max_rpm)))
-	return throttle * engine_power
+func _get_engine_torque() -> float:
+	var max_torque := max_engine_power_hp * HP_TO_W / max_rpm * TO_RPM
+	var x := rpm / max_rpm
+	if x > 1.0:
+		return max_torque
+	if x < 0.2:
+		x /= 0.2
+		return lerpf(0.0, max_torque * 0.4, x)
+	if x < 0.5:
+		x = (x - 0.2) / 0.5
+		return lerpf(max_torque * 0.4, max_torque * 0.98, x)
+	x = (x - 0.5) / 0.5
+	return lerpf(max_torque * 0.98, max_torque, x)
