@@ -92,6 +92,6 @@ func _get_engine_power() -> float:
 	var max_engine_power := max_engine_power_hp * HP_TO_W
 	if rpm > max_rpm:
 		return throttle * lerpf(max_engine_power, 0.0, (rpm - max_rpm) / (max_rpm * 0.2))
-	var min_engine_power := max_engine_power * 0.01
+	var min_engine_power := max_engine_power * 0.1
 	var engine_power := throttle * minf(max_engine_power, maxf(min_engine_power, lerpf(min_engine_power, max_engine_power, rpm / max_rpm)))
 	return throttle * engine_power
