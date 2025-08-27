@@ -56,7 +56,6 @@ func _physics_process(delta: float) -> void:
 	angular_velocity += (engine_torque - torque) / inertia * delta
 	rpm = angular_velocity * TO_RPM
 	rotation.z += angular_velocity * delta
-	print(int(rpm), '   ', thrust)
 
 
 func _calculate(velocity: float) -> void:
