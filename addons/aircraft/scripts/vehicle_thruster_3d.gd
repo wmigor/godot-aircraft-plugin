@@ -11,7 +11,7 @@ var torque := 0.0
 var angular_velocity := 0.0
 var _body: RigidBody3D
 
-var rpm:
+var rpm: float:
 	get(): return angular_velocity * TO_RPM
 
 var rps: float:

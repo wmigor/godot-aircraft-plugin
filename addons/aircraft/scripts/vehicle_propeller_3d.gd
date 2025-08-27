@@ -8,6 +8,7 @@ class_name VehiclePropeller3D
 @export var inertia := 10.0
 @export var density := 1.2255
 @export_range(0.0, 1.0) var efficiency := 0.85
+@export var auto_rpm := false
 
 var _lambda_peak: float
 var _beta: float
@@ -39,11 +40,20 @@ func _physics_process(delta: float) -> void:
 		engine_torque = engine_power / angular_velocity
 	else:
 		engine_torque = inertia * 10.0 if throttle > 0.0 else 0.0
+	if auto_rpm:
+		_process_pitch(delta)
 	_calculate(velocity)
 	_body.apply_force(thrust * forward, global_position - _body.global_position)
 	angular_velocity += (engine_torque - torque) / inertia * delta
 	rpm = angular_velocity * TO_RPM
 	rotation.z += angular_velocity * delta
+
+
+func _process_pitch(delta: float) -> void:
+	var min_rpm := max_rpm * 0.1
+	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
+	var rpm_delta := target_rpm - rpm
+	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.3, 0.7)
 
 
 func _calculate(velocity: float) -> void:
