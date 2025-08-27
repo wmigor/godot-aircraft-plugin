@@ -29,6 +29,7 @@ var throttle: float:
 func _ready() -> void:
 	for thruster in find_children("*", "VehicleThruster3D"):
 		thrusters.append(thruster)
+		thruster.debug = debug
 	for w in find_children("*", "VehicleWing3D"):
 		w.debug = debug
 	for f in find_children("*", "VehicleFuselage3D"):

@@ -1,6 +1,12 @@
 extends Node3D
 class_name VehicleThruster3D
 
+@export var debug: bool:
+	set(value):
+		if value != debug:
+			debug = value
+			_update_debug_view()
+
 const TO_RPM := 60.0 / TAU
 const TO_KMPH = 3.6
 const HP_TO_W := 745.7
@@ -31,3 +37,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if get_parent() is not RigidBody3D:
 		warnings.append("Please use it as a child of a VehicleBody3D or RigidBody3D.")
 	return warnings
+
+
+func _update_debug_view() -> void:
+	pass

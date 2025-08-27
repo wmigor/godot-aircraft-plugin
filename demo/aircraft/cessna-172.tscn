@@ -1,12 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://cymcchdpmb3iy"]
+[gd_scene load_steps=10 format=3 uid="uid://cymcchdpmb3iy"]
 
 [ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_0vr8e"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_y66pv"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_y66pv"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_auhpd"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qxvgi"]
-albedo_color = Color(0.863436, 5.31845e-06, 7.70092e-07, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
 height = 5.0
@@ -111,10 +108,6 @@ max_engine_power_hp = 160.0
 velocity_max_kmph = 200.0
 inertia = 2.264
 metadata/_custom_type_script = "uid://1ure55g3chtu"
-
-[node name="Propeller" type="CSGBox3D" parent="Propeller"]
-size = Vector3(0.1, 2, 0.05)
-material = SubResource("StandardMaterial3D_qxvgi")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.525)

@@ -1,3 +1,4 @@
+@tool
 extends VehicleThruster3D
 class_name VehiclePropeller3D
 
@@ -15,6 +16,7 @@ var _beta: float
 var _base_j0: float
 var _f0: float
 var _pitch := 0.5
+var _debug_view: Node3D
 
 
 func  _ready() -> void:
@@ -30,7 +32,7 @@ func  _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if _body == null or not visible:
+	if _body == null or not visible or Engine.is_editor_hint():
 		return
 	var forward := -_body.basis.z
 	var velocity := _body.linear_velocity.dot(forward)
@@ -42,8 +44,6 @@ func _physics_process(delta: float) -> void:
 	_calculate(velocity)
 	_body.apply_force(thrust * forward, global_position - _body.global_position)
 	angular_velocity += (engine_torque - torque) / inertia * delta
-	rpm = angular_velocity * TO_RPM
-	rotation.z += angular_velocity * delta
 
 
 func _process_pitch(delta: float) -> void:
@@ -98,3 +98,13 @@ func _get_engine_torque() -> float:
 		return lerpf(max_torque * 0.4, max_torque * 0.98, x)
 	x = (x - 0.5) / 0.5
 	return lerpf(max_torque * 0.98, max_torque, x)
+
+
+var VehiclePropeller3DDebugView := preload("uid://bi5f3pjnf633x")
+func _update_debug_view() -> void:
+	if _debug_view != null:
+		_debug_view.queue_free()
+		_debug_view = null
+	if debug:
+		_debug_view = VehiclePropeller3DDebugView.new()
+		add_child(_debug_view)
