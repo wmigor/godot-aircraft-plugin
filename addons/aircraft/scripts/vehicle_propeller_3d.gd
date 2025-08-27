@@ -9,12 +9,11 @@ class_name VehiclePropeller3D
 @export var density := 1.2255
 @export_range(0.0, 1.0) var efficiency := 0.85
 
-var pitch := 0.5
-
 var _lambda_peak: float
 var _beta: float
 var _base_j0: float
 var _f0: float
+var _pitch := 0.5
 
 
 func  _ready() -> void:
@@ -56,7 +55,7 @@ func _calculate(velocity: float) -> void:
 	if omega < 0.1:
 		omega = 0.1
 
-	var j0 := _base_j0 * pow(2.0, 2.0 - 4.0 * pitch)
+	var j0 := _base_j0 * pow(2.0, 2.0 - 4.0 * _pitch) if _pitch != 0.5 else _base_j0
 	var tipspd := radius * omega
 	var v2 := velocity * velocity + tipspd * tipspd
 
