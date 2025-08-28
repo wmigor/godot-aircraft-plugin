@@ -1,6 +1,7 @@
 extends Node3D
 class_name VehicleThruster3D
 
+@export var density := 1.2255
 @export var debug: bool:
 	set(value):
 		if value != debug:

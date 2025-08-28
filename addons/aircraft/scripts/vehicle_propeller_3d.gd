@@ -7,7 +7,6 @@ class_name VehiclePropeller3D
 @export var velocity_max_kmph := 300.0
 @export var diameter := 2.4
 @export var inertia := 10.0
-@export var density := 1.2255
 @export_range(0.0, 1.0) var efficiency := 0.85
 @export var auto_rpm := false
 
