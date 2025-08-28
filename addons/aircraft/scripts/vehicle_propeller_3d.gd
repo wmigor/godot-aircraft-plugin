@@ -49,7 +49,7 @@ func _process_pitch(delta: float) -> void:
 	var min_rpm := max_rpm * 0.1
 	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
 	var rpm_delta := target_rpm - rpm
-	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.3, 0.7)
+	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.7)
 
 
 func _calculate(velocity: float) -> void:

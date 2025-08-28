@@ -96,7 +96,6 @@ front_width = 1.0
 rear_width = 0.2
 midpoint = 0.3
 cylinder = true
-drag_max = 0.7
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
 [node name="Propeller" type="Node3D" parent="."]
@@ -104,8 +103,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -2.2)
 script = ExtResource("4_y66pv")
 max_rpm = 2700.0
 max_engine_power_hp = 160.0
-velocity_max_kmph = 190.0
+velocity_max_kmph = 240.0
 inertia = 2.264
+auto_rpm = true
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
