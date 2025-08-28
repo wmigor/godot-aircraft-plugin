@@ -44,6 +44,7 @@ dihedral = 0.0302466
 zero_lift_angle = -0.0436332
 stall_angle_min = -0.235619
 flap_end = 0.45
+flap_fraction = 0.4
 flap_angle_min = 0.0
 aileron_start = 0.45
 aileron_end = 0.95
