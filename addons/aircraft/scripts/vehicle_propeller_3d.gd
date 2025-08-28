@@ -15,7 +15,10 @@ class_name VehiclePropeller3D
 ## Propeller efficiency
 @export_range(0.0, 1.0) var efficiency := 0.85
 ## Constant-speed propeller
-@export var auto_rpm := false
+@export var constant_speed := false
+
+var min_rpm: float:
+	get(): return max_rpm * 0.1
 
 var _lambda_peak: float
 var _beta: float
@@ -43,9 +46,9 @@ func _physics_process(delta: float) -> void:
 	var forward := -_body.basis.z
 	var velocity := _body.linear_velocity.dot(forward)
 	var engine_torque := throttle * _get_engine_torque()
-	if rpm < max_rpm * 0.1:
+	if rpm < min_rpm:
 		engine_torque = inertia * 10.0 if throttle > 0.0 else 0.0
-	if auto_rpm:
+	if constant_speed:
 		_process_pitch(delta)
 	_calculate(velocity)
 	_body.apply_force(thrust * forward, global_position - _body.global_position)
@@ -53,7 +56,6 @@ func _physics_process(delta: float) -> void:
 
 
 func _process_pitch(delta: float) -> void:
-	var min_rpm := max_rpm * 0.1
 	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
 	var rpm_delta := target_rpm - rpm
 	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.7)
@@ -93,17 +95,9 @@ func _calculate(velocity: float) -> void:
 
 func _get_engine_torque() -> float:
 	var max_torque := max_engine_power_hp * HP_TO_W / max_rpm * TO_RPM
-	var x := rpm / max_rpm
-	if x > 1.0:
-		return max_torque
-	if x < 0.2:
-		x /= 0.2
-		return lerpf(0.0, max_torque * 0.4, x)
-	if x < 0.5:
-		x = (x - 0.2) / 0.5
-		return lerpf(max_torque * 0.4, max_torque * 0.98, x)
-	x = (x - 0.5) / 0.5
-	return lerpf(max_torque * 0.98, max_torque, x)
+	var x := 1.0 - rpm / max_rpm
+	x = 1.0 - x * x * x * x
+	return lerpf(0.0, max_torque, x)
 
 
 var VehiclePropeller3DDebugView := preload("uid://bi5f3pjnf633x")
