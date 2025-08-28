@@ -51,7 +51,7 @@ class_name VehicleFuselage3D
 @export var density := 1.2255
 
 @export_group("Debug")
-## Enables debug view of wing sections
+## Enables debug view of fuselage sections
 @export var debug: bool:
 	set(value):
 		if value != debug:

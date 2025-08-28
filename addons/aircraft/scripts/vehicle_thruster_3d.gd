@@ -1,7 +1,9 @@
 extends Node3D
 class_name VehicleThruster3D
 
+## Air density.
 @export var density := 1.2255
+## Enables debug view of thruster
 @export var debug: bool:
 	set(value):
 		if value != debug:

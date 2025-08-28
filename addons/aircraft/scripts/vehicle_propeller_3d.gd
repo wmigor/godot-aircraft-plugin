@@ -2,12 +2,19 @@
 extends VehicleThruster3D
 class_name VehiclePropeller3D
 
+## Maximum RPM
 @export var max_rpm := 2900.0
+## Peak engine power at maximum RPM
 @export var max_engine_power_hp := 360.0
+## Velocity at maximum RPM
 @export var velocity_max_kmph := 300.0
+## Propeller diameterr for debug view
 @export var diameter := 2.4
+## Propeller intertia
 @export var inertia := 10.0
+## Propeller efficiency
 @export_range(0.0, 1.0) var efficiency := 0.85
+## Constant-speed propeller
 @export var auto_rpm := false
 
 var _lambda_peak: float
