@@ -5,9 +5,9 @@ class_name VehiclePropeller3D
 ## Maximum RPM
 @export var max_rpm := 2900.0
 ## Velocity at maximum RPM
-@export var max_rpm_velocity := 300.0
+@export_custom(PROPERTY_HINT_NONE, "suffix:km/h") var max_rpm_velocity := 300.0
 ## Peak engine power at maximum RPM
-@export var max_engine_power := 360.0
+@export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 360.0
 ## Propeller intertia
 @export var inertia := 10.0
 ## Propeller efficiency
