@@ -55,12 +55,6 @@ func _physics_process(delta: float) -> void:
 	angular_velocity += (engine_torque - torque) / inertia * delta
 
 
-func _process_pitch(delta: float) -> void:
-	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
-	var rpm_delta := target_rpm - rpm
-	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.7)
-
-
 func _calculate(velocity: float) -> void:
 	if velocity < 0.0:
 		velocity = 0.0
@@ -95,9 +89,18 @@ func _calculate(velocity: float) -> void:
 
 func _get_engine_torque() -> float:
 	var max_torque := max_engine_power_hp * HP_TO_W / max_rpm * TO_RPM
+	if rpm > max_rpm:
+		var x := clampf((rpm - max_rpm) / (max_rpm * 0.25), 0.0, 1.0)
+		return lerpf(max_torque, 0.0, x * x * (3.0 - 2.0 * x))
 	var x := 1.0 - rpm / max_rpm
 	x = 1.0 - x * x * x * x
 	return lerpf(0.0, max_torque, x)
+
+
+func _process_pitch(delta: float) -> void:
+	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
+	var rpm_delta := target_rpm - rpm
+	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.7)
 
 
 var VehiclePropeller3DDebugView := preload("uid://bi5f3pjnf633x")
