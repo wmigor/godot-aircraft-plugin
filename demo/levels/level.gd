@@ -21,8 +21,10 @@ func spawn_aircraft(index: int) -> void:
 	aircraft = aircrafts[index].instantiate() as Aircraft
 	if aircraft == null:
 		return
-	var extra_height := 2000.0 if Input.is_action_pressed("mode") else 0.0
-	aircraft.position.y = aircraft.horizontal_height + extra_height
+	var height := aircraft.horizontal_height
+	if Input.is_action_pressed("mode"):
+		height += 1000.0
+	aircraft.position.y = height
 	aircraft.rotation.x = deg_to_rad(aircraft.horizontal_rotation)
 	var camera := AircraftCamera.new()
 	camera.distance = aircraft.camera_distance

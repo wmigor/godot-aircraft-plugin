@@ -2,12 +2,13 @@ extends Node3D
 
 @onready var _fuselage := get_parent() as VehicleFuselage3D
 
-static var fuselage_material: Material = null
+static var _material: Material = null
 
 
 func _ready() -> void:
-	if fuselage_material == null:
-		fuselage_material = _create_material(Color.ORANGE)
+	if _material == null:
+		_material = StandardMaterial3D.new()
+		_material.albedo_color = Color.ORANGE
 	build()
 
 
@@ -20,7 +21,7 @@ func build() -> void:
 		var width := _fuselage.get_section_width(i)
 		var length := _fuselage.get_section_length(i)
 		var section_transform := _fuselage.get_section_transform(i)
-		view.material = fuselage_material
+		view.material = _material
 		view.basis = section_transform.basis
 		view.position = section_transform.origin
 		view.size.x = width
@@ -32,9 +33,3 @@ func build() -> void:
 func _clear() -> void:
 	for i in get_child_count():
 		get_child(i).queue_free()
-
-
-func _create_material(color: Color) -> Material:
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	return material

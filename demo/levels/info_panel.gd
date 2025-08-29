@@ -7,6 +7,7 @@ class_name InfoPanel
 @onready var altitude := $Parameters/Altitude as Label
 @onready var angle_of_attack := $Parameters/AngleOfAttack as Label
 @onready var rpm := $Parameters/Rpm as Label
+@onready var trim_elevator := $Parameters/TrimElevator as Label
 
 var aircraft: Aircraft
 
@@ -15,25 +16,15 @@ func _process(_delta: float) -> void:
 	if aircraft == null:
 		return
 	var forward := -aircraft.basis.z
-	if aircraft.motor != null:
-		throttle.text = str(roundi(100 * aircraft.motor.throttle)) + " %"
+	throttle.text = str(roundi(100 * aircraft.throttle)) + " %"
 	elif aircraft.rotor != null:
 		throttle.text = str(roundi(100 * aircraft.rotor.pitch)) + " %"
-	speed.text = str(roundi(aircraft.linear_velocity.dot(forward) * Motor.TO_KMPH)) + " km/h"
+	speed.text = str(roundi(aircraft.linear_velocity.dot(forward) * VehicleThruster3D.TO_KMPH)) + " km/h"
 	vertical_speed.text = str(snappedf(aircraft.linear_velocity.dot(Vector3.UP), 0.1)) + " m/s"
 	altitude.text = str(snappedf(aircraft.position.y, 0.1)) + " m"
 	angle_of_attack.text = str(snappedf(get_attack_angle(), 0.1))
-	rpm.text = str(int(get_rpm()))
-
-
-func get_rpm() -> float:
-	if aircraft == null:
-		return 0.0
-	if aircraft.rotor != null:
-		return aircraft.rotor.angular_velocity * Motor.TO_RPM
-	if aircraft.motor != null:
-		return aircraft.motor.rpm
-	return 0
+	rpm.text = str(int(aircraft.rpm))
+	trim_elevator.text = "a: " + str(snappedf(aircraft.trim_aileron, 0.01)) + ", e: " + str(snappedf(aircraft.trim_elevator, 0.01))
 
 
 func get_attack_angle() -> float:
