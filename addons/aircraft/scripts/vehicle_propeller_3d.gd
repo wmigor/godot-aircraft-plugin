@@ -8,6 +8,8 @@ class_name VehiclePropeller3D
 @export_custom(PROPERTY_HINT_NONE, "suffix:km/h") var max_rpm_velocity := 300.0
 ## Peak engine power at maximum RPM
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 360.0
+## Extra starter power (default is max_engine_power * 0.2)
+@export_custom(PROPERTY_HINT_NONE, "suffix:hp") var extra_starter_power := 0.0
 ## Propeller intertia
 @export var inertia := 10.0
 ## Propeller efficiency
@@ -19,6 +21,9 @@ class_name VehiclePropeller3D
 
 var min_rpm: float:
 	get(): return max_rpm * 0.1
+
+var max_torque: float:
+	get(): return max_engine_power * HP_TO_W / max_rpm * TO_RPM
 
 var _lambda_peak: float
 var _beta: float
@@ -81,14 +86,13 @@ func _calculate(velocity: float) -> void:
 func _get_engine_torque() -> float:
 	if rpm >= min_rpm:
 		return throttle * _get_nominal_engine_torque()
-	var starter_torque := inertia * 20.0
+	var starter_torque := max_torque * 0.2 + extra_starter_power / min_rpm * TO_RPM
 	if throttle > 0.0:
 		return starter_torque
 	return -starter_torque - angular_velocity * 0.1
 
 
 func _get_nominal_engine_torque() -> float:
-	var max_torque := max_engine_power * HP_TO_W / max_rpm * TO_RPM
 	if rpm > max_rpm:
 		var x := clampf((rpm - max_rpm) / (max_rpm * 0.25), 0.0, 1.0)
 		return lerpf(max_torque, 0.0, x * x * (3.0 - 2.0 * x))
