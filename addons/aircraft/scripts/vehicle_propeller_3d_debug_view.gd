@@ -21,7 +21,7 @@ func _process(delta: float) -> void:
 		rotation.z += _propeller.angular_velocity * delta
 	else:
 		var delta_angle := TAU / 8
-		var speed := delta_angle * (rpm - change_visual_rpm) / (_propeller.max_rpm - change_visual_rpm) / 0.25
+		var speed := delta_angle * (rpm - change_visual_rpm) / (_propeller.peak_rpm - change_visual_rpm) / 0.25
 		rotation.z += delta_angle + speed * delta
 
 

@@ -102,9 +102,9 @@ metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 [node name="Propeller" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -2.2)
 script = ExtResource("4_y66pv")
-max_rpm = 2700.0
-max_engine_power_hp = 160.0
-velocity_max_kmph = 240.0
+peak_engine_power_hp = 160.0
+peak_rpm = 2700.0
+peak_velocity_kmph = 200.0
 inertia = 6.5
 constant_speed = true
 metadata/_custom_type_script = "uid://1ure55g3chtu"

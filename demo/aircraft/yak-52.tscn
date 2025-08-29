@@ -106,7 +106,7 @@ metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 [node name="Propeller" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -2.3)
 script = ExtResource("4_2460t")
-velocity_max_kmph = 240.0
+peak_velocity_kmph = 240.0
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
