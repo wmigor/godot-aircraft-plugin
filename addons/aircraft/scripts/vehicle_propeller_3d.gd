@@ -18,7 +18,7 @@ class_name VehiclePropeller3D
 @export var diameter := 2.4
 
 var min_rpm: float:
-	get(): return max_rpm * 0.2
+	get(): return max_rpm * 0.1
 
 var _lambda_peak: float
 var _beta: float
