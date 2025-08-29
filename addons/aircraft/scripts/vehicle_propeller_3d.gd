@@ -14,6 +14,10 @@ class_name VehiclePropeller3D
 @export_range(0.0, 1.0) var efficiency := 0.85
 ## Constant-speed propeller
 @export var constant_speed := false
+## Apply engine torque to body
+@export var apply_torque := false;
+## Reverse rotation
+@export var reverse := false
 ## Propeller diameterr for debug view
 @export var diameter := 2.4
 
@@ -53,6 +57,9 @@ func _physics_process(delta: float) -> void:
 		_process_pitch(delta)
 	_calculate(velocity)
 	_body.apply_force(thrust * forward, global_position - _body.global_position)
+	if apply_torque:
+		var rotate_direction := 1.0 if reverse else -1.0
+		_body.apply_torque(rotate_direction * forward * torque)
 	angular_velocity += (engine_torque - torque) / inertia * delta
 	if angular_velocity	 < 0.0:
 		angular_velocity = 0.0

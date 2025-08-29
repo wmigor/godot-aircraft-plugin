@@ -17,12 +17,13 @@ func _process(delta: float) -> void:
 		return
 	var rpm := _propeller.rpm
 	var min_rpm := _propeller.min_rpm
+	var axis := Vector3.FORWARD if _propeller.reverse else Vector3.BACK
 	if rpm < min_rpm:
-		rotate(Vector3.BACK, _propeller.angular_velocity * delta)
+		rotate(axis, _propeller.angular_velocity * delta)
 	else:
 		var delta_angle := TAU / 8
 		var speed := delta_angle * (rpm - min_rpm) / (_propeller.max_rpm - min_rpm) / 0.25
-		rotate(Vector3.BACK, delta_angle + speed * delta)
+		rotate(axis, delta_angle + speed * delta)
 
 
 func _build() -> void:

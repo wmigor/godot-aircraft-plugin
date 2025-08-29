@@ -22,7 +22,7 @@ func _process(_delta: float) -> void:
 	altitude.text = str(snappedf(aircraft.position.y, 0.1)) + " m"
 	angle_of_attack.text = str(snappedf(get_attack_angle(), 0.1))
 	rpm.text = str(int(aircraft.rpm))
-	trim_elevator.text = str(snappedf(aircraft.trim_elevator, 0.1))
+	trim_elevator.text = "a: " + str(snappedf(aircraft.trim_aileron, 0.01)) + ", e: " + str(snappedf(aircraft.trim_elevator, 0.01))
 
 
 func get_attack_angle() -> float:

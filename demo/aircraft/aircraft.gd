@@ -8,6 +8,7 @@ class_name Aircraft
 @export var camera_distance := 8.0
 @export var trim_scale := 0.2
 @export var trim_step := 0.1
+@export var trim_aileron := 0.0
 @export var trim_elevator := 0.0
 @export var debug := true
 
