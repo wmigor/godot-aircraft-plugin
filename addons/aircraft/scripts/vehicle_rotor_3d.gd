@@ -16,6 +16,7 @@ class_name VehicleRotor3D
 @export var rpm_max := 192.0
 @export var inertia := 25000.0
 @export var engine_power_hp := 3000.0
+@export var alternative_drag := true
 
 var force: Vector3
 var pitch: float
@@ -39,28 +40,7 @@ func _exit_tree() -> void:
 
 func _ready() -> void:
 	for i in blade_count:
-		var blade := VehicleWing3D.new()
-		blade.mirror = false
-		blade.debug = debug
-		blade.span = radius
-		blade.chord = blade_chord
-		blade.twist = deg_to_rad(blade_twist)
-		blade.twist_power = blade_twist_power
-		blade.zero_lift_angle = deg_to_rad(blade_zero_lift_angle)
-		blade.stall_angle_max = deg_to_rad(stall_angle)
-		blade.stall_angle_min = -deg_to_rad(stall_angle - blade_zero_lift_angle)
-		blade.stall_width = deg_to_rad(stall_width)
-		blade.restore_stall_angle = deg_to_rad(30)
-		blade.flap_angle_min = 0.0
-		blade.flap_angle_max = 0.0
-		blade.flap_start = 0.0
-		blade.flap_end = 0.0
-		blade.aileron_start = 0.0
-		blade.aileron_end = 0.0
-		blade.name = "Blade_" + str(i)
-		blade.rotation_degrees.y = i * 360.0 / blade_count
-		blade.rotation_degrees.x = collective_angle_min
-		blade.position = blade.basis.x * blade_chord * 0.5
+		var blade := _create_blade(i)
 		_blades.append(blade)
 		add_child(blade)
 		blade.set_owner(get_tree().get_edited_scene_root())
@@ -129,6 +109,33 @@ func _get_dynamic_pitch(blade: VehicleWing3D) -> float:
 	var x := absf(angle_delta) / PI
 	var dynamic_pitch := lerpf(-stick_len, stick_len, x)
 	return clampf(0.5 * (dynamic_pitch + 1.0), 0.0, 1.0)
+
+
+func _create_blade(index: int) -> VehicleWing3D:
+	var blade := VehicleWing3D.new()
+	blade.mirror = false
+	blade.relax_forces = false
+	blade.alternative_drag = alternative_drag
+	blade.debug = debug
+	blade.span = radius
+	blade.chord = blade_chord
+	blade.twist = deg_to_rad(blade_twist)
+	blade.twist_power = blade_twist_power
+	blade.zero_lift_angle = deg_to_rad(blade_zero_lift_angle)
+	blade.stall_angle_max = deg_to_rad(stall_angle)
+	blade.stall_angle_min = -deg_to_rad(stall_angle - blade_zero_lift_angle)
+	blade.stall_width = deg_to_rad(stall_width)
+	blade.flap_angle_min = 0.0
+	blade.flap_angle_max = 0.0
+	blade.flap_start = 0.0
+	blade.flap_end = 0.0
+	blade.aileron_start = 0.0
+	blade.aileron_end = 0.0
+	blade.name = "Blade_" + str(index)
+	blade.rotation.y = index * TAU / blade_count
+	blade.rotation_degrees.x = collective_angle_min
+	blade.position = blade.basis.x * blade_chord * 0.5
+	return blade
 
 
 func _update_debug_view() -> void:

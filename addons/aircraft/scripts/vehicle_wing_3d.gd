@@ -223,6 +223,8 @@ class Section:
 	var restore_stall_angle_min: float
 
 
+var relax_forces := true
+
 var _force: Vector3
 var _torque: Vector3
 var _body: RigidBody3D
@@ -284,8 +286,9 @@ func _calculate_section_forces(section: Section, wind: Vector3) -> void:
 	var drag := drag_direction * section.drag_factor * pressure
 	var force := lift + drag
 	var torque := -right * section.torque_factor * pressure * section.chord
-	force = section.force + (force - section.force) * 0.5
-	torque = section.torque + (torque - section.torque) * 0.5
+	if relax_forces:
+		force = section.force + (force - section.force) * 0.5
+		torque = section.torque + (torque - section.torque) * 0.5
 	section.force = force
 	section.torque = torque
 
