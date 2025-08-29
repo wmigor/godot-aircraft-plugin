@@ -15,7 +15,9 @@ class_name VehiclePropeller3D
 ## Constant-speed propeller
 @export var constant_speed := false
 ## Apply engine torque to body
-@export var apply_torque := false;
+@export var apply_engine_torque := false
+## Apply gyroscopic torque to body
+@export var apply_gyroscopic_torque := false
 ## Reverse rotation
 @export var reverse := false
 ## Propeller radius
@@ -55,10 +57,12 @@ func _physics_process(delta: float) -> void:
 	if constant_speed:
 		_process_pitch(delta)
 	_calculate(velocity)
-	_body.apply_force(thrust * forward, global_position - _body.global_position)
-	if apply_torque:
-		var rotate_direction := 1.0 if reverse else -1.0
-		_body.apply_torque(rotate_direction * forward * torque)
+	var force := thrust * forward
+	_body.apply_force(force, global_position - _body.global_position)
+	if apply_engine_torque:
+		_apply_engine_torque(forward)
+	if apply_gyroscopic_torque:
+		_apply_gyroscopic_torque(forward)
 	angular_velocity += (engine_torque - torque) / inertia * delta
 	if angular_velocity	 < 0.0:
 		angular_velocity = 0.0
@@ -102,6 +106,17 @@ func _get_nominal_engine_torque() -> float:
 	var x := 1.0 - rpm / max_rpm
 	x = 1.0 - x * x * x * x
 	return lerpf(0.0, max_torque, x)
+
+
+func _apply_engine_torque(forward: Vector3) -> void:
+	var direction := 1.0 if reverse else -1.0
+	_body.apply_torque(direction * forward * torque)
+
+
+func _apply_gyroscopic_torque(forward: Vector3) -> void:
+	var direction := -1.0 if reverse else 1.0
+	var gyro_torque := direction * forward * angular_velocity * inertia
+	_body.apply_torque(gyro_torque.cross(_body.angular_velocity))
 
 
 func _process_pitch(delta: float) -> void:
