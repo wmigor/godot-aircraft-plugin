@@ -18,8 +18,8 @@ class_name VehiclePropeller3D
 @export var apply_torque := false;
 ## Reverse rotation
 @export var reverse := false
-## Propeller diameterr for debug view
-@export var diameter := 2.4
+## Propeller radius
+@export var radius := 1.0
 
 var min_rpm: float:
 	get(): return max_rpm * 0.2
@@ -39,7 +39,6 @@ func  _ready() -> void:
 	var velocity := max_rpm_velocity / TO_KMPH
 	var angular_velocity := max_rpm / TO_RPM
 	var power := max_engine_power * HP_TO_W
-	var radius := diameter * 0.5
 	var v2 := pow(velocity, 2) + pow(radius * angular_velocity, 2)
 	_lambda_peak = pow(5.0, -1.0 / 4.0)
 	_beta = 1.0 / (pow(5.0, -1.0 / 4.0) - pow(5.0, -5.0 / 4.0))
@@ -69,7 +68,6 @@ func _calculate(velocity: float) -> void:
 	if velocity < 0.0:
 		velocity = 0.0
 
-	var radius := diameter * 0.5
 	var angular_velocity := angular_velocity
 	var j0 := _base_j0 * pow(2.0, 2.0 - 4.0 * _pitch) if _pitch != 0.5 else _base_j0
 	var tipspd := radius * angular_velocity

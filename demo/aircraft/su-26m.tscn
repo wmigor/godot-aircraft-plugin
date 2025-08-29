@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_to4ok"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
-height = 5.0
+height = 5.62598
 radius = 0.25
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c4w4o"]
@@ -112,10 +112,11 @@ metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 [node name="Propeller" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.97, -1.7)
 script = ExtResource("4_to4ok")
+radius = null
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.525)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.21201)
 shape = SubResource("CylinderShape3D_c4w4o")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
@@ -127,11 +128,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.627915, -0.165173)
 shape = SubResource("BoxShape3D_qxvgi")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.387, 4.78886)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.387, 4.31549)
 shape = SubResource("BoxShape3D_ivdla")
 
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.75901, 4.8787)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.75901, 4.40533)
 shape = SubResource("BoxShape3D_7bubi")
 
 [node name="WheelF" type="VehicleWheel3D" parent="."]

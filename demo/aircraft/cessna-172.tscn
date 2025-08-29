@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_auhpd"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
-height = 5.0
+height = 6.02246
 radius = 0.25
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c4w4o"]
@@ -19,7 +19,7 @@ size = Vector3(1, 1, 1.56226)
 size = Vector3(3.42749, 0.1, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_0yl5f"]
-size = Vector3(0.001, 1.60443, 1.17969)
+size = Vector3(0.001, 1.89268, 1.17969)
 
 [node name="Cessna-172" type="VehicleBody3D"]
 mass = 750.0
@@ -107,10 +107,11 @@ max_rpm_velocity = 200.0
 max_engine_power = 160.0
 inertia = 6.5
 constant_speed = true
+radius = null
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.525)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.01377)
 shape = SubResource("CylinderShape3D_c4w4o")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
@@ -126,7 +127,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.975857, 4.96197)
 shape = SubResource("BoxShape3D_hb7vo")
 
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.68922, 5.19234)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.83335, 5.19234)
 shape = SubResource("BoxShape3D_0yl5f")
 
 [node name="WheelF" type="VehicleWheel3D" parent="."]

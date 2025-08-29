@@ -32,7 +32,7 @@ func _build() -> void:
 		return
 	var blade := CSGBox3D.new()
 	blade.material = _material
-	blade.size.x = _propeller.diameter
+	blade.size.x = _propeller.radius * 2.0
 	blade.size.z = 0.05
 	blade.size.y = 0.1
 	add_child(blade)
