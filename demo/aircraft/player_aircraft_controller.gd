@@ -15,12 +15,12 @@ func _process(delta: float) -> void:
 	process_keyboard_values(delta)
 
 	if aircraft.wing != null:
-	    var trim_aileron := aircraft.trim_aileron * aircraft.trim_scale
+		var trim_aileron := aircraft.trim_aileron * aircraft.trim_scale
 		aircraft.wing.aileron_value = clampf(aileron_key + trim_aileron + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
 		var flap_target := aircraft.flap_modes[aircraft.flap_mode] if aircraft.flap_mode < len(aircraft.flap_modes) else 0.0
 		aircraft.wing.flap_value = move_toward(aircraft.wing.flap_value, clampf(flap_target, -1.0, 1.0), delta)
 	if aircraft.elevator != null:
-	    var trim_elevator := aircraft.trim_elevator * aircraft.trim_scale
+		var trim_elevator := aircraft.trim_elevator * aircraft.trim_scale
 		aircraft.elevator.flap_value = clampf(elevator_key + trim_elevator + Input.get_axis("elevator_down", "elevator_up"), -1.0, 1.0)
 	if aircraft.rudder != null:
 		aircraft.rudder.flap_value = clampf(rudder_key + Input.get_axis("rudder_left", "rudder_right"), -1.0, 1.0)
@@ -49,6 +49,8 @@ func _input(event: InputEvent) -> void:
 		return
 	var mode := Input.is_action_pressed("mode")
 	if mode:
+		if aircraft.rotor != null:
+			aircraft.rotor.running = not aircraft.rotor.running
 		if event.is_action_pressed("flap_down"):
 			aircraft.trim_elevator = clampf(aircraft.trim_elevator - aircraft.trim_step, -1.0, 1.0)
 		elif event.is_action_pressed("flap_up"):
@@ -62,9 +64,6 @@ func _input(event: InputEvent) -> void:
 			aircraft.flap_mode = clampi(aircraft.flap_mode + 1, 0, len(aircraft.flap_modes) - 1)
 		elif event.is_action_pressed("flap_up"):
 			aircraft.flap_mode = clampi(aircraft.flap_mode - 1, 0, len(aircraft.flap_modes) - 1)
-	elif event.is_action_pressed("mode"):
-		if aircraft.rotor != null:
-			aircraft.rotor.running = not aircraft.rotor.running
 
 
 func process_keyboard_values(delta: float) -> void:

@@ -29,6 +29,12 @@ var throttle: float:
 		for thruster in thrusters:
 			thruster.throttle = value
 
+var rotor: VehicleRotor3D:
+	get(): return thrusters[0] as VehicleRotor3D if len(thrusters) > 0 else null
+
+var pitch: float:
+	get(): return rotor.pitch if rotor != null else 0.0
+
 
 func _ready() -> void:
 	for thruster in find_children("*", "VehicleThruster3D"):
