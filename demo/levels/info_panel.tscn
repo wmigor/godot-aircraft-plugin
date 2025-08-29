@@ -56,3 +56,19 @@ text = "AoA"
 [node name="AngleOfAttack" type="Label" parent="Parameters"]
 layout_mode = 2
 text = "0"
+
+[node name="RpmLabel" type="Label" parent="Parameters"]
+layout_mode = 2
+text = "RPM"
+
+[node name="Rpm" type="Label" parent="Parameters"]
+layout_mode = 2
+text = "0"
+
+[node name="TrimElevatorLabel" type="Label" parent="Parameters"]
+layout_mode = 2
+text = "Trim"
+
+[node name="TrimElevator" type="Label" parent="Parameters"]
+layout_mode = 2
+text = "0"
