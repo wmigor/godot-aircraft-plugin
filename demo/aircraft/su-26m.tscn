@@ -57,7 +57,7 @@ aileron_angle_min = -0.383972
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
 [node name="Elevator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.999656, 0.0261769, 0, -0.0261769, 0.999656, 0, 1.41, 4.072)
+transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 0.999999, 0, 1.41, 4.072)
 script = ExtResource("2_ccpia")
 span = 2.9
 chord = 1.1
