@@ -18,7 +18,7 @@ class_name VehiclePropeller3D
 @export var diameter := 2.4
 
 var min_rpm: float:
-	get(): return max_rpm * 0.1
+	get(): return max_rpm * 0.2
 
 var _lambda_peak: float
 var _beta: float
@@ -45,14 +45,14 @@ func _physics_process(delta: float) -> void:
 		return
 	var forward := -_body.basis.z
 	var velocity := _body.linear_velocity.dot(forward)
-	var engine_torque := throttle * _get_engine_torque()
-	if rpm < min_rpm:
-		engine_torque = inertia * 10.0 if throttle > 0.0 else 0.0
+	var engine_torque := _get_engine_torque()
 	if constant_speed:
 		_process_pitch(delta)
 	_calculate(velocity)
 	_body.apply_force(thrust * forward, global_position - _body.global_position)
 	angular_velocity += (engine_torque - torque) / inertia * delta
+	if angular_velocity	 < 0.0:
+		angular_velocity = 0.0
 
 
 func _calculate(velocity: float) -> void:
@@ -60,34 +60,34 @@ func _calculate(velocity: float) -> void:
 		velocity = 0.0
 
 	var radius := diameter * 0.5
-	var omega := angular_velocity
-	if omega < 0.1:
-		omega = 0.1
-
+	var angular_velocity := angular_velocity
 	var j0 := _base_j0 * pow(2.0, 2.0 - 4.0 * _pitch) if _pitch != 0.5 else _base_j0
-	var tipspd := radius * omega
+	var tipspd := radius * angular_velocity
 	var v2 := velocity * velocity + tipspd * tipspd
-
-	var j := velocity / omega
+	var j := velocity / angular_velocity if absf(angular_velocity) > 0.1 else velocity / 0.1
 	var lambda := j / j0
-
-	if lambda == 1.0:
-		lambda = 0.9999
-
-	var l4 := lambda * lambda
-	l4 = l4 * l4
-	var gamma := (efficiency * _beta / j0) * (1 - l4)
+	var l4 := lambda * lambda * lambda * lambda
+	var gamma := (efficiency * _beta / j0) * (1.0 - l4)
 	var tc := (1.0 - lambda) / (1.0 - _lambda_peak)
 	thrust = 0.5 * density * v2 * _f0 * tc
 	torque = thrust / gamma
 	if lambda > 1.0:
-		var tau0 := (0.25 * j0) / (efficiency * _beta * (1 - _lambda_peak))
+		var tau0 := (0.25 * j0) / (efficiency * _beta * (1.0 - _lambda_peak))
 		var lambda_wm = 1.2
-		torque = tau0 - tau0 * (lambda - 1) / (lambda_wm - 1)
+		torque = tau0 - tau0 * (lambda - 1.0) / (lambda_wm - 1.0)
 		torque *= 0.5 * density * v2 * _f0
 
 
 func _get_engine_torque() -> float:
+	if rpm >= min_rpm:
+		return throttle * _get_nominal_engine_torque()
+	var starter_torque := inertia * 20.0
+	if throttle > 0.0:
+		return starter_torque
+	return -starter_torque - angular_velocity * 0.1
+
+
+func _get_nominal_engine_torque() -> float:
 	var max_torque := max_engine_power * HP_TO_W / max_rpm * TO_RPM
 	if rpm > max_rpm:
 		var x := clampf((rpm - max_rpm) / (max_rpm * 0.25), 0.0, 1.0)
