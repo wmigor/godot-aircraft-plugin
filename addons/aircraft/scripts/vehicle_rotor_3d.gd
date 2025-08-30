@@ -1,29 +1,77 @@
+@tool
 extends VehicleThruster3D
 class_name VehicleRotor3D
 
-@export var radius := 10.5
-@export var blade_count := 4
-@export var blade_chord := 0.5
-@export_range(-15, 0, 0.001, "radians_as_degrees") var blade_twist := deg_to_rad(-12.0)
+@export var radius := 10.5:
+	set(value):
+		radius = value
+		update_gizmos()
+
+@export var blade_count := 4:
+	set(value):
+		blade_count = value
+		update_gizmos()
+
+@export var blade_chord := 0.5:
+	set(value):
+		blade_chord = value
+		update_gizmos()
+
+@export_range(-15, 0, 0.001, "radians_as_degrees") var blade_twist := deg_to_rad(-12.0):
+	set(value):
+		blade_twist = value
+		update_gizmos()
+
+
+@export_range(-10, 10.0, 0.001, "radians_as_degrees") var collective_angle_min := deg_to_rad(2.0):
+	set(value):
+		collective_angle_min = value
+		update_gizmos()
+
+@export_range(0, 30, 0.001, "radians_as_degrees") var collective_angle_max := deg_to_rad(16.0):
+	set(value):
+		collective_angle_max = value
+		update_gizmos()
+
+@export_range(-30, 0, 0.001, "radians_as_degrees") var azimuthal_angle_min := deg_to_rad(-6.0):
+	set(value):
+		azimuthal_angle_min = value
+		update_gizmos()
+
+@export_range(0, 30, 0.001, "radians_as_degrees") var azimuthal_angle_max := deg_to_rad(6.0):
+	set(value):
+		azimuthal_angle_max = value
+		update_gizmos()
+
 @export_range(0.0, 6, 0.001) var blade_twist_power := 3.0
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_angle := deg_to_rad(14.0)
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(2.0)
 @export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(30.0)
 @export_range(-10, 0.0, 0.001, "radians_as_degrees") var blade_zero_lift_angle := deg_to_rad(-2.0)
-@export_range(-10, 10.0, 0.001, "radians_as_degrees") var collective_angle_min := deg_to_rad(2.0)
-@export_range(0, 30, 0.001, "radians_as_degrees") var collective_angle_max := deg_to_rad(16.0)
-@export_range(-30, 0, 0.001, "radians_as_degrees") var azimuthal_angle_min := deg_to_rad(-6.0)
-@export_range(0, 30, 0.001, "radians_as_degrees") var azimuthal_angle_max := deg_to_rad(6.0)
 @export var max_rpm := 192.0
 @export var inertia := 25000.0
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 3800.0
 @export var alternative_drag := true
 
-var pitch := 0.0
-var stick_angle: float
-var stick_len: float
+@export_range(0.0, 1.0, 0.01) var pitch := 0.0:
+	set(value):
+		pitch = value
+		update_gizmos()
+
+@export_range(0.0, TAU, 0.01) var stick_angle: float:
+	set(value):
+		stick_angle = value
+		update_gizmos()
+
+@export_range(0.0, 1.0, 0.01) var stick_len: float:
+	set(value):
+		stick_len = value
+		update_gizmos()
+
 var running := true
 var rudder: float
+var collective_angle: float:
+	get(): return lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
 
 var _blades: Array[VehicleWing3D]
 
@@ -41,17 +89,16 @@ func _ready() -> void:
 		var blade := _create_blade(i)
 		_blades.append(blade)
 		add_child(blade)
-		blade.set_owner(get_tree().get_edited_scene_root())
 
 
 func _physics_process(delta: float) -> void:
-	if _body == null:
+	if _body == null or Engine.is_editor_hint():
 		return
 	var state := PhysicsServer3D.body_get_direct_state(_body.get_rid())
-	_calculate(delta, _body.transform * state.center_of_mass_local, state.linear_velocity, state.angular_velocity, 1.2255)
+	calculate(delta, _body.transform * state.center_of_mass_local, state.linear_velocity, state.angular_velocity, 1.2255)
 
 
-func _calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, density: float) -> void:
+func calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, density: float) -> void:
 	var rotor_force := Vector3.ZERO
 	var rotor_torque := Vector3.ZERO
 	var up := global_transform.basis.y.normalized()
@@ -59,8 +106,7 @@ func _calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, 
 	for blade in _blades:
 		blade.calculate(aircraft_velocity.dot(up) * up, aircraft_angular_velocity + rotor_av, mass_center)
 		blade.rotation.z = 0.0
-		var collective_angle := lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
-		var azimut_angle := lerpf(azimuthal_angle_min, azimuthal_angle_max, _get_dynamic_pitch(blade))
+		var azimut_angle := get_azimuthal_angle(blade.rotation.y + rotation.y)
 		blade.rotation.x = collective_angle + azimut_angle
 		rotor_force += blade.get_force()
 		rotor_torque += blade.get_torque()
@@ -70,6 +116,11 @@ func _calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, 
 	_process_engine(delta, rotor_torque.dot(up))
 	_body.apply_central_force(rotor_force)
 	_body.apply_torque(tail_torque + rotor_torque - rotor_torque.dot(up) * up)
+
+
+func get_azimuthal_angle(blade_angle: float) -> float:
+	var dynamic_pitch := _get_dynamic_pitch(blade_angle)
+	return lerpf(azimuthal_angle_min, azimuthal_angle_max, dynamic_pitch)
 
 
 func _get_blade_bend_angle(blade_lift: float) -> float:
@@ -105,9 +156,9 @@ func _calc_fake_tail_torque(aircraft_angular_velocity: Vector3, up: Vector3) -> 
 	return tail_torque
 
 
-func _get_dynamic_pitch(blade: VehicleWing3D) -> float:
-	var blade_angle_y := wrapf(blade.rotation.y + rotation.y, -PI, PI)
-	var angle_delta := wrapf(stick_angle - blade_angle_y, -PI, PI)
+func _get_dynamic_pitch(blade_nagle: float) -> float:
+	var blade_angle := wrapf(blade_nagle, -PI, PI)
+	var angle_delta := wrapf(stick_angle - blade_angle, -PI, PI)
 	var x := absf(angle_delta) / PI
 	var dynamic_pitch := lerpf(-stick_len, stick_len, x)
 	return clampf(0.5 * (dynamic_pitch + 1.0), 0.0, 1.0)
