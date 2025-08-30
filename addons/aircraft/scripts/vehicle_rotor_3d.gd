@@ -16,7 +16,7 @@ class_name VehicleRotor3D
 @export var azimuthal_angle_max := 6.0
 @export var max_rpm := 192.0
 @export var inertia := 25000.0
-@export var engine_power_hp := 3000.0
+@export var engine_power_hp := 3800.0
 @export var alternative_drag := true
 
 var pitch := 0.0
