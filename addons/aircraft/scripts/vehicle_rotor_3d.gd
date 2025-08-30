@@ -80,7 +80,6 @@ func _get_blade_bend_angle(blade_lift: float) -> float:
 
 func _process_engine(delta: float, rotor_torque: float) -> void:
 	var engine_torque := _get_engine_torque()
-	print(engine_torque)
 	angular_velocity += (rotor_torque + engine_torque) / inertia * delta
 	rotate_y(angular_velocity * delta)
 
