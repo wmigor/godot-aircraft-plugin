@@ -8,17 +8,17 @@ class_name VehicleRotor3D
 @export var blade_twist_power := 3.0
 @export var stall_angle := 14.0
 @export var stall_width := 2.0
+@export var restore_stall_angle := 30.0
 @export var blade_zero_lift_angle := -2.0
 @export var collective_angle_min := 2.0
 @export var collective_angle_max := 16.0
 @export var azimuthal_angle_min := -6.0
 @export var azimuthal_angle_max := 6.0
-@export var rpm_max := 192.0
+@export var max_rpm := 192.0
 @export var inertia := 25000.0
 @export var engine_power_hp := 3000.0
 @export var alternative_drag := true
 
-var force: Vector3
 var pitch: float
 var stick_angle: float
 var stick_len: float
@@ -26,8 +26,6 @@ var running: float = true
 var rudder: float
 
 var _blades: Array[VehicleWing3D]
-var _engine_torque: float
-var _blades_torque: Vector3
 
 
 func _enter_tree() -> void:
@@ -54,10 +52,9 @@ func _physics_process(delta: float) -> void:
 
 
 func _calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, density: float) -> void:
-	force = Vector3.ZERO
-	_blades_torque = Vector3.ZERO
+	var rotor_force := Vector3.ZERO
+	var rotor_torque := Vector3.ZERO
 	var up := global_transform.basis.y.normalized()
-	var rotor_torque := 0.0
 	var rotor_av := angular_velocity * up
 	for blade in _blades:
 		blade.calculate(aircraft_velocity.dot(up) * up, aircraft_angular_velocity + rotor_av, mass_center)
@@ -65,15 +62,14 @@ func _calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, 
 		var collective_angle := lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
 		var azimut_angle := lerpf(azimuthal_angle_min, azimuthal_angle_max, _get_dynamic_pitch(blade))
 		blade.rotation_degrees.x = collective_angle + azimut_angle
-		force += blade.get_force()
-		_blades_torque += blade.get_torque() - blade.get_torque().dot(up) * up
+		rotor_force += blade.get_force()
+		rotor_torque += blade.get_torque()
 		var blade_lift := blade.get_force().dot(up)
-		rotor_torque += blade.get_torque().dot(up)
 		blade.rotation_degrees.z = _get_blade_bend_angle(blade_lift)
-	_calc_fake_rudder(aircraft_angular_velocity, up)
-	_integrate_engine(delta, rotor_torque)
-	_body.apply_central_force(force)
-	_body.apply_torque(_blades_torque)
+	var tail_torque := _calc_fake_tail_torque(aircraft_angular_velocity, up)
+	_process_engine(delta, rotor_torque.dot(up))
+	_body.apply_central_force(rotor_force)
+	_body.apply_torque(tail_torque + rotor_torque - rotor_torque.dot(up) * up)
 
 
 func _get_blade_bend_angle(blade_lift: float) -> float:
@@ -82,25 +78,32 @@ func _get_blade_bend_angle(blade_lift: float) -> float:
 	return clampf(5.0 * blade_lift / (_body.mass * 9.8 / blade_count), -20, 20)
 
 
-func _integrate_engine(delta: float, rotor_torque: float) -> void:
-	if running:
-		var engine_torque_max := engine_power_hp * HP_TO_W / rpm_max * TO_RPM
-		var min_torque := 0.1 * engine_torque_max
-		if rpm <= rpm_max:
-			_engine_torque = lerpf(min_torque, engine_torque_max, rpm / rpm_max)
-		else:
-			_engine_torque = lerpf(engine_torque_max, 0.0, (rpm - rpm_max) / 2.0)
-		if _engine_torque < min_torque:
-			_engine_torque += min_torque
-	else:
-		_engine_torque = 0.0
-	angular_velocity += (rotor_torque + _engine_torque) / inertia * delta
+func _process_engine(delta: float, rotor_torque: float) -> void:
+	var engine_torque := _get_engine_torque()
+	print(engine_torque)
+	angular_velocity += (rotor_torque + engine_torque) / inertia * delta
 	rotate_y(angular_velocity * delta)
 
 
-func _calc_fake_rudder(aircraft_angular_velocity: Vector3, up: Vector3) -> void:
+func _get_engine_torque() -> float:
+	if not running:
+		return 0.0
+	var max_torque := engine_power_hp * HP_TO_W / max_rpm * TO_RPM
+	var min_rpm := max_rpm * 0.1
+	if rpm <= min_rpm:
+		var starter_torque := 0.1 * max_torque
+		return starter_torque
+	if rpm > max_rpm:
+		return lerpf(max_torque, 0.0, (rpm - max_rpm))
+	var x := 1.0 - rpm / max_rpm
+	x = 1.0 - x * x * x * x
+	return lerpf(0.0, max_torque, x)
+
+
+func _calc_fake_tail_torque(aircraft_angular_velocity: Vector3, up: Vector3) -> Vector3:
 	var up_omega := 6 * (PI / 2 * rudder - aircraft_angular_velocity.dot(up))
-	_blades_torque += up * 9000 * up_omega * absf(up_omega)
+	var tail_torque = up * 9000 * up_omega * absf(up_omega)
+	return tail_torque
 
 
 func _get_dynamic_pitch(blade: VehicleWing3D) -> float:
@@ -125,6 +128,7 @@ func _create_blade(index: int) -> VehicleWing3D:
 	blade.stall_angle_max = deg_to_rad(stall_angle)
 	blade.stall_angle_min = -deg_to_rad(stall_angle - blade_zero_lift_angle)
 	blade.stall_width = deg_to_rad(stall_width)
+	blade.restore_stall_angle = deg_to_rad(restore_stall_angle)
 	blade.flap_angle_min = 0.0
 	blade.flap_angle_max = 0.0
 	blade.flap_start = 0.0
