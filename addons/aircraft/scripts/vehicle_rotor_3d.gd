@@ -22,7 +22,7 @@ class_name VehicleRotor3D
 var pitch := 0.0
 var stick_angle: float
 var stick_len: float
-var running: float = true
+var running := true
 var rudder: float
 
 var _blades: Array[VehicleWing3D]
