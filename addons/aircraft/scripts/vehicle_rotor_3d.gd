@@ -19,7 +19,7 @@ class_name VehicleRotor3D
 @export var engine_power_hp := 3000.0
 @export var alternative_drag := true
 
-var pitch: float
+var pitch := 0.0
 var stick_angle: float
 var stick_len: float
 var running: float = true
