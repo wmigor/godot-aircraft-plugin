@@ -1,24 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://cog35xpdqehjv"]
+[gd_scene load_steps=5 format=3 uid="uid://cog35xpdqehjv"]
 
 [ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_1sdnb"]
 [ext_resource type="Script" uid="uid://blc3x0y8gvux8" path="res://addons/aircraft/scripts/vehicle_rotor_3d.gd" id="2_0x04r"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_rkqbg"]
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
-height = 5.0
-radius = 0.25
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_c4w4o"]
-size = Vector3(7.8, 0.1, 1.494)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_qxvgi"]
-size = Vector3(1, 1, 1.56226)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ivdla"]
-size = Vector3(3.108, 0.1, 1)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_7bubi"]
-size = Vector3(0.001, 1.74402, 1.17969)
+[sub_resource type="BoxShape3D" id="BoxShape3D_td68f"]
+size = Vector3(1, 1, 5)
 
 [node name="Mi-8" type="VehicleBody3D"]
 mass = 12000.0
@@ -47,55 +34,4 @@ cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 1.525)
-shape = SubResource("CylinderShape3D_c4w4o")
-
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.831, 0.138134)
-shape = SubResource("BoxShape3D_c4w4o")
-
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.627915, -0.165173)
-shape = SubResource("BoxShape3D_qxvgi")
-
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.387, 4.78886)
-shape = SubResource("BoxShape3D_ivdla")
-
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.75901, 4.8787)
-shape = SubResource("BoxShape3D_7bubi")
-
-[node name="WheelF" type="VehicleWheel3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
-use_as_steering = true
-wheel_radius = 0.25
-suspension_stiffness = 50.0
-suspension_max_force = 600000.0
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelF"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-radius = 0.25
-height = 0.2
-
-[node name="WheelL" type="VehicleWheel3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0.7)
-wheel_radius = 0.25
-suspension_stiffness = 50.0
-suspension_max_force = 600000.0
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelL"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-radius = 0.25
-height = 0.2
-
-[node name="WheelR" type="VehicleWheel3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.7)
-wheel_radius = 0.25
-suspension_stiffness = 50.0
-suspension_max_force = 600000.0
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelR"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-radius = 0.25
-height = 0.2
+shape = SubResource("BoxShape3D_td68f")

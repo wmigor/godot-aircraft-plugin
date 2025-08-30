@@ -49,8 +49,6 @@ func _input(event: InputEvent) -> void:
 		return
 	var mode := Input.is_action_pressed("mode")
 	if mode:
-		if aircraft.rotor != null:
-			aircraft.rotor.running = not aircraft.rotor.running
 		if event.is_action_pressed("flap_down"):
 			aircraft.trim_elevator = clampf(aircraft.trim_elevator - aircraft.trim_step, -1.0, 1.0)
 		elif event.is_action_pressed("flap_up"):
@@ -64,6 +62,8 @@ func _input(event: InputEvent) -> void:
 			aircraft.flap_mode = clampi(aircraft.flap_mode + 1, 0, len(aircraft.flap_modes) - 1)
 		elif event.is_action_pressed("flap_up"):
 			aircraft.flap_mode = clampi(aircraft.flap_mode - 1, 0, len(aircraft.flap_modes) - 1)
+		elif event.is_action_pressed("left") and aircraft.rotor != null:
+			aircraft.rotor.running = not aircraft.rotor.running
 
 
 func process_keyboard_values(delta: float) -> void:
