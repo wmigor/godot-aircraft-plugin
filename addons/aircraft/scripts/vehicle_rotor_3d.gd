@@ -196,7 +196,7 @@ func _create_blade(index: int) -> VehicleWing3D:
 	blade.twist_power = blade_twist_power
 	blade.zero_lift_angle = blade_zero_lift_angle
 	blade.stall_angle_max = stall_angle
-	blade.stall_angle_min = blade_zero_lift_angle - stall_angle
+	blade.stall_angle_min = -stall_angle - blade_zero_lift_angle
 	blade.stall_width = stall_width
 	blade.restore_stall_angle = restore_stall_angle
 	blade.flap_angle_min = 0.0
