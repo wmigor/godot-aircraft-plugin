@@ -22,6 +22,7 @@ camera_distance = 17.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 script = ExtResource("2_0x04r")
 blade_count = 5
+tail_gear_ratio = null
 
 [node name="Fuselage" type="Node3D" parent="."]
 script = ExtResource("3_rkqbg")

@@ -22,7 +22,6 @@ class_name VehicleRotor3D
 		blade_twist = value
 		update_gizmos()
 
-
 @export_range(-10, 10.0, 0.001, "radians_as_degrees") var collective_angle_min := deg_to_rad(2.0):
 	set(value):
 		collective_angle_min = value
@@ -53,7 +52,7 @@ class_name VehicleRotor3D
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 3800.0
 @export var alternative_drag := true
 
-@export var tail_gear_ration := 6.0
+@export var tail_gear_ratio := 6.0
 @export var tail_arm := 12.5
 @export var tail_radius := 2.0
 @export var tail_blade_chord := 0.28
@@ -82,6 +81,8 @@ var collective_angle: float:
 	get(): return lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
 
 var _blades: Array[VehicleWing3D]
+var _rotor_pivot: Node3D
+var _debug_view: Node3D
 
 
 func _enter_tree() -> void:
@@ -93,10 +94,12 @@ func _exit_tree() -> void:
 
 
 func _ready() -> void:
+	_rotor_pivot = Node3D.new()
+	add_child(_rotor_pivot)
 	for i in blade_count:
 		var blade := _create_blade(i)
 		_blades.append(blade)
-		add_child(blade)
+		_rotor_pivot.add_child(blade)
 
 
 func _physics_process(delta: float) -> void:
@@ -140,7 +143,7 @@ func _get_blade_bend_angle(blade_lift: float) -> float:
 func _process_engine(delta: float, rotor_torque: float) -> void:
 	var engine_torque := _get_engine_torque()
 	angular_velocity += (rotor_torque + engine_torque) / inertia * delta
-	rotate_y(angular_velocity * delta)
+	_rotor_pivot.rotate_y(angular_velocity * delta)
 
 
 func _get_engine_torque() -> float:
@@ -159,17 +162,17 @@ func _get_engine_torque() -> float:
 
 
 func _calc_fake_tail_torque(aircraft_angular_velocity: Vector3, up: Vector3) -> Vector3:
-	var back := _body.global_transform.basis.z
+	var back := _body.global_transform.basis.z.normalized()
 	var arm := tail_arm * back
 	var work_area := tail_blade_count * tail_blade_chord * tail_radius * 0.2
 	var velocity := aircraft_angular_velocity.cross(arm)
-	velocity += tail_radius * angular_velocity * tail_gear_ration * up
+	velocity += tail_radius * angular_velocity * tail_gear_ratio * up
 	var pressure := 0.5 * velocity.length_squared() * density * work_area
 	var lift_direction := -velocity.cross(back).normalized()
-	var angle_of_attack := velocity.signed_angle_to(up, back) - rudder * collective_angle_max
+	var angle_of_attack := velocity.signed_angle_to(up, back) + rudder * collective_angle_max
 	var lift := TAU * angle_of_attack
 	var force := lift * pressure * lift_direction
-	var torque := arm.cross(force)
+	var torque := arm.cross(force).dot(up) * up
 	return torque
 
 
@@ -209,8 +212,13 @@ func _create_blade(index: int) -> VehicleWing3D:
 	return blade
 
 
+var VehicleRotor3DDebugView := preload("uid://c8fd6k112j85a")
 func _update_debug_view() -> void:
-	for i in get_child_count():
-		var blade := get_child(i) as VehicleWing3D
-		if blade != null:
-			blade.debug = debug
+	if _debug_view != null and not debug:
+		_debug_view.queue_free()
+		_debug_view = null
+	elif _debug_view == null and debug:
+		_debug_view = VehicleRotor3DDebugView.new()
+		add_child(_debug_view)
+	for blade in _blades:
+		blade.debug = debug
