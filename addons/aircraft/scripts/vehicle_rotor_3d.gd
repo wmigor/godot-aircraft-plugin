@@ -53,6 +53,14 @@ class_name VehicleRotor3D
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 3800.0
 @export var alternative_drag := true
 
+@export var tail_gear_ration := 6.0
+@export var tail_arm := 12.5
+@export var tail_radius := 2.0
+@export var tail_blade_chord := 0.28
+@export var tail_blade_count := 3
+@export_range(0, 30.0, 0.001, "radians_as_degrees") var tail_max_angle := deg_to_rad(14.0)
+
+
 @export_range(0.0, 1.0, 0.01) var pitch := 0.0:
 	set(value):
 		pitch = value
@@ -151,9 +159,18 @@ func _get_engine_torque() -> float:
 
 
 func _calc_fake_tail_torque(aircraft_angular_velocity: Vector3, up: Vector3) -> Vector3:
-	var up_omega := 6 * (PI / 2 * rudder - aircraft_angular_velocity.dot(up))
-	var tail_torque = up * 9000 * up_omega * absf(up_omega)
-	return tail_torque
+	var back := _body.global_transform.basis.z
+	var arm := tail_arm * back
+	var work_area := tail_blade_count * tail_blade_chord * tail_radius * 0.2
+	var velocity := aircraft_angular_velocity.cross(arm)
+	velocity += tail_radius * angular_velocity * tail_gear_ration * up
+	var pressure := 0.5 * velocity.length_squared() * density * work_area
+	var lift_direction := -velocity.cross(back).normalized()
+	var angle_of_attack := velocity.signed_angle_to(up, back) - rudder * collective_angle_max
+	var lift := TAU * angle_of_attack
+	var force := lift * pressure * lift_direction
+	var torque := arm.cross(force)
+	return torque
 
 
 func _get_dynamic_pitch(blade_nagle: float) -> float:
