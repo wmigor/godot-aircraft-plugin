@@ -117,7 +117,7 @@ func calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, a
 	for blade in _blades:
 		blade.calculate(aircraft_velocity.dot(up) * up, aircraft_angular_velocity + rotor_av, mass_center)
 		blade.rotation.z = 0.0
-		var azimut_angle := get_azimuthal_angle(blade.rotation.y + rotation.y)
+		var azimut_angle := get_azimuthal_angle(blade.rotation.y + _rotor_pivot.rotation.y)
 		blade.rotation.x = collective_angle + azimut_angle
 		rotor_force += blade.get_force()
 		rotor_torque += blade.get_torque()
@@ -164,7 +164,7 @@ func _get_engine_torque() -> float:
 func _calc_fake_tail_torque(aircraft_angular_velocity: Vector3, up: Vector3) -> Vector3:
 	var back := _body.global_transform.basis.z.normalized()
 	var arm := tail_arm * back
-	var work_area := tail_blade_count * tail_blade_chord * tail_radius * 0.2
+	var work_area := tail_blade_count * tail_blade_chord * tail_radius * 0.5
 	var velocity := aircraft_angular_velocity.cross(arm)
 	velocity += tail_radius * angular_velocity * tail_gear_ratio * up
 	var pressure := 0.5 * velocity.length_squared() * density * work_area

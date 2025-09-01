@@ -16,7 +16,7 @@ linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_1sdnb")
 horizontal_height = 1.24
-camera_distance = 17.0
+camera_distance = 20.0
 
 [node name="Rotor" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
