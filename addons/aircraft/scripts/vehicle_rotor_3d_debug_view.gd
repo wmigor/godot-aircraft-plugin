@@ -11,7 +11,7 @@ var _blades: Array[Node3D]
 func _ready() -> void:
 	if _material == null:
 		_material = StandardMaterial3D.new()
-		_material.albedo_color = Color.RED
+		_material.albedo_color = Color.GREEN
 	_build()
 
 
