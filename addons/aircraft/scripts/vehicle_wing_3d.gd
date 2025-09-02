@@ -18,6 +18,8 @@ class_name VehicleWing3D
 ## [b]Note:[/b] When shape parameters are modified, the wing adapts to maintain the center of
 ## pressure at the wing node's position.[br][br]
 
+enum Type { Wing, Elevator, Rudder }
+
 @export_group("Shape")
 ## Wing span. Distance between wingtips.
 @export var span := 4.0:
@@ -104,6 +106,8 @@ class_name VehicleWing3D
 @export var alternative_drag := true
 
 @export_group("Control surfaces")
+## Wing type
+@export var type := Type.Wing
 ## Flap start relative to wing length.
 @export_range(0, 1, 0.001) var flap_start := 0.1:
 	set(value):
