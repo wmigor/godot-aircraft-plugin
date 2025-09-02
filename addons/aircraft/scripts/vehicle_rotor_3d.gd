@@ -52,12 +52,12 @@ class_name VehicleRotor3D
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 3800.0
 @export var alternative_drag := true
 
-@export var tail_gear_ratio := 6.0
+@export var tail_gear_ratio := 5.0
 @export var tail_arm := 12.5
 @export var tail_radius := 2.0
 @export var tail_blade_chord := 0.28
 @export var tail_blade_count := 3
-@export_range(0, 30.0, 0.001, "radians_as_degrees") var tail_max_angle := deg_to_rad(14.0)
+@export_range(0, 30.0, 0.001, "radians_as_degrees") var tail_max_angle := deg_to_rad(3.0)
 
 
 @export_range(0.0, 1.0, 0.01) var pitch := 0.0:
@@ -81,8 +81,9 @@ var collective_angle: float:
 	get(): return lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
 
 var _blades: Array[VehicleWing3D]
+var _tail_blades: Array[VehicleWing3D]
 var _rotor_pivot: Node3D
-var _debug_view: Node3D
+var _tail_pivot: Node3D
 
 
 func _enter_tree() -> void:
@@ -100,6 +101,15 @@ func _ready() -> void:
 		var blade := _create_blade(i)
 		_blades.append(blade)
 		_rotor_pivot.add_child(blade)
+	_tail_pivot = Node3D.new()
+	_tail_pivot.rotation.z = PI / 2.0
+	_tail_pivot.position.z = tail_arm
+	_tail_pivot.position.y = -tail_radius * 0.5
+	add_child(_tail_pivot)
+	for i in tail_blade_count:
+		var blade := _create_tail_blade(i)
+		_tail_blades.append(blade)
+		_tail_pivot.add_child(blade)
 
 
 func _physics_process(delta: float) -> void:
@@ -107,12 +117,13 @@ func _physics_process(delta: float) -> void:
 		return
 	var state := PhysicsServer3D.body_get_direct_state(_body.get_rid())
 	calculate(delta, _body.transform * state.center_of_mass_local, state.linear_velocity, state.angular_velocity, 1.2255)
+	_calculate_tail(delta, _body.transform * state.center_of_mass_local, state.linear_velocity, state.angular_velocity, 1.2255)
 
 
 func calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, density: float) -> void:
 	var rotor_force := Vector3.ZERO
 	var rotor_torque := Vector3.ZERO
-	var up := global_transform.basis.y.normalized()
+	var up := _rotor_pivot.global_basis.y.normalized()
 	var rotor_av := angular_velocity * up
 	for blade in _blades:
 		blade.calculate(aircraft_velocity.dot(up) * up, aircraft_angular_velocity + rotor_av, mass_center)
@@ -123,10 +134,24 @@ func calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, a
 		rotor_torque += blade.get_torque()
 		var blade_lift := blade.get_force().dot(up)
 		blade.rotation_degrees.z = _get_blade_bend_angle(blade_lift)
-	var tail_torque := _calc_fake_tail_torque(aircraft_angular_velocity, up)
 	_process_engine(delta, rotor_torque.dot(up))
 	_body.apply_central_force(rotor_force)
-	_body.apply_torque(tail_torque + rotor_torque - rotor_torque.dot(up) * up)
+	_body.apply_torque(rotor_torque - rotor_torque.dot(up) * up)
+
+
+func _calculate_tail(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, density: float) -> void:
+	var rotor_force := Vector3.ZERO
+	var rotor_torque := Vector3.ZERO
+	var up := _tail_pivot.global_basis.y.normalized()
+	var rotor_av := angular_velocity * tail_gear_ratio * up
+	for blade in _tail_blades:
+		blade.calculate(aircraft_velocity.dot(up) * up, aircraft_angular_velocity + rotor_av, mass_center)
+		blade.rotation.x = rudder * tail_max_angle
+		rotor_force += blade.get_force()
+		rotor_torque += blade.get_torque()
+		var blade_lift := blade.get_force().dot(up)
+	_body.apply_central_force(rotor_force)
+	_body.apply_torque(rotor_torque - rotor_torque.dot(up) * up)
 
 
 func get_azimuthal_angle(blade_angle: float) -> float:
@@ -144,6 +169,7 @@ func _process_engine(delta: float, rotor_torque: float) -> void:
 	var engine_torque := _get_engine_torque()
 	angular_velocity += (rotor_torque + engine_torque) / inertia * delta
 	_rotor_pivot.rotate_y(angular_velocity * delta)
+	_tail_pivot.rotate_x(angular_velocity * tail_gear_ratio * delta)
 
 
 func _get_engine_torque() -> float:
@@ -159,21 +185,6 @@ func _get_engine_torque() -> float:
 	var x := 1.0 - rpm / max_rpm
 	x = 1.0 - x * x * x * x
 	return lerpf(0.0, max_torque, x)
-
-
-func _calc_fake_tail_torque(aircraft_angular_velocity: Vector3, up: Vector3) -> Vector3:
-	var back := _body.global_transform.basis.z.normalized()
-	var arm := tail_arm * back
-	var work_area := tail_blade_count * tail_blade_chord * tail_radius * 0.5
-	var velocity := aircraft_angular_velocity.cross(arm)
-	velocity += tail_radius * angular_velocity * tail_gear_ratio * up
-	var pressure := 0.5 * velocity.length_squared() * density * work_area
-	var lift_direction := -velocity.cross(back).normalized()
-	var angle_of_attack := velocity.signed_angle_to(up, back) + rudder * collective_angle_max
-	var lift := TAU * angle_of_attack
-	var force := lift * pressure * lift_direction
-	var torque := arm.cross(force).dot(up) * up
-	return torque
 
 
 func _get_dynamic_pitch(blade_nagle: float) -> float:
@@ -212,13 +223,33 @@ func _create_blade(index: int) -> VehicleWing3D:
 	return blade
 
 
-var VehicleRotor3DDebugView := preload("uid://c8fd6k112j85a")
+func _create_tail_blade(index: int) -> VehicleWing3D:
+	var blade := VehicleWing3D.new()
+	blade.mirror = false
+	blade.relax_forces = false
+	blade.alternative_drag = alternative_drag
+	blade.debug = debug
+	blade.span = tail_radius
+	blade.chord = tail_blade_chord
+	blade.zero_lift_angle = 0.0
+	blade.stall_angle_max = stall_angle
+	blade.stall_angle_min = -stall_angle
+	blade.stall_width = stall_width
+	blade.restore_stall_angle = restore_stall_angle
+	blade.flap_angle_min = 0.0
+	blade.flap_angle_max = 0.0
+	blade.flap_start = 0.0
+	blade.flap_end = 0.0
+	blade.aileron_start = 0.0
+	blade.aileron_end = 0.0
+	blade.name = "Blade_" + str(index)
+	blade.rotation.y = index * TAU / tail_blade_count
+	blade.position = blade.basis.x * tail_blade_chord * 0.5
+	return blade
+
+
 func _update_debug_view() -> void:
-	if _debug_view != null and not debug:
-		_debug_view.queue_free()
-		_debug_view = null
-	elif _debug_view == null and debug:
-		_debug_view = VehicleRotor3DDebugView.new()
-		add_child(_debug_view)
 	for blade in _blades:
+		blade.debug = debug
+	for blade in _tail_blades:
 		blade.debug = debug
