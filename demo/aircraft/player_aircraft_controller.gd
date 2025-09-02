@@ -17,7 +17,7 @@ func _process(delta: float) -> void:
 	aircraft.input_ailerons = clampf(aileron_key + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
 	aircraft.input_elevator = clampf(elevator_key + Input.get_axis("elevator_down", "elevator_up"), -1.0, 1.0)
 	aircraft.input_rudder = clampf(rudder_key + Input.get_axis("rudder_left", "rudder_right"), -1.0, 1.0)
-	aircraft.steering = deg_to_rad(-aircraft.input_rudder)
+	aircraft.steering = deg_to_rad(-aircraft.input_rudder) * aircraft.steering_value
 	aircraft.brake = Input.get_action_strength("brake") * aircraft.brake_value
 
 	if Input.is_action_pressed("throttle_down"):

@@ -3,6 +3,7 @@ class_name AircraftBody3D
 
 @export var flap_modes: Array[float] = [0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0]
 @export var brake_value := 1.0
+@export var steering_value := 5.0
 @export var horizontal_height := 0.0
 @export var horizontal_rotation := 0.0
 @export var camera_distance := 8.0
