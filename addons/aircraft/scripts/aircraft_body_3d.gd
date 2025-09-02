@@ -8,8 +8,6 @@ class_name AircraftBody3D
 @export var camera_distance := 8.0
 @export var trim_scale := 0.2
 @export var trim_step := 0.1
-@export var trim_aileron := 0.0
-@export var trim_elevator := 0.0
 @export var debug := true
 
 @export_group("Input")
@@ -17,27 +15,26 @@ class_name AircraftBody3D
 @export_range(-1.0, 1.0, 0.001) var input_elevator := 0.0
 @export_range(-1.0, 1.0, 0.001) var input_rudder := 0.0
 @export_range(0.0, 1.0, 0.001) var input_throttle := 1.0
+@export var input_engine_running := true
 
 var _wings: Array[VehicleWing3D]
 var _elevators: Array[VehicleWing3D]
 var _rudders: Array[VehicleWing3D]
 var _thrusters: Array[VehicleThruster3D]
+var _rotors: Array[VehicleRotor3D]
 var _flap_mode := 0
 
 var rpm: float:
 	get(): return _thrusters[0].rpm if len(_thrusters) > 0 else 0.0
 
-var throttle: float:
-	get(): return _thrusters[0].throttle if len(_thrusters) > 0 else 0.0
-	set(value):
-		for thruster in _thrusters:
-			thruster.throttle = value
+var has_rotor: bool:
+	get(): return len(_rotors) > 0
 
-var rotor: VehicleRotor3D:
-	get(): return _thrusters[0] as VehicleRotor3D if len(_thrusters) > 0 else null
+var trim_aileron := 0.0:
+	get(): return trim_aileron
 
-var pitch: float:
-	get(): return rotor.pitch if rotor != null else 0.0
+var trim_elevator := 0.0:
+	get(): return trim_elevator
 
 
 func _ready() -> void:
@@ -49,14 +46,22 @@ func _physics_process(delta: float) -> void:
 
 
 func _apply_input(delta: float) -> void:
+	var ailerons_value := clampf(input_ailerons + trim_aileron * trim_scale, -1.0, 1.0)
+	var elevator_value := clampf(input_elevator + trim_elevator * trim_scale, -1.0, 1.0)
 	for thruster in _thrusters:
 		thruster.throttle = input_throttle
+		thruster.running = input_engine_running
+	for rotor in _rotors:
+		rotor.pitch = input_throttle
+		rotor.tail_pitch = input_rudder
+		rotor.stick_angle = atan2(elevator_value, -ailerons_value)
+		rotor.stick_len = sqrt(elevator_value * elevator_value + ailerons_value * ailerons_value)
 	for wing in _wings:
-		wing.aileron_value = input_ailerons
+		wing.aileron_value = ailerons_value
 		if _flap_mode >= 0 and _flap_mode < len(flap_modes):
 			wing.flap_value = move_toward(wing.flap_value, flap_modes[_flap_mode], delta)
 	for elevator in _elevators:
-		elevator.flap_value = input_elevator
+		elevator.flap_value = elevator_value
 	for rudder in _rudders:
 		rudder.flap_value = input_rudder
 
@@ -64,6 +69,8 @@ func _apply_input(delta: float) -> void:
 func _find_objects() -> void:
 	for thruster in find_children("*", "VehicleThruster3D"):
 		_thrusters.append(thruster)
+		if thruster is VehicleRotor3D:
+			_rotors.append(thruster)
 		thruster.debug = debug
 	for wing in find_children("*", "VehicleWing3D"):
 		if wing.type == VehicleWing3D.Type.Wing:
@@ -79,3 +86,11 @@ func _find_objects() -> void:
 
 func change_flap_mode(delta: int) -> void:
 	_flap_mode = clampi(_flap_mode + delta, 0, len(flap_modes) - 1)
+
+
+func change_trim_elevator(direction: int) -> void:
+	trim_elevator = clampf(trim_elevator + direction * trim_step, -1.0, 1.0)
+
+
+func change_trim_aileron(direction: int) -> void:
+	trim_aileron = clampf(trim_aileron + direction * trim_step, -1.0, 1.0)

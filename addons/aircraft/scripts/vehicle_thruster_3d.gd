@@ -18,6 +18,7 @@ var throttle := 1.0
 var thrust := 0.0
 var torque := 0.0
 var angular_velocity := 0.0
+var running := true
 var _body: RigidBody3D
 
 var rpm: float:

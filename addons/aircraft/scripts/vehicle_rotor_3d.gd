@@ -105,7 +105,6 @@ class_name VehicleRotor3D
 		tail_pitch = value
 		update_gizmos()
 
-var running := true
 var collective_angle: float:
 	get(): return lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
 

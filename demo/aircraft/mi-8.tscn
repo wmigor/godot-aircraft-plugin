@@ -17,6 +17,7 @@ angular_damp_mode = 1
 script = ExtResource("1_td68f")
 horizontal_height = 1.24
 camera_distance = 20.0
+input_throttle = 0.0
 
 [node name="Rotor" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
