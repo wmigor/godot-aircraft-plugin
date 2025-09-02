@@ -1,6 +1,6 @@
 # Aircraft plugin for Godot
 
-This plugin adds wing physics to `VehicleBody3D` via the `VehicleWing3D` node.
+This plugin adds airplane and helicopter physics to `VehicleBody3D` via the `VehicleWing3D`, `VehicleFuselage3D`, `VehiclePropeller3D` and `VehicleRotor3D` nodes.
 
 ## Installation
 - Download addon from [Godot Asset Library](https://godotengine.org/asset-library/asset/4049)
@@ -33,12 +33,16 @@ How to setup an airplane:
   - By default, it's configured for a standard wing, except for zero_lift_angle - this should be set to about -2.5 degrees on the main wing and 0.0 on tail empennage
 <br>![Aerodynamics](images/aerodynamics.png)
 
-Position the center of mass near the wing location, setup the mass corresponding to the wing size, disable damping, apply aircraft thrust, and enjoy the flight
+
+Add `VehiclePropeller3D` for thrust, position the center of mass near the wing location, setup the mass corresponding to the wing size, disable damping, and enjoy the flight
 ![Takeoff](images/takeoff.png)
+
+With `VehicleRotor3D` you can create helicopters
+![Takeoff](images/mi-8.png)
 
 ## Demo
 
-This demo simulates 2 aircraft using `VehicleWing3D` nodes.
+This demo simulates 3 airplanes and 1 helicopter.
 
 Wings are displayed as multiple debug sections in different colors:
 - Green - normal state
@@ -76,6 +80,12 @@ Basic parameters of aircraft:
   - Wing dihedral: 2.0 degree
   - Wing twist: -2.5 degree
   - Wing zero lift angle: -2.0 degree
+- Helicopter MI-8:
+  - Mass 12000 kg
+  - Rotor radius: 12.5 m
+  - Rotor inertia: 25000 kg * m^2
+  - Engine power: 3000 hp
+  - Max RPM: 192
 
 Language: GDScript
 
