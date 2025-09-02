@@ -18,6 +18,8 @@ func _process(delta: float) -> void:
 	var up := aircraft.basis.y
 	var right := aircraft.basis.x
 	var velocity := aircraft.linear_velocity
+	if aircraft.rotor != null:
+		velocity *= 0.0
 	var direction := velocity.normalized().rotated(right, pitch).rotated(up, yaw)
 	var speed := velocity.length()
 	if speed < 3.0:

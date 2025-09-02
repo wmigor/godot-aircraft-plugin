@@ -16,7 +16,10 @@ func _process(_delta: float) -> void:
 	if aircraft == null:
 		return
 	var forward := -aircraft.basis.z
-	throttle.text = str(roundi(100 * aircraft.throttle)) + " %"
+	if aircraft.rotor != null:
+		throttle.text = str(roundi(100 * aircraft.rotor.pitch)) + " %"
+	else:
+		throttle.text = str(roundi(100 * aircraft.throttle)) + " %"
 	speed.text = str(roundi(aircraft.linear_velocity.dot(forward) * VehicleThruster3D.TO_KMPH)) + " km/h"
 	vertical_speed.text = str(snappedf(aircraft.linear_velocity.dot(Vector3.UP), 0.1)) + " m/s"
 	altitude.text = str(snappedf(aircraft.position.y, 0.1)) + " m"

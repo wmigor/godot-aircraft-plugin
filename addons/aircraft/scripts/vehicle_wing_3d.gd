@@ -47,6 +47,14 @@ class_name VehicleWing3D
 		_dirty = true
 		update_gizmos()
 
+
+## Wing twist power.
+@export_range(0.0, 6, 0.001) var twist_power := 1.0:
+	set(value):
+		twist_power = value
+		_dirty = true
+		update_gizmos()
+
 ## Wing sweep angle.
 @export_range(-70, 70, 0.001, "radians_as_degrees") var sweep := 0.0:
 	set(value):
@@ -215,6 +223,8 @@ class Section:
 	var restore_stall_angle_min: float
 
 
+var relax_forces := true
+
 var _force: Vector3
 var _torque: Vector3
 var _body: RigidBody3D
@@ -276,8 +286,9 @@ func _calculate_section_forces(section: Section, wind: Vector3) -> void:
 	var drag := drag_direction * section.drag_factor * pressure
 	var force := lift + drag
 	var torque := -right * section.torque_factor * pressure * section.chord
-	force = section.force + (force - section.force) * 0.5
-	torque = section.torque + (torque - section.torque) * 0.5
+	if relax_forces:
+		force = section.force + (force - section.force) * 0.5
+		torque = section.torque + (torque - section.torque) * 0.5
 	section.force = force
 	section.torque = torque
 
@@ -372,7 +383,7 @@ func _calculate_stall_factors(section: Section, angle_of_attack: float) -> Vecto
 	var half_pi := PI / 2.0
 	var z := half_pi - section.corrected_stall_angle_max if angle_of_attack > section.corrected_stall_angle_max else -half_pi - section.corrected_stall_angle_min
 	var w := (half_pi - clampf(angle_of_attack, -half_pi, half_pi)) / z if absf(z) >= 0.001 else 0.0
-	induced_angle = lerpf(0.0, induced_angle, w)
+	induced_angle = lerpf(0.0, induced_angle, clampf(w, 0.0, 1.0))
 	var effective_angle := angle_of_attack - section.corrected_zero_lift_angle - induced_angle
 	var sin_ea := sin(effective_angle)
 	var cos_ea := cos(effective_angle)
@@ -487,7 +498,7 @@ func _build_wing_sections() -> void:
 			var fraction := control_surface.start + (i + 0.5) * bound_size / section_count
 			var section_pos := base + (tip - base) * fraction
 			var section_chord := chord * (1.0 - (1.0 - taper) * fraction)
-			var section_twist = twist * fraction
+			var section_twist = twist * pow(fraction, twist_power)
 			_sections.append(_create_wing_section(control_surface, section_pos, section_chord, section_length, section_twist, false))
 			if mirror:
 				section_pos.x = -section_pos.x
