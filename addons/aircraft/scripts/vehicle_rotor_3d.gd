@@ -57,7 +57,7 @@ class_name VehicleRotor3D
 @export var tail_radius := 2.0
 @export var tail_blade_chord := 0.28
 @export var tail_blade_count := 3
-@export_range(0, 30.0, 0.001, "radians_as_degrees") var tail_max_angle := deg_to_rad(14.0)
+@export_range(0, 30.0, 0.001, "radians_as_degrees") var tail_max_angle := deg_to_rad(10.0)
 
 
 @export_range(0.0, 1.0, 0.01) var pitch := 0.0:
@@ -123,7 +123,7 @@ func calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, a
 		rotor_torque += blade.get_torque()
 		var blade_lift := blade.get_force().dot(up)
 		blade.rotation_degrees.z = _get_blade_bend_angle(blade_lift)
-	var tail_torque := _calc_fake_tail_torque(aircraft_angular_velocity, up)
+	var tail_torque := _calc_fake_tail_torque(aircraft_velocity, aircraft_angular_velocity, up)
 	_process_engine(delta, rotor_torque.dot(up))
 	_body.apply_central_force(rotor_force)
 	_body.apply_torque(tail_torque + rotor_torque - rotor_torque.dot(up) * up)
@@ -161,16 +161,18 @@ func _get_engine_torque() -> float:
 	return lerpf(0.0, max_torque, x)
 
 
-func _calc_fake_tail_torque(aircraft_angular_velocity: Vector3, up: Vector3) -> Vector3:
-	var back := _body.global_transform.basis.z.normalized()
+func _calc_fake_tail_torque(aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, up: Vector3) -> Vector3:
+	var back := global_basis.z.normalized()
+	var right := global_basis.x.normalized()
 	var arm := tail_arm * back
 	var work_area := tail_blade_count * tail_blade_chord * tail_radius * 0.5
-	var velocity := aircraft_angular_velocity.cross(arm)
-	velocity += tail_radius * angular_velocity * tail_gear_ratio * up
-	var pressure := 0.5 * velocity.length_squared() * density * work_area
-	var lift_direction := -velocity.cross(back).normalized()
-	var angle_of_attack := velocity.signed_angle_to(up, back) + rudder * collective_angle_max
-	var lift := TAU * angle_of_attack
+	var lateral_velocity := (aircraft_velocity + aircraft_angular_velocity.cross(arm)).dot(right)
+	var blade_velocity := tail_radius * angular_velocity * tail_gear_ratio
+	var velocity := lateral_velocity + blade_velocity
+	var pressure := 0.5 * velocity * velocity * density * work_area
+	var lift_direction := -right
+	var angle_of_attack := atan2(lateral_velocity, blade_velocity) + rudder * tail_max_angle
+	var lift := TAU * angle_of_attack if absf(angle_of_attack) < stall_angle else 0.0
 	var force := lift * pressure * lift_direction
 	var torque := arm.cross(force).dot(up) * up
 	return torque
