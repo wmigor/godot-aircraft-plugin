@@ -9,7 +9,7 @@ class_name InfoPanel
 @onready var rpm := $Parameters/Rpm as Label
 @onready var trim_elevator := $Parameters/TrimElevator as Label
 
-var aircraft: Aircraft
+var aircraft: AircraftBody3D
 
 
 func _process(_delta: float) -> void:

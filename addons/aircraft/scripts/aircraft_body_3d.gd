@@ -1,5 +1,5 @@
 extends VehicleBody3D
-class_name Aircraft
+class_name AircraftBody3D
 
 @export var flap_modes: Array[float] = [0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0]
 @export var brake_value := 1.0

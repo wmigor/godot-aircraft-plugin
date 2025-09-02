@@ -1,7 +1,7 @@
 extends Node
 class_name PlayerAircraftController
 
-@onready var aircraft := get_parent() as Aircraft
+@onready var aircraft := get_parent() as AircraftBody3D
 
 var aileron_key := 0.0
 var elevator_key := 0.0

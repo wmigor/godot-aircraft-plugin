@@ -5,7 +5,7 @@ class_name AircraftCamera
 @export var default_pitch := -20.0
 @export var stick_sens := 360.0
 
-@onready var aircraft := get_parent() as Aircraft
+@onready var aircraft := get_parent() as AircraftBody3D
 
 var yaw := 0.0
 var pitch := deg_to_rad(default_pitch)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://pt5e5ymsx528"]
 
-[ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_ivdla"]
+[ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_3r63h"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_3r63h"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_2460t"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
@@ -28,7 +28,7 @@ center_of_mass = Vector3(0, 1, 0)
 inertia = Vector3(3000, 3500, 1200)
 linear_damp_mode = 1
 angular_damp_mode = 1
-script = ExtResource("1_ivdla")
+script = ExtResource("1_3r63h")
 brake_value = 10.0
 horizontal_height = 0.274
 horizontal_rotation = -4.7

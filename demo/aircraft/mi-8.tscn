@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cog35xpdqehjv"]
 
-[ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_1sdnb"]
+[ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_td68f"]
 [ext_resource type="Script" uid="uid://blc3x0y8gvux8" path="res://addons/aircraft/scripts/vehicle_rotor_3d.gd" id="2_0x04r"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_rkqbg"]
 
@@ -14,7 +14,7 @@ center_of_mass = Vector3(0, 1, 0)
 inertia = Vector3(90000, 50000, 35000)
 linear_damp_mode = 1
 angular_damp_mode = 1
-script = ExtResource("1_1sdnb")
+script = ExtResource("1_td68f")
 horizontal_height = 1.24
 camera_distance = 20.0
 
