@@ -133,7 +133,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if _body == null or Engine.is_editor_hint():
+	if _body == null or not visible or Engine.is_editor_hint():
 		return
 	var state := PhysicsServer3D.body_get_direct_state(_body.get_rid())
 	calculate(delta, _body.transform * state.center_of_mass_local, state.linear_velocity, state.angular_velocity, 1.2255)
