@@ -22,6 +22,8 @@ func _redraw(gizmo: EditorNode3DGizmo) -> void:
 	var lines := PackedVector3Array()
 	for i in rotor.blade_count:
 		_add_blade_lines(rotor, i, lines)
+	for i in rotor.tail_blade_count:
+		_add_tail_lines(rotor, i, lines)
 	gizmo.add_lines(lines, get_material("blade_material", gizmo), false, Color.WHITE)
 
 
@@ -47,6 +49,31 @@ func _add_blade_lines(rotor: VehicleRotor3D, index: int, lines: PackedVector3Arr
 
 	lines.append(lines[len(lines) - 1])
 	lines.append(tip - tip_right * half_chord)
+	
+	lines.append(lines[len(lines) - 1])
+	lines.append(lines[len(lines) - 9])
+
+
+func _add_tail_lines(rotor: VehicleRotor3D, index: int, lines: PackedVector3Array) -> void:
+	var yaw := index * TAU / maxi(1, rotor.tail_blade_count)
+	var direction := Vector3.FORWARD.rotated(Vector3.RIGHT, yaw)
+	var base := Vector3.BACK * rotor.tail_arm + direction * rotor.tail_blade_chord * 0.5
+	base += Vector3.DOWN * rotor.tail_radius
+	var tip := base + direction * rotor.tail_radius
+	var angle := rotor.tail_max_angle * rotor.tail_pitch
+	var right := direction.cross(Vector3.RIGHT).rotated(direction, angle)
+	var half_chord := rotor.tail_blade_chord * 0.5
+	lines.append(base - right * half_chord)
+	lines.append(base + right * half_chord)
+	
+	lines.append(lines[len(lines) - 1])
+	lines.append(tip + right * half_chord)
+	
+	lines.append(lines[len(lines) - 1])
+	lines.append(tip + right * half_chord)
+
+	lines.append(lines[len(lines) - 1])
+	lines.append(tip - right * half_chord)
 	
 	lines.append(lines[len(lines) - 1])
 	lines.append(lines[len(lines) - 9])

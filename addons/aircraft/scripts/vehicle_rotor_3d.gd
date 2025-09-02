@@ -2,12 +2,13 @@
 extends VehicleThruster3D
 class_name VehicleRotor3D
 
+@export_group("Blades")
 @export var radius := 10.5:
 	set(value):
 		radius = value
 		update_gizmos()
 
-@export var blade_count := 4:
+@export_range(2, 10, 1) var blade_count := 4:
 	set(value):
 		blade_count = value
 		update_gizmos()
@@ -47,19 +48,43 @@ class_name VehicleRotor3D
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(2.0)
 @export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(30.0)
 @export_range(-10, 0.0, 0.001, "radians_as_degrees") var blade_zero_lift_angle := deg_to_rad(-2.0)
+@export var alternative_drag := true
+
+@export_group("Engine")
 @export var max_rpm := 192.0
 @export var inertia := 25000.0
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 3800.0
-@export var alternative_drag := true
 
+@export_group("Tail")
 @export var tail_gear_ratio := 6.0
-@export var tail_arm := 12.5
-@export var tail_radius := 2.0
-@export var tail_blade_chord := 0.28
-@export var tail_blade_count := 3
-@export_range(0, 30.0, 0.001, "radians_as_degrees") var tail_max_angle := deg_to_rad(10.0)
+@export var tail_arm := 12.5:
+	set(value):
+		tail_arm = value
+		update_gizmos()
+
+@export var tail_radius := 2.0:
+	set(value):
+		tail_radius = value
+		update_gizmos()
+
+@export var tail_blade_chord := 0.28:
+	set(value):
+		tail_blade_chord = value
+		update_gizmos()
+
+@export_range(2, 10, 1) var tail_blade_count := 3:
+	set(value):
+		tail_blade_count = value
+		update_gizmos()
+
+@export_range(0, 30.0, 0.001, "radians_as_degrees") var tail_max_angle := deg_to_rad(10.0):
+	set(value):
+		tail_max_angle = value
+		update_gizmos()
 
 
+
+@export_group("Input")
 @export_range(0.0, 1.0, 0.01) var pitch := 0.0:
 	set(value):
 		pitch = value
@@ -75,13 +100,19 @@ class_name VehicleRotor3D
 		stick_len = value
 		update_gizmos()
 
+@export_range(-1.0, 1.0, 0.01) var tail_pitch: float:
+	set(value):
+		tail_pitch = value
+		update_gizmos()
+
 var running := true
-var rudder: float
 var collective_angle: float:
 	get(): return lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
 
 var _blades: Array[VehicleWing3D]
 var _rotor_pivot: Node3D
+var _force: Vector3
+var _torque: Vector3
 var _debug_view: Node3D
 
 
@@ -125,8 +156,11 @@ func calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, a
 		blade.rotation_degrees.z = _get_blade_bend_angle(blade_lift)
 	var tail_torque := _calc_fake_tail_torque(aircraft_velocity, aircraft_angular_velocity, up)
 	_process_engine(delta, rotor_torque.dot(up))
-	_body.apply_central_force(rotor_force)
-	_body.apply_torque(tail_torque + rotor_torque - rotor_torque.dot(up) * up)
+	rotor_torque = tail_torque + rotor_torque - rotor_torque.dot(up) * up
+	_force += (rotor_force - _force) * 0.5
+	_torque += (rotor_torque - _torque) * 0.5
+	_body.apply_central_force(_force)
+	_body.apply_torque(_torque)
 
 
 func get_azimuthal_angle(blade_angle: float) -> float:
@@ -171,7 +205,7 @@ func _calc_fake_tail_torque(aircraft_velocity: Vector3, aircraft_angular_velocit
 	var velocity := lateral_velocity + blade_velocity
 	var pressure := 0.5 * velocity * velocity * density * work_area
 	var lift_direction := -right
-	var angle_of_attack := atan2(lateral_velocity, blade_velocity) + rudder * tail_max_angle
+	var angle_of_attack := atan2(lateral_velocity, blade_velocity) + tail_pitch * tail_max_angle
 	var lift := TAU * angle_of_attack if absf(angle_of_attack) < stall_angle else 0.0
 	var force := lift * pressure * lift_direction
 	var torque := arm.cross(force).dot(up) * up

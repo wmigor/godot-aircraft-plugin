@@ -26,7 +26,7 @@ func _process(delta: float) -> void:
 		var speed := delta_angle * rpm / _rotor.max_rpm / _rotor.tail_gear_ratio / 0.25
 		rotate_x(delta_angle + speed * delta)
 	for blade in _blades:
-		blade.rotation.z = _rotor.rudder * _rotor.tail_max_angle
+		blade.rotation.z = _rotor.tail_pitch * _rotor.tail_max_angle
 
 
 func _build() -> void:
