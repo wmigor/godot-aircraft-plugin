@@ -83,6 +83,7 @@ func _calculate(velocity: float) -> void:
 	var tc := (1.0 - lambda) / (1.0 - _lambda_peak)
 	thrust = 0.5 * density * v2 * _f0 * tc
 	torque = thrust / gamma
+	wind = _calc_wind(velocity, density)
 	if lambda > 1.0:
 		var tau0 := (0.25 * j0) / (efficiency * _beta * (1.0 - _lambda_peak))
 		var lambda_wm = 1.2
@@ -123,6 +124,14 @@ func _process_pitch(delta: float) -> void:
 	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
 	var rpm_delta := target_rpm - rpm
 	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.7)
+
+
+func _calc_wind(velocity: float, density: float) -> float:
+	var area := radius * radius * PI
+	var vel2sum := velocity * absf(velocity) + 2.0 * thrust / (density * area)
+	if vel2sum > 0.0:
+		return -velocity + sqrt(vel2sum)
+	return -velocity - sqrt(-vel2sum)
 
 
 var VehiclePropeller3DDebugView := preload("uid://bi5f3pjnf633x")

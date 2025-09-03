@@ -181,6 +181,8 @@ enum Type { Wing, Elevator, Rudder }
 		flap_value = value
 		update_gizmos()
 
+## Global wind
+@export var global_wind: Vector3
 
 @export_group("Debug")
 ## Enables debug view of wing sections
@@ -273,7 +275,7 @@ func calculate(linear_velocity: Vector3, angular_velocity: Vector3, center_of_ma
 	for section in _sections:
 		section.global_transform = global_transform * section.transform
 		var arm := section.global_transform.origin - center_of_mass
-		var wind := -(linear_velocity + angular_velocity.cross(arm))
+		var wind := global_wind - (linear_velocity + angular_velocity.cross(arm))
 		_calculate_section_forces(section, wind)
 		_force += section.force
 		_torque += section.torque + arm.cross(section.force)

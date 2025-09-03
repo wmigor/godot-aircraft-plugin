@@ -9,6 +9,7 @@ class_name AircraftBody3D
 @export var camera_distance := 8.0
 @export var trim_scale := 0.2
 @export var trim_step := 0.1
+@export_range(0.0, 1.0, 0.001) var thruster_wind_factor := 0.1
 @export var debug := true
 
 @export_group("Input")
@@ -44,6 +45,15 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_apply_input(delta)
+	if thruster_wind_factor > 0.0:
+		var wind := Vector3.ZERO
+		for thruster in _thrusters:
+			var back := thruster.global_basis.z
+			wind += thruster.wind * back * thruster_wind_factor
+		for rudder in _rudders:
+			rudder.global_wind = wind
+		for elevator in _elevators:
+			elevator.global_wind = wind
 
 
 func _apply_input(delta: float) -> void:
