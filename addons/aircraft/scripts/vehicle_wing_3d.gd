@@ -18,6 +18,8 @@ class_name VehicleWing3D
 ## [b]Note:[/b] When shape parameters are modified, the wing adapts to maintain the center of
 ## pressure at the wing node's position.[br][br]
 
+enum Type { Wing, Elevator, Rudder }
+
 @export_group("Shape")
 ## Wing span. Distance between wingtips.
 @export var span := 4.0:
@@ -104,6 +106,8 @@ class_name VehicleWing3D
 @export var alternative_drag := true
 
 @export_group("Control surfaces")
+## Wing type
+@export var type := Type.Wing
 ## Flap start relative to wing length.
 @export_range(0, 1, 0.001) var flap_start := 0.1:
 	set(value):
@@ -177,6 +181,8 @@ class_name VehicleWing3D
 		flap_value = value
 		update_gizmos()
 
+## Global wind
+@export var global_wind: Vector3
 
 @export_group("Debug")
 ## Enables debug view of wing sections
@@ -244,7 +250,7 @@ func _exit_tree() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if _body == null:
+	if _body == null or not visible or Engine.is_editor_hint():
 		return
 	var state := PhysicsServer3D.body_get_direct_state(_body.get_rid())
 	if state != null:
@@ -269,7 +275,7 @@ func calculate(linear_velocity: Vector3, angular_velocity: Vector3, center_of_ma
 	for section in _sections:
 		section.global_transform = global_transform * section.transform
 		var arm := section.global_transform.origin - center_of_mass
-		var wind := -(linear_velocity + angular_velocity.cross(arm))
+		var wind := global_wind - (linear_velocity + angular_velocity.cross(arm))
 		_calculate_section_forces(section, wind)
 		_force += section.force
 		_torque += section.torque + arm.cross(section.force)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://byms7r5tty5kg"]
 
-[ext_resource type="Script" uid="uid://ulc5c742n0e6" path="res://demo/aircraft/aircraft.gd" id="1_to4ok"]
+[ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_to4ok"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_ccpia"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_ccpia"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_to4ok"]
@@ -65,6 +65,7 @@ taper = 0.673
 stall_angle_max = 0.244346
 stall_angle_min = -0.244346
 stall_width = 0.20944
+type = 1
 flap_start = 0.0
 flap_end = 1.0
 flap_fraction = 0.5
@@ -87,6 +88,7 @@ mirror = false
 stall_angle_max = 0.244346
 stall_angle_min = -0.244346
 stall_width = 0.20944
+type = 2
 flap_start = 0.0
 flap_end = 1.0
 flap_fraction = 0.5

@@ -5,7 +5,7 @@ extends Node3D
 @onready var info_panel := $InfoPanel as InfoPanel
 @onready var aircraft_name := $AircraftName as Label
 
-var aircraft: Aircraft
+var aircraft: AircraftBody3D
 var aircraft_index := 0
 
 
@@ -18,7 +18,7 @@ func spawn_aircraft(index: int) -> void:
 	aircraft_index = index
 	if index < 0 or index >= len(aircrafts) or aircrafts[index] == null:
 		return
-	aircraft = aircrafts[index].instantiate() as Aircraft
+	aircraft = aircrafts[index].instantiate() as AircraftBody3D
 	if aircraft == null:
 		return
 	var height := aircraft.horizontal_height

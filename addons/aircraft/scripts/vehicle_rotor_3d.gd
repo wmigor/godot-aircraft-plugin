@@ -105,7 +105,6 @@ class_name VehicleRotor3D
 		tail_pitch = value
 		update_gizmos()
 
-var running := true
 var collective_angle: float:
 	get(): return lerpf(collective_angle_min, collective_angle_max, clampf(pitch, 0.0, 1.0))
 
@@ -134,7 +133,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if _body == null or Engine.is_editor_hint():
+	if _body == null or not visible or Engine.is_editor_hint():
 		return
 	var state := PhysicsServer3D.body_get_direct_state(_body.get_rid())
 	calculate(delta, _body.transform * state.center_of_mass_local, state.linear_velocity, state.angular_velocity, 1.2255)
