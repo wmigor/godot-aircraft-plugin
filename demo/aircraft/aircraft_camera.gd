@@ -4,6 +4,7 @@ class_name AircraftCamera
 @export var distance := 10.0
 @export var default_pitch := -20.0
 @export var stick_sens := 360.0
+@export var mouse_sens := 0.5
 
 @onready var aircraft := get_parent() as AircraftBody3D
 
@@ -38,13 +39,13 @@ func _process_stick(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	var motion := event as InputEventMouseMotion
 	if motion != null and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		yaw -= deg_to_rad(motion.relative.x)
-		pitch -= deg_to_rad(motion.relative.y)
+		yaw -= deg_to_rad(motion.relative.x) * mouse_sens
+		pitch -= deg_to_rad(motion.relative.y) * mouse_sens
 		return
 	var drag := event as InputEventScreenDrag
 	if drag != null:
-		yaw -= deg_to_rad(drag.relative.x)
-		pitch -= deg_to_rad(drag.relative.y)
+		yaw -= deg_to_rad(drag.relative.x) * mouse_sens
+		pitch -= deg_to_rad(drag.relative.y) * mouse_sens
 		return
 	if event.is_action_released("reset_camera"):
 		yaw = 0.0

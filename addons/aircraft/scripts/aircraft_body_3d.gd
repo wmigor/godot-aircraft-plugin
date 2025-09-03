@@ -48,8 +48,7 @@ func _physics_process(delta: float) -> void:
 	if thruster_wind_factor > 0.0:
 		var wind := Vector3.ZERO
 		for thruster in _thrusters:
-			var back := thruster.global_basis.z
-			wind += thruster.wind * back * thruster_wind_factor
+			wind += thruster.wind * thruster_wind_factor
 		for rudder in _rudders:
 			rudder.global_wind = wind
 		for elevator in _elevators:

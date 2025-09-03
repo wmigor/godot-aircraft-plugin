@@ -56,7 +56,7 @@ func _physics_process(delta: float) -> void:
 	var engine_torque := _get_engine_torque()
 	if constant_speed:
 		_process_pitch(delta)
-	_calculate(velocity)
+	_calculate(velocity, forward)
 	var force := thrust * forward
 	_body.apply_force(force, global_position - _body.global_position)
 	if apply_engine_torque:
@@ -68,7 +68,7 @@ func _physics_process(delta: float) -> void:
 		angular_velocity = 0.0
 
 
-func _calculate(velocity: float) -> void:
+func _calculate(velocity: float, forward: Vector3) -> void:
 	if velocity < 0.0:
 		velocity = 0.0
 
@@ -83,7 +83,7 @@ func _calculate(velocity: float) -> void:
 	var tc := (1.0 - lambda) / (1.0 - _lambda_peak)
 	thrust = 0.5 * density * v2 * _f0 * tc
 	torque = thrust / gamma
-	wind = _calc_wind(velocity, density)
+	wind = -forward * _calc_wind(velocity, density)
 	if lambda > 1.0:
 		var tau0 := (0.25 * j0) / (efficiency * _beta * (1.0 - _lambda_peak))
 		var lambda_wm = 1.2
