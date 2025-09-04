@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://cog35xpdqehjv"]
+
+[ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_td68f"]
+[ext_resource type="Script" uid="uid://blc3x0y8gvux8" path="res://addons/aircraft/scripts/vehicle_rotor_3d.gd" id="2_0x04r"]
+[ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_rkqbg"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_td68f"]
+size = Vector3(2.5, 2.5, 10)
+
+[node name="Mi-8" type="VehicleBody3D"]
+mass = 12000.0
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, 1, 0)
+inertia = Vector3(90000, 50000, 35000)
+linear_damp_mode = 1
+angular_damp_mode = 1
+script = ExtResource("1_td68f")
+horizontal_height = 1.24
+camera_distance = 20.0
+input_throttle = 0.0
+
+[node name="Rotor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("2_0x04r")
+blade_count = 5
+
+[node name="Fuselage" type="Node3D" parent="."]
+script = ExtResource("3_rkqbg")
+length = 10.0
+front_width = 1.5
+rear_width = 1.5
+midpoint_width = 2.5
+midpoint = 0.5
+cylinder = true
+drag_max = 0.5
+metadata/_custom_type_script = "uid://i7qb6e7eelmo"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_td68f")

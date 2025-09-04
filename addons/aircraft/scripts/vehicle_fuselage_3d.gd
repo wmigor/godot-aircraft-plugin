@@ -51,7 +51,7 @@ class_name VehicleFuselage3D
 @export var density := 1.2255
 
 @export_group("Debug")
-## Enables debug view of wing sections
+## Enables debug view of fuselage sections
 @export var debug: bool:
 	set(value):
 		if value != debug:
@@ -84,7 +84,7 @@ func _exit_tree() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if _body == null or Engine.is_editor_hint():
+	if _body == null or not visible or Engine.is_editor_hint():
 		return
 	var state := PhysicsServer3D.body_get_direct_state(_body.get_rid())
 	if state != null:
@@ -204,7 +204,7 @@ func _create_section(section_position, section_width, section_length, section_cy
 
 func _get_nominal_section_length(width_base: float, tip_width: float, part_length: float) -> float:
 	var max_width := maxf(width_base, maxf(tip_width, midpoint_width))
-	var section_length := max_width / part_length / 2.0
+	var section_length := max_width / part_length
 	if section_length <= 0.0:
 		return 0.0
 	var section_count := ceili(1.0 / section_length)

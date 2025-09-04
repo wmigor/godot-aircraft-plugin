@@ -5,7 +5,7 @@ extends Node3D
 @onready var info_panel := $InfoPanel as InfoPanel
 @onready var aircraft_name := $AircraftName as Label
 
-var aircraft: Aircraft
+var aircraft: AircraftBody3D
 var aircraft_index := 0
 
 
@@ -18,10 +18,13 @@ func spawn_aircraft(index: int) -> void:
 	aircraft_index = index
 	if index < 0 or index >= len(aircrafts) or aircrafts[index] == null:
 		return
-	aircraft = aircrafts[index].instantiate() as Aircraft
+	aircraft = aircrafts[index].instantiate() as AircraftBody3D
 	if aircraft == null:
 		return
-	aircraft.position.y = aircraft.horizontal_height
+	var height := aircraft.horizontal_height
+	if Input.is_action_pressed("mode"):
+		height += 1000.0
+	aircraft.position.y = height
 	aircraft.rotation.x = deg_to_rad(aircraft.horizontal_rotation)
 	var camera := AircraftCamera.new()
 	camera.distance = aircraft.camera_distance
@@ -45,8 +48,17 @@ func clear() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("spawn_next"):
 		spawn_next()
+	elif event.is_action_pressed("toggle_fullscreen"):
+		toggle_fullscreen()
 
 
 func spawn_next() -> void:
 	if len(aircrafts) > 0:
 		spawn_aircraft((aircraft_index + 1) % len(aircrafts))
+
+
+func toggle_fullscreen() -> void:
+	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)

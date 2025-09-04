@@ -100,7 +100,6 @@ func _get_control_surface_material(index: int) -> Material:
 
 
 func _create_material(color: Color) -> Material:
-	print("create material")
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
 	return material
