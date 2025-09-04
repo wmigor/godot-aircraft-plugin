@@ -105,6 +105,8 @@ var _matrix_dirty := true
 var _panels: Array[WingPanel]
 var _debug_view: Node3D
 var _aic_matrix: Array[Array]
+var _v: Array[float]
+var _s: Array[float]
 
 
 func _enter_tree() -> void:
@@ -249,6 +251,24 @@ func _build_aic_matrix() -> void:
 			var velocity_induced := vortex.dot(panel1.normal)
 			_aic_matrix[i][j] = velocity_induced
 
+	_v.resize(count)
+	var velocity := 10
+	for i in count:
+		var panel := _panels[i]
+		_v[i] = velocity * deg_to_rad(15.0)
+
+	_solve(_aic_matrix, _v, _s)
+	var density := 1.2255
+	var lift := 0.0
+	var p := 0.5 * density * velocity * velocity
+	var area := 0.0
+	for i in count:
+		var panel := _panels[i]
+		var le := panel.front_left.distance_to(panel.front_right)
+		lift += velocity * density * _s[i] * le
+		area += panel.area
+	var cl = lift / area / p
+	print(cl)
 
 func _get_bound_vortex(vortex_point1: Vector3, vortex_point2: Vector3, control_point: Vector3, gamma := 1.0) -> Vector3:
 	var d1 := vortex_point1 - control_point
@@ -346,3 +366,41 @@ func _update_debug_view() -> void:
 	if debug:
 		_debug_view = VlmWing3DDebugView.new()
 		add_child(_debug_view)
+
+
+func _solve(a: Array[Array], b: Array[float], s: Array[float]):
+	var n := len(a)
+	for i in n:
+		var max_i := i
+		var max_value = a[i][i]
+		for t in n - i - 1:
+			var k := i + 1 + t
+			if absf(a[k][i]) > max_value:
+				max_i = i
+				max_value = a[k][i]
+		if max_i != i:
+			var temp = b[i]
+			b[i] = b[max_i]
+			b[max_i] = temp
+			temp = a[i]
+			a[i] = a[max_i]
+			a[max_i] = temp
+		if absf(a[i][i]) < 0.000001:
+			push_error("Матрица вырождена или почти вырождена")
+			return []
+		for t in n - i - 1:
+			var k := i + 1 + t
+			var factor = a[k][i] / a[i][i]
+			for j in n:
+				a[k][j] -= factor * a[i][j]
+			b[k] -= factor * b[i]
+
+	s.resize(n)
+
+	for t in n:
+		var i := n - 1 - t
+		s[i] = b[i]
+		for tt in n - i - 1:
+			var j := n - tt - 1
+			s[i] -= a[i][j] * s[j]
+		s[i] /= a[i][i]
