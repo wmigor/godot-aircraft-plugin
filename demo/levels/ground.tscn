@@ -34,7 +34,7 @@ shape = SubResource("WorldBoundaryShape3D_gjl0y")
 debug_fill = false
 
 [node name="Box" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -577.641)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -710.245)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Box"]
 shape = SubResource("BoxShape3D_h3u77")
@@ -44,7 +44,7 @@ size = Vector3(100, 10, 10)
 material = ExtResource("4_nwecp")
 
 [node name="Box2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -748.59)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -881.194)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Box2"]
 shape = SubResource("BoxShape3D_h3u77")
@@ -54,7 +54,7 @@ size = Vector3(100, 10, 10)
 material = ExtResource("4_nwecp")
 
 [node name="Box3" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -898.915)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -1031.52)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Box3"]
 shape = SubResource("BoxShape3D_h3u77")

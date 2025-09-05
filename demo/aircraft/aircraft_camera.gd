@@ -32,8 +32,8 @@ func _process(delta: float) -> void:
 
 func _process_stick(delta: float) -> void:
 	var stick := Input.get_vector("camera_left", "camera_right", "camera_down", "camera_up")
-	yaw -= deg_to_rad(stick.x) * delta * stick_sens
-	pitch += deg_to_rad(stick.y) * delta * stick_sens
+	yaw -= deg_to_rad(stick.x * absf(stick.x)) * delta * stick_sens
+	pitch += deg_to_rad(stick.y * absf(stick.y)) * delta * stick_sens
 
 
 func _input(event: InputEvent) -> void:
