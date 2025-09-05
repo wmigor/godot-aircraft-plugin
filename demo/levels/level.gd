@@ -4,6 +4,7 @@ extends Node3D
 
 @onready var info_panel := $InfoPanel as InfoPanel
 @onready var aircraft_name := $AircraftName as Label
+@onready var papi := $PrecisionApproachPathIndicator as PrecisionApproachPathIndicator
 
 var aircraft: AircraftBody3D
 var aircraft_index := 0
@@ -21,11 +22,12 @@ func spawn_aircraft(index: int) -> void:
 	aircraft = aircrafts[index].instantiate() as AircraftBody3D
 	if aircraft == null:
 		return
-	var height := aircraft.horizontal_height
-	if Input.is_action_pressed("mode"):
-		height += 1000.0
-	aircraft.position.y = height
+	aircraft.position.y = aircraft.horizontal_height
 	aircraft.rotation.x = deg_to_rad(aircraft.horizontal_rotation)
+	if Input.is_action_pressed("mode"):
+		aircraft.position.y += 1000.0
+		aircraft.position.z = -4000
+		aircraft.rotation.y = PI
 	var camera := AircraftCamera.new()
 	camera.distance = aircraft.camera_distance
 	aircraft.add_child(camera, true)
@@ -35,6 +37,7 @@ func spawn_aircraft(index: int) -> void:
 		info_panel.aircraft = aircraft
 	if aircraft_name != null:
 		aircraft_name.text = aircraft.name
+	papi.target = aircraft
 
 
 func clear() -> void:
@@ -43,6 +46,7 @@ func clear() -> void:
 		aircraft = null
 	if info_panel != null:
 		info_panel.aircraft = null
+	papi.target = null
 
 
 func _input(event: InputEvent) -> void:
