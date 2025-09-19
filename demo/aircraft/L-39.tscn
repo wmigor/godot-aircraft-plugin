@@ -1,0 +1,174 @@
+[gd_scene load_steps=10 format=3 uid="uid://b5lj0nc8qwqtd"]
+
+[ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_wbti5"]
+[ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_wos3d"]
+[ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_6nxcw"]
+[ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_v26s5"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
+height = 6.18188
+radius = 0.25
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c4w4o"]
+size = Vector3(9.14, 0.1, 1.494)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qxvgi"]
+size = Vector3(1, 1, 1.56226)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ivdla"]
+size = Vector3(3.108, 0.1, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7bubi"]
+size = Vector3(0.001, 1.74402, 1.17969)
+
+[node name="L-39" type="VehicleBody3D"]
+mass = 4337.0
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, 1, 0)
+inertia = Vector3(7000, 5000, 2500)
+linear_damp_mode = 1
+angular_damp_mode = 1
+script = ExtResource("1_wbti5")
+brake_value = 10.0
+horizontal_height = 0.274
+horizontal_rotation = -4.7
+camera_distance = 11.0
+
+[node name="Wing" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9993905, -0.034899484, 0, 0.034899484, 0.9993905, 0, 0.831, 0.121768475)
+script = ExtResource("2_wos3d")
+span = 8.05
+chord = 2.4699999999999998
+taper = 0.4
+sweep = -0.05235987755982989
+dihedral = 0.04363323129985824
+zero_lift_angle = -0.00034906585039885845
+stall_width = 0.15707963267948966
+flap_start = 0.09
+flap_end = 0.638
+flap_angle_max = 0.767944870877505
+flap_angle_min = 0.0
+aileron_start = 0.638
+aileron_end = 1.0
+aileron_fraction = 0.3
+aileron_angle_max = 0.279253
+aileron_angle_min = -0.383972
+metadata/_custom_type_script = "uid://bugtnfunnraoj"
+
+[node name="Elevator" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.99955857, 0.029666206, 0, -0.029666206, 0.99955857, 0, 1.387, 4.762)
+script = ExtResource("2_wos3d")
+span = 3.95
+chord = 1.4020000000000001
+taper = 0.51
+sweep = 0.06981317007977318
+stall_angle_max = 0.3490658503988659
+stall_angle_min = -0.3490658503988659
+stall_width = 0.17453292519943295
+type = 1
+flap_end = 1.0
+flap_fraction = 0.4
+flap_angle_max = 0.436332
+flap_angle_min = -0.436332
+aileron_start = 0.0
+aileron_end = 0.0
+aileron_fraction = 0.0
+aileron_angle_max = 0.0
+aileron_angle_min = 0.0
+metadata/_custom_type_script = "uid://bugtnfunnraoj"
+
+[node name="Rudder" type="Node3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 1.085, 4.762)
+script = ExtResource("2_wos3d")
+span = 2.565
+chord = 2.22
+taper = 0.35
+sweep = 0.5934119456780721
+mirror = false
+stall_angle_max = 0.33161255787892263
+stall_angle_min = -0.33161255787892263
+stall_width = 0.13962634015954636
+type = 2
+flap_start = 0.2
+flap_end = 0.86
+flap_angle_max = 0.471239
+flap_angle_min = -0.471239
+aileron_start = 0.0
+aileron_end = 0.0
+aileron_fraction = 0.0
+aileron_angle_max = 0.0
+aileron_angle_min = 0.0
+metadata/_custom_type_script = "uid://bugtnfunnraoj"
+
+[node name="Fuselage" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 1.7)
+script = ExtResource("3_6nxcw")
+length = 7.75
+front_width = 1.0
+rear_width = 0.2
+midpoint = 0.3
+cylinder = true
+metadata/_custom_type_script = "uid://i7qb6e7eelmo"
+
+[node name="Propeller" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -2.3)
+script = ExtResource("4_v26s5")
+max_rpm = 10000.0
+max_rpm_velocity = 760.0
+max_engine_power = 3850.0
+constant_speed = true
+metadata/_custom_type_script = "uid://1ure55g3chtu"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 0.934058)
+shape = SubResource("CylinderShape3D_c4w4o")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.831, 0.595937)
+shape = SubResource("BoxShape3D_c4w4o")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.627915, -0.165173)
+shape = SubResource("BoxShape3D_qxvgi")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.387, 4.78886)
+shape = SubResource("BoxShape3D_ivdla")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.75901, 4.8787)
+shape = SubResource("BoxShape3D_7bubi")
+
+[node name="WheelF" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
+use_as_steering = true
+wheel_radius = 0.25
+suspension_stiffness = 50.0
+suspension_max_force = 600000.0
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelF"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.25
+height = 0.2
+
+[node name="WheelL" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0.7)
+wheel_radius = 0.25
+suspension_stiffness = 50.0
+suspension_max_force = 600000.0
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelL"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.25
+height = 0.2
+
+[node name="WheelR" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.7)
+wheel_radius = 0.25
+suspension_stiffness = 50.0
+suspension_max_force = 600000.0
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelR"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.25
+height = 0.2

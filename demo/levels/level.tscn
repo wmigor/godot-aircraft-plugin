@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://boonkhcx0sdwp"]
+[gd_scene load_steps=10 format=3 uid="uid://boonkhcx0sdwp"]
 
 [ext_resource type="Script" uid="uid://csp8ors3tvmcv" path="res://demo/levels/level.gd" id="1_5mrsh"]
 [ext_resource type="PackedScene" uid="uid://cymcchdpmb3iy" path="res://demo/aircraft/cessna-172.tscn" id="3_5mrsh"]
@@ -7,12 +7,13 @@
 [ext_resource type="PackedScene" uid="uid://byms7r5tty5kg" path="res://demo/aircraft/su-26m.tscn" id="5_ya3gt"]
 [ext_resource type="PackedScene" uid="uid://cog35xpdqehjv" path="res://demo/aircraft/mi-8.tscn" id="5_ystn6"]
 [ext_resource type="PackedScene" uid="uid://b1o38th6yrrkr" path="res://demo/levels/ground.tscn" id="6_gjl0y"]
+[ext_resource type="PackedScene" uid="uid://b5lj0nc8qwqtd" path="res://demo/aircraft/L-39.tscn" id="6_ystn6"]
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_safpt"]
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_5mrsh")
-aircrafts = Array[PackedScene]([ExtResource("4_gjl0y"), ExtResource("3_5mrsh"), ExtResource("5_ya3gt"), ExtResource("5_ystn6")])
+aircrafts = Array[PackedScene]([ExtResource("4_gjl0y"), ExtResource("3_5mrsh"), ExtResource("5_ya3gt"), ExtResource("5_ystn6"), ExtResource("6_ystn6")])
 
 [node name="InfoPanel" parent="." instance=ExtResource("4_safpt")]
 
