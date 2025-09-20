@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_wbti5"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_wos3d"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_6nxcw"]
-[ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_v26s5"]
+[ext_resource type="Script" uid="uid://n0qycfy5ewx7" path="res://demo/aircraft/turbine.gd" id="4_wbti5"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
 height = 6.18188
@@ -38,11 +38,11 @@ camera_distance = 11.0
 transform = Transform3D(1, 0, 0, 0, 0.9993905, -0.034899484, 0, 0.034899484, 0.9993905, 0, 0.831, 0.121768475)
 script = ExtResource("2_wos3d")
 span = 8.05
-chord = 2.4699999999999998
+chord = 2.47
 taper = 0.4
 sweep = -0.05235987755982989
 dihedral = 0.04363323129985824
-zero_lift_angle = -0.00034906585039885845
+zero_lift_angle = -0.00034906585039885
 stall_width = 0.15707963267948966
 flap_start = 0.09
 flap_end = 0.638
@@ -59,7 +59,7 @@ metadata/_custom_type_script = "uid://bugtnfunnraoj"
 transform = Transform3D(1, 0, 0, 0, 0.99955857, 0.029666206, 0, -0.029666206, 0.99955857, 0, 1.387, 4.762)
 script = ExtResource("2_wos3d")
 span = 3.95
-chord = 1.4020000000000001
+chord = 1.402
 taper = 0.51
 sweep = 0.06981317007977318
 stall_angle_max = 0.3490658503988659
@@ -110,14 +110,9 @@ midpoint = 0.3
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
-[node name="Propeller" type="Node3D" parent="."]
+[node name="Turbine" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -2.3)
-script = ExtResource("4_v26s5")
-max_rpm = 10000.0
-max_rpm_velocity = 760.0
-max_engine_power = 3850.0
-constant_speed = true
-metadata/_custom_type_script = "uid://1ure55g3chtu"
+script = ExtResource("4_wbti5")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 0.934058)
