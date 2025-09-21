@@ -11,8 +11,13 @@ extends Control
 @export_range(0.0, 1.6, 0.001) var stall_drop := 0.1
 @export_range(0.0, 1.6, 0.001) var stalled_drop := 0.8
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
+@export_range(20.0, 180, 1.0) var interval := 180.0
+
+@onready var _angle_label := $GridContainer/Angle
+@onready var _lift_label := $GridContainer/Lift
 
 var _lift: Array[float]
+var _cursor: Vector2
 
 
 func _process(_delta: float) -> void:
@@ -63,6 +68,7 @@ func _get_lift(angle: float) -> float:
 func _draw() -> void:
 	_draw_axis()
 	_draw_plot()
+	_draw_cursor()
 
 
 func _draw_axis() -> void:
@@ -72,9 +78,14 @@ func _draw_axis() -> void:
 	draw_line(Vector2(center.x, 0.0), Vector2(center.x, rect.size.y), Color.WHITE)
 
 
+func _draw_cursor() -> void:
+	var rect := get_rect()
+	draw_line(Vector2(_cursor.x, 0.0), Vector2(_cursor.x, rect.size.y), Color.ORANGE)
+
+
 func _draw_plot() -> void:
 	var rect := get_rect()
-	var lift_scale := rect.size.y / max_lift / 2.0
+	var lift_scale := rect.size.y / max_lift * 0.9 / 2.0
 	var center := rect.get_center()
 	var start_pixel := rect.position.x
 	var end_pixel := rect.end.x
@@ -90,7 +101,8 @@ func _draw_plot() -> void:
 
 
 func _map_x_to_angle(x: float) -> float:
-	return deg_to_rad(x * 360.0 / get_rect().size.x - 180.0)
+	var s := interval / 180.0
+	return deg_to_rad(x * 360.0 * s / get_rect().size.x - interval)
 
 
 func _input(event: InputEvent) -> void:
@@ -98,4 +110,6 @@ func _input(event: InputEvent) -> void:
 	if motion != null:
 		var angle := _map_x_to_angle(motion.position.x)
 		var lift := _get_lift(angle)
-		print("angle: {0}, lift: {1}".format([snappedf(rad_to_deg(angle), 0.001), lift]))
+		_cursor = motion.position
+		_angle_label.text = str(snappedf(rad_to_deg(angle), 0.001))
+		_lift_label.text = str(snappedf(lift, 0.001))
