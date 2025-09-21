@@ -46,7 +46,18 @@ func _get_lift(angle: float) -> float:
 		var b := min_lift + stall_drop + stalled_drop
 		var weight := (min_angle - angle) / (stall_angle + min_angle)
 		return lerpf(a, b, pow(weight, stall_power))
-	return max_lift - stall_drop - stalled_drop if angle > max_angle else min_lift + stall_drop + stalled_drop
+	var ta := PI / 4.0
+	if angle >= stall_angle and angle <= ta:
+		var a := max_lift - stall_drop - stalled_drop
+		var b := sin(ta * 2.0) * 1.144
+		var weight := (angle - stall_angle) / (ta - stall_angle)
+		return lerpf(a, b, 1.0 - pow(1.0 - weight, 2.0))
+	if angle >= -ta and angle <= -stall_angle:
+		var a := min_lift + stall_drop + stalled_drop
+		var b := sin(-ta * 2.0) * 1.144
+		var weight := (-angle - stall_angle) / (ta - stall_angle)
+		return lerpf(a, b, 1.0 - pow(1.0 - weight, 2.0))
+	return sin(angle * 2.0) * 1.144
 
 
 func _draw() -> void:
