@@ -87,17 +87,14 @@ func _draw_plot() -> void:
 	var rect := get_rect()
 	var lift_scale := rect.size.y / max_lift * 0.9 / 2.0
 	var center := rect.get_center()
-	var start_pixel := rect.position.x
-	var end_pixel := rect.end.x
-	var x1 := start_pixel
-	while x1 < end_pixel:
-		var x2 := x1 + 1
-		var angle1 := _map_x_to_angle(x1)
-		var angle2 := _map_x_to_angle(x2)
-		var lift1 := _get_lift(angle1)
-		var lift2 := _get_lift(angle2)
-		draw_line(Vector2(x1, center.y - lift1 * lift_scale), Vector2(x2, center.y - lift2 * lift_scale), Color.GREEN, 2)
-		x1 += 1
+	var x := 0.0
+	var points := PackedVector2Array()
+	while x <= rect.size.x:
+		var angle := _map_x_to_angle(x)
+		var lift := _get_lift(angle)
+		points.append(Vector2(x, center.y - lift * lift_scale))
+		x += 1
+	draw_polyline(points, Color.GREEN, 2.0, true)
 
 
 func _map_x_to_angle(x: float) -> float:
