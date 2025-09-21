@@ -96,7 +96,7 @@ func _draw_plot() -> void:
 		var angle2 := _map_x_to_angle(x2)
 		var lift1 := _get_lift(angle1)
 		var lift2 := _get_lift(angle2)
-		draw_line(Vector2(x1, center.y - lift1 * lift_scale), Vector2(x2, center.y - lift2 * lift_scale), Color.GREEN)
+		draw_line(Vector2(x1, center.y - lift1 * lift_scale), Vector2(x2, center.y - lift2 * lift_scale), Color.GREEN, 2)
 		x1 += 1
 
 
