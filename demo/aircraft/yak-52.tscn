@@ -109,6 +109,7 @@ metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -2.3)
 script = ExtResource("4_2460t")
 max_rpm_velocity = 240.0
+radius = 1.2
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

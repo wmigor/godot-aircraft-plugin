@@ -110,6 +110,7 @@ max_rpm_velocity = 200.0
 max_engine_power = 160.0
 inertia = 6.5
 constant_speed = true
+radius = 0.953
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
