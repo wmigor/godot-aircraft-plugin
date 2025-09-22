@@ -29,14 +29,14 @@ inertia = Vector3(1800, 2650, 1300)
 linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_okv22")
-brake_value = 10.0
-horizontal_height = 0.274
-horizontal_rotation = -4.7
+brake_value = 30.0
+horizontal_height = 0.332
+horizontal_rotation = 1.2
 camera_distance = 11.0
-thruster_wind_factor = 0.707
+thruster_wind_factor = 0.75
 
 [node name="Wing" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 1.509, 0.06)
+transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 1.509, -0.06)
 script = ExtResource("5_auhpd")
 span = 11.0
 chord = 1.494
@@ -110,6 +110,7 @@ max_rpm_velocity = 200.0
 max_engine_power = 160.0
 inertia = 6.5
 constant_speed = true
+radius = 0.953
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -133,7 +134,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.83335, 5.19234)
 shape = SubResource("BoxShape3D_0yl5f")
 
 [node name="WheelF" type="VehicleWheel3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.7)
 use_as_steering = true
 wheel_radius = 0.25
 suspension_stiffness = 50.0

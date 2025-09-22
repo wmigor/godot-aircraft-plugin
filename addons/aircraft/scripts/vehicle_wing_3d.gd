@@ -291,7 +291,7 @@ func _calculate_section_forces(section: Section, wind: Vector3) -> void:
 	var lift := lift_direction * section.lift_factor * pressure
 	var drag := drag_direction * section.drag_factor * pressure
 	var force := lift + drag
-	var torque := -right * section.torque_factor * pressure * section.chord
+	var torque := right * section.torque_factor * pressure * section.chord
 	if relax_forces:
 		force = section.force + (force - section.force) * 0.5
 		torque = section.torque + (torque - section.torque) * 0.5
