@@ -86,6 +86,7 @@ enum Type { Wing, Elevator, Rudder }
 		update_gizmos()
 
 @export_group("Aerodynamic")
+@export var airfoil: Airfoil
 ## Determines how quickly the lift increases with the angle of rotation. For a normal wing it is 2 * PI.
 @export var lift_slope := TAU
 ## Zero lift angle of attack.
@@ -285,18 +286,37 @@ func _calculate_section_forces(section: Section, wind: Vector3) -> void:
 	var right := section.global_transform.basis.x
 	var drag_direction := wind.normalized()
 	var lift_direction := drag_direction.cross(right)
-	_update_section_parameters(section, wind)
-	_calculate_section_factors(section, wind)
+	if airfoil == null:
+		_update_section_parameters(section, wind)
+		_calculate_section_factors(section, wind)
+	else:
+		_calculate_airfoil_section_factors(section, wind)
 	var pressure := 0.5 * density * wind.length_squared() * section.chord * section.length
 	var lift := lift_direction * section.lift_factor * pressure
 	var drag := drag_direction * section.drag_factor * pressure
 	var force := lift + drag
-	var torque := -right * section.torque_factor * pressure * section.chord
+	var torque := right * section.torque_factor * pressure * section.chord
 	if relax_forces:
 		force = section.force + (force - section.force) * 0.5
 		torque = section.torque + (torque - section.torque) * 0.5
 	section.force = force
 	section.torque = torque
+
+
+func _calculate_airfoil_section_factors(section: Section, wind: Vector3) -> void:
+	var to_local := section.global_transform.affine_inverse()
+	var local_wind := to_local * wind - to_local * Vector3.ZERO
+	var angle_of_attack := _get_angle_of_attack(local_wind)
+	section.control_surface_angle = get_control_surface_angle(section.type, section.mirror)
+	section.lift_factor = airfoil.get_lift(angle_of_attack, section.control_surface_angle)
+	var induced_angle := section.lift_factor / (PI * _aspect_ratio)
+	var zla := zero_lift_angle
+	section.angle_of_attack = angle_of_attack - zla - induced_angle
+	section.drag_factor = airfoil.get_drag(section.angle_of_attack, section.control_surface_angle)
+	section.torque_factor = airfoil.get_pitch(section.angle_of_attack, section.control_surface_angle)
+	var k := 1.0 / (PI * _aspect_ratio * 0.8)
+	var induced_drag := surface_friction + k * section.lift_factor * section.lift_factor
+	section.drag_factor += induced_drag
 
 
 func _update_section_parameters(section: Section, wind: Vector3) -> void:
