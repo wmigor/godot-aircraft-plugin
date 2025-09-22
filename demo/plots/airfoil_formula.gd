@@ -11,15 +11,31 @@ class_name AirfoilFormula
 @export_range(0.0, 1.6, 0.001) var stall_drop := 0.1
 @export_range(0.0, 1.6, 0.001) var stalled_drop := 0.8
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
+@export var min_drag := 0.006
+@export var max_drag := 0.02
 @export_range(20.0, 180, 1.0) var interval := 180.0
+
+
+var stall_angle := deg_to_rad(20.0)
 
 
 func get_lift(alpha: float, _deflection: float) -> float:
 	return _get_lift(alpha)
 
 
-func get_drag(_alpha: float, _deflection: float) -> float:
-	return 0.0
+func get_drag(alpha: float, _deflection: float) -> float:
+	if alpha >= 0.0 and alpha <= max_angle:
+		return lerpf(min_drag, max_drag, alpha / max_angle)
+	if alpha >= min_angle and alpha <= 0.0:
+		return lerpf(max_drag, min_drag, -alpha / min_angle)
+	var drag := 1.2 * sin(absf(alpha))
+	if alpha >= max_angle and alpha <= stall_angle:
+		var weight := (alpha - max_angle) / (stall_angle - max_angle)
+		return lerpf(max_drag, drag, pow(weight, 2.4))
+	if alpha >= -stall_angle and alpha <= min_angle:
+		var weight := 1.0 - (alpha + stall_angle) / (min_angle + stall_angle)
+		return lerpf(max_drag, drag, pow(weight, 2.4))
+	return drag
 
 
 func get_pitch(_alpha: float, _deflection: float) -> float:
@@ -38,7 +54,6 @@ func _get_lift(angle: float) -> float:
 		var weight := (angle - min_angle) / (-linear_range - min_angle)
 		var a := zero_angle_lift - linear_range * lift_slope
 		return lerpf(a, min_lift, 1.0 - pow(weight, lift_power))
-	var stall_angle := deg_to_rad(20.0)
 	if angle > max_angle and angle < stall_angle:
 		var a := max_lift - stall_drop
 		var b := max_lift - stall_drop - stalled_drop

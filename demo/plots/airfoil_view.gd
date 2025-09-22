@@ -4,6 +4,8 @@ extends Control
 
 @onready var _angle_label := $GridContainer/Angle
 @onready var _lift_label := $GridContainer/Lift
+@onready var _drag_label := $GridContainer/Drag
+@onready var _pitch_label := $GridContainer/Pitch
 @onready var _deflection_label := $GridContainer/Deflection
 @onready var _deflection := $Deflection as Slider
 
@@ -25,7 +27,18 @@ func _make_plot() -> void:
 
 
 func _get_lift(angle: float) -> float:
-	return airfoil.get_lift(angle, 0.0) if airfoil != null else 0.0
+	var deflection := deg_to_rad(_deflection.value)
+	return airfoil.get_lift(angle, deflection) if airfoil != null else 0.0
+
+
+func _get_drag(angle: float) -> float:
+	var deflection := deg_to_rad(_deflection.value)
+	return airfoil.get_drag(angle, deflection) if airfoil != null else 0.0
+
+
+func _get_pitch(angle: float) -> float:
+	var deflection := deg_to_rad(_deflection.value)
+	return airfoil.get_pitch(angle, deflection) if airfoil != null else 0.0
 
 
 func _draw() -> void:
@@ -59,12 +72,11 @@ func _draw_plot() -> void:
 	var lift_points := PackedVector2Array()
 	var drag_points := PackedVector2Array()
 	var pitches_points := PackedVector2Array()
-	var deflection := deg_to_rad(_deflection.value)
 	while x <= rect.size.x:
 		var angle := _map_x_to_angle(x)
-		var lift := airfoil.get_lift(angle, deflection) if airfoil != null else 0.0
-		var drag := airfoil.get_drag(angle, deflection) if airfoil != null else 0.0
-		var pitch := airfoil.get_pitch(angle, deflection) if airfoil != null else 0.0
+		var lift := _get_lift(angle)
+		var drag := _get_drag(angle)
+		var pitch := _get_pitch(angle)
 		lift_points.append(Vector2(x, center.y - lift * lift_scale))
 		drag_points.append(Vector2(x, center.y - drag * lift_scale))
 		pitches_points.append(Vector2(x, center.y - pitch * lift_scale))
@@ -85,6 +97,10 @@ func _input(event: InputEvent) -> void:
 	if motion != null:
 		var angle := _map_x_to_angle(motion.position.x)
 		var lift := _get_lift(angle)
+		var drag := _get_drag(angle)
+		var pitch := _get_pitch(angle)
 		_cursor = motion.position
 		_angle_label.text = str(snappedf(rad_to_deg(angle), 0.001))
 		_lift_label.text = str(snappedf(lift, 0.001))
+		_drag_label.text = str(snappedf(drag, 0.001))
+		_pitch_label.text = str(snappedf(pitch, 0.001))
