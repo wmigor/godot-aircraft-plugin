@@ -306,12 +306,12 @@ func _calculate_section_forces(section: Section, wind: Vector3) -> void:
 func _calculate_airfoil_section_factors(section: Section, wind: Vector3) -> void:
 	var to_local := section.global_transform.affine_inverse()
 	var local_wind := to_local * wind - to_local * Vector3.ZERO
-	var angle_of_attack := _get_angle_of_attack(local_wind)
+	var angle_of_attack := atan2(local_wind.y, local_wind.z)
 	section.control_surface_angle = get_control_surface_angle(section.type, section.mirror)
 	section.lift_factor = airfoil.get_lift(angle_of_attack, section.control_surface_angle)
 	var induced_angle := section.lift_factor / (PI * _aspect_ratio)
 	var zla := zero_lift_angle
-	section.angle_of_attack = angle_of_attack - zla - induced_angle
+	section.angle_of_attack = wrapf(angle_of_attack - zla - induced_angle, -PI, PI)
 	section.drag_factor = airfoil.get_drag(section.angle_of_attack, section.control_surface_angle)
 	section.torque_factor = airfoil.get_pitch(section.angle_of_attack, section.control_surface_angle)
 	var k := 1.0 / (PI * _aspect_ratio * 0.8)
