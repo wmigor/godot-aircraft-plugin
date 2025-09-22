@@ -3,6 +3,7 @@ extends VehicleThruster3D
 class_name VehicleRotor3D
 
 @export_group("Blades")
+@export var airfoil: Airfoil
 @export var radius := 10.5:
 	set(value):
 		radius = value
@@ -244,6 +245,7 @@ func _create_blade(index: int) -> VehicleWing3D:
 	blade.rotation.y = index * TAU / blade_count
 	blade.rotation_degrees.x = collective_angle_min
 	blade.position = blade.basis.x * blade_chord * 0.5
+	blade.airfoil = airfoil
 	return blade
 
 
