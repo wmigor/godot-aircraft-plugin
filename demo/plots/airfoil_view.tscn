@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://by43jpuvixm2m"]
+[gd_scene load_steps=4 format=3 uid="uid://by43jpuvixm2m"]
 
 [ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://demo/plots/airfoil_view.gd" id="1_kca72"]
+[ext_resource type="Script" uid="uid://dr07ocua7m5f6" path="res://demo/plots/airfoil_table.gd" id="2_3jeof"]
+
+[sub_resource type="Resource" id="Resource_h6ldn"]
+script = ExtResource("2_3jeof")
+data_file = "res://tools/naca2412"
+metadata/_custom_type_script = "uid://dr07ocua7m5f6"
 
 [node name="AirfoilView" type="Control"]
 layout_mode = 3
@@ -10,6 +16,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_kca72")
+airfoil = SubResource("Resource_h6ldn")
 
 [node name="GridContainer" type="GridContainer" parent="."]
 layout_mode = 1
@@ -34,3 +41,17 @@ text = "Lift"
 
 [node name="Lift" type="Label" parent="GridContainer"]
 layout_mode = 2
+
+[node name="DeflectionLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Deflection"
+
+[node name="Deflection" type="Label" parent="GridContainer"]
+layout_mode = 2
+
+[node name="Deflection" type="HSlider" parent="."]
+layout_mode = 0
+offset_right = 448.0
+offset_bottom = 16.0
+min_value = -50.0
+max_value = 50.0

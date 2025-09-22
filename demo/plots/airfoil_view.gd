@@ -1,23 +1,19 @@
-@tool
 extends Control
 
-@export var zero_angle_lift := 0.25
-@export var lift_slope := TAU
-@export var max_lift := 1.6
-@export_range(-20.0, 0.0, 0.001, "radians_as_degrees") var min_angle := deg_to_rad(-15.0)
-@export_range(0.0, 20.0, 0.001, "radians_as_degrees") var max_angle := deg_to_rad(15.0)
-@export_range(0.0, 19.0, 0.001, "radians_as_degrees") var linear_range := deg_to_rad(10.0)
-@export_range(0.0, 9.0, 0.001) var lift_power := 1.6
-@export_range(0.0, 1.6, 0.001) var stall_drop := 0.1
-@export_range(0.0, 1.6, 0.001) var stalled_drop := 0.8
-@export_range(0.0, 9.0, 0.001) var stall_power := 1.4
-@export_range(20.0, 180, 1.0) var interval := 180.0
+@export var airfoil: Airfoil
 
 @onready var _angle_label := $GridContainer/Angle
 @onready var _lift_label := $GridContainer/Lift
+@onready var _deflection_label := $GridContainer/Deflection
+@onready var _deflection := $Deflection as Slider
 
 var _lift: Array[float]
 var _cursor: Vector2
+
+
+func _ready() -> void:
+	_update_deflection_text(_deflection.value)
+	_deflection.value_changed.connect(_update_deflection_text)
 
 
 func _process(_delta: float) -> void:
@@ -29,40 +25,7 @@ func _make_plot() -> void:
 
 
 func _get_lift(angle: float) -> float:
-	if angle >= -linear_range and angle <= linear_range:
-		return zero_angle_lift + angle * lift_slope
-	if angle > linear_range and angle <= max_angle:
-		var weight := (angle - linear_range) / (max_angle - linear_range)
-		var a := zero_angle_lift + linear_range * lift_slope
-		return lerpf(a, max_lift, 1.0 - pow(1.0 - weight, lift_power))
-	var min_lift := zero_angle_lift * 2.0 - max_lift
-	if angle > min_angle and angle <= -linear_range:
-		var weight := (angle - min_angle) / (-linear_range - min_angle)
-		var a := zero_angle_lift - linear_range * lift_slope
-		return lerpf(a, min_lift, 1.0 - pow(weight, lift_power))
-	var stall_angle := deg_to_rad(20.0)
-	if angle > max_angle and angle < stall_angle:
-		var a := max_lift - stall_drop
-		var b := max_lift - stall_drop - stalled_drop
-		var weight := (angle - max_angle) / (stall_angle - max_angle)
-		return lerpf(a, b, pow(weight, stall_power))
-	if angle <= min_angle and angle >= -stall_angle:
-		var a := min_lift + stall_drop
-		var b := min_lift + stall_drop + stalled_drop
-		var weight := (min_angle - angle) / (stall_angle + min_angle)
-		return lerpf(a, b, pow(weight, stall_power))
-	var ta := PI / 4.0
-	if angle >= stall_angle and angle <= ta:
-		var a := max_lift - stall_drop - stalled_drop
-		var b := sin(ta * 2.0) * 1.144
-		var weight := (angle - stall_angle) / (ta - stall_angle)
-		return lerpf(a, b, 1.0 - pow(1.0 - weight, 2.0))
-	if angle >= -ta and angle <= -stall_angle:
-		var a := min_lift + stall_drop + stalled_drop
-		var b := sin(-ta * 2.0) * 1.144
-		var weight := (-angle - stall_angle) / (ta - stall_angle)
-		return lerpf(a, b, 1.0 - pow(1.0 - weight, 2.0))
-	return sin(angle * 2.0) * 1.144
+	return airfoil.get_lift(angle, 0.0) if airfoil != null else 0.0
 
 
 func _draw() -> void:
@@ -83,21 +46,36 @@ func _draw_cursor() -> void:
 	draw_line(Vector2(_cursor.x, 0.0), Vector2(_cursor.x, rect.size.y), Color.ORANGE)
 
 
+func _update_deflection_text(value: float) -> void:
+	_deflection_label.text = str(value)
+
+
 func _draw_plot() -> void:
 	var rect := get_rect()
-	var lift_scale := rect.size.y / max_lift * 0.9 / 2.0
+	var max_value := 2.2
+	var lift_scale := rect.size.y / max_value / 2.0
 	var center := rect.get_center()
 	var x := 0.0
-	var points := PackedVector2Array()
+	var lift_points := PackedVector2Array()
+	var drag_points := PackedVector2Array()
+	var pitches_points := PackedVector2Array()
+	var deflection := deg_to_rad(_deflection.value)
 	while x <= rect.size.x:
 		var angle := _map_x_to_angle(x)
-		var lift := _get_lift(angle)
-		points.append(Vector2(x, center.y - lift * lift_scale))
+		var lift := airfoil.get_lift(angle, deflection) if airfoil != null else 0.0
+		var drag := airfoil.get_drag(angle, deflection) if airfoil != null else 0.0
+		var pitch := airfoil.get_pitch(angle, deflection) if airfoil != null else 0.0
+		lift_points.append(Vector2(x, center.y - lift * lift_scale))
+		drag_points.append(Vector2(x, center.y - drag * lift_scale))
+		pitches_points.append(Vector2(x, center.y - pitch * lift_scale))
 		x += 1
-	draw_polyline(points, Color.GREEN, 2.0, true)
+	draw_polyline(lift_points, Color.GREEN, 2.0, true)
+	draw_polyline(drag_points, Color.RED, 2.0, true)
+	draw_polyline(pitches_points, Color.YELLOW, 2.0, true)
 
 
 func _map_x_to_angle(x: float) -> float:
+	var interval := 180.0
 	var s := interval / 180.0
 	return deg_to_rad(x * 360.0 * s / get_rect().size.x - interval)
 
