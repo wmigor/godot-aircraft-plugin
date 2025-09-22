@@ -33,9 +33,10 @@ brake_value = 10.0
 horizontal_height = 0.274
 horizontal_rotation = -4.7
 camera_distance = 11.0
+thruster_wind_factor = 0.5
 
 [node name="Wing" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0.831, 0.1)
+transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0.831, -0.1)
 script = ExtResource("5_hocnw")
 span = 9.3
 chord = 2.095
