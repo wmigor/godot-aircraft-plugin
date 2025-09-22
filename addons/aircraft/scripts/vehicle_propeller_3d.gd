@@ -123,7 +123,7 @@ func _apply_gyroscopic_torque(forward: Vector3) -> void:
 func _process_pitch(delta: float) -> void:
 	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
 	var rpm_delta := target_rpm - rpm
-	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.7)
+	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.2, 0.8)
 
 
 func _calc_wind(velocity: float, density: float) -> float:

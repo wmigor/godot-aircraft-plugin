@@ -34,7 +34,7 @@ brake_value = 10.0
 horizontal_height = 0.274
 horizontal_rotation = -4.7
 camera_distance = 11.0
-thruster_wind_factor = 1.0
+thruster_wind_factor = 0.5
 
 [node name="Wing" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86, -0.12)
@@ -119,6 +119,7 @@ metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 [node name="Propeller" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.97, -1.7)
 script = ExtResource("4_to4ok")
+radius = 1.2
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
