@@ -1,8 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://pt5e5ymsx528"]
+[gd_scene load_steps=12 format=3 uid="uid://pt5e5ymsx528"]
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_3r63h"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_3r63h"]
+[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://demo/airfoils/naca2412.tres" id="3_l8sau"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_2460t"]
+[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="4_dnvip"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
@@ -33,6 +35,7 @@ brake_value = 10.0
 horizontal_height = 0.274
 horizontal_rotation = -4.7
 camera_distance = 11.0
+thruster_wind_factor = 0.5
 
 [node name="Wing" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0.831, 0.1)
@@ -43,6 +46,7 @@ taper = 0.5
 twist = -0.0436332
 sweep = -0.0174533
 dihedral = 0.0349066
+airfoil = ExtResource("3_l8sau")
 zero_lift_angle = -0.0349066
 stall_angle_min = -0.244346
 stall_width = 0.0698132
@@ -61,6 +65,7 @@ span = 3.214
 chord = 1.184
 taper = 0.6
 sweep = 0.0349066
+airfoil = ExtResource("4_dnvip")
 type = 1
 flap_start = 0.0
 flap_end = 1.0
@@ -82,6 +87,7 @@ chord = 1.441
 taper = 0.7
 sweep = 0.122173
 mirror = false
+airfoil = ExtResource("4_dnvip")
 type = 2
 flap_start = 0.0
 flap_end = 1.0
