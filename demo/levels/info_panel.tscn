@@ -72,3 +72,11 @@ text = "Trim"
 [node name="TrimElevator" type="Label" parent="Parameters"]
 layout_mode = 2
 text = "0"
+
+[node name="ApproachLabel" type="Label" parent="Parameters"]
+layout_mode = 2
+text = "Approach"
+
+[node name="Approach" type="Label" parent="Parameters"]
+layout_mode = 2
+text = "0"

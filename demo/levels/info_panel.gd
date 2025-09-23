@@ -9,6 +9,7 @@ class_name InfoPanel
 @onready var angle_of_attack := $Parameters/AngleOfAttack as Label
 @onready var rpm := $Parameters/Rpm as Label
 @onready var trim_elevator := $Parameters/TrimElevator as Label
+@onready var approach := $Parameters/Approach as Label
 
 var aircraft: AircraftBody3D
 
@@ -25,6 +26,8 @@ func _process(_delta: float) -> void:
 	angle_of_attack.text = str(snappedf(get_attack_angle(), 0.1))
 	rpm.text = str(int(aircraft.rpm))
 	trim_elevator.text = "a: " + str(snappedf(aircraft.trim_aileron, 0.01)) + ", e: " + str(snappedf(aircraft.trim_elevator, 0.01))
+	var approach_angle := atan2(aircraft.linear_velocity.y, aircraft.linear_velocity.z)
+	approach.text = str(snappedf(rad_to_deg(approach_angle), 0.01))
 
 
 func get_attack_angle() -> float:
