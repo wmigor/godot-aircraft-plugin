@@ -309,8 +309,9 @@ func _calculate_airfoil_section_factors(section: Section, wind: Vector3) -> void
 	var angle_of_attack := atan2(local_wind.y, local_wind.z)
 	section.control_surface_angle = get_control_surface_angle(section.type, section.mirror)
 	section.lift_factor = airfoil.get_lift(angle_of_attack, section.control_surface_angle)
-	var induced_angle := section.lift_factor / (PI * _aspect_ratio)
+	section.lift_factor /= 1.0 + section.lift_factor / (PI * _aspect_ratio)
 	var zla := zero_lift_angle
+	var induced_angle := section.lift_factor / (PI * _aspect_ratio)
 	section.angle_of_attack = wrapf(angle_of_attack - zla - induced_angle, -PI, PI)
 	section.drag_factor = airfoil.get_drag(section.angle_of_attack, section.control_surface_angle)
 	section.torque_factor = airfoil.get_pitch(section.angle_of_attack, section.control_surface_angle)
@@ -398,7 +399,7 @@ func _calculate_normal_factors(section: Section, angle_of_attack: float) -> Vect
 		drag = surface_friction + k * lift * lift
 	else:
 		drag = normal * sin_ea + tangent * cos_ea
-	var torque := section.control_surface_lift / 6.0 - normal * _get_torque_factor(effective_angle)
+	var torque := section.control_surface_lift / 6.0 * 0 - normal * _get_torque_factor(effective_angle)
 	return Vector3(lift, drag, torque)
 
 
@@ -460,6 +461,7 @@ func _get_aileron_angle(is_mirror: bool) -> float:
 	if is_mirror:
 		return (aileron_angle_min if aileron_value > 0.0 else -aileron_angle_max) * aileron_value
 	return (aileron_angle_max if aileron_value > 0.0 else -aileron_angle_min) * aileron_value
+
 
 func _get_flap_angle() -> float:
 	return (flap_angle_max if flap_value >= 0.0 else -flap_angle_min) * flap_value
