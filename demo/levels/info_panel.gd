@@ -26,9 +26,16 @@ func _process(_delta: float) -> void:
 	angle_of_attack.text = str(snappedf(get_attack_angle(), 0.1))
 	rpm.text = str(int(aircraft.rpm))
 	trim_elevator.text = "a: " + str(snappedf(aircraft.trim_aileron, 0.01)) + ", e: " + str(snappedf(aircraft.trim_elevator, 0.01))
-	var approach_angle := atan2(aircraft.linear_velocity.y, aircraft.linear_velocity.z)
-	approach.text = str(snappedf(rad_to_deg(approach_angle), 0.01))
+	approach.text = str(snappedf(rad_to_deg(_get_approach_angle()), 0.01))
 
+
+func _get_approach_angle() -> float:
+	if aircraft == null:
+		return 0.0
+	var velocity := aircraft.linear_velocity
+	var h_velocity := velocity - Vector3.UP * velocity.dot(Vector3.UP)
+	var approach_angle := atan2(velocity.y, h_velocity.length())
+	return approach_angle
 
 func get_attack_angle() -> float:
 	if aircraft == null or aircraft.linear_velocity.length_squared() < 2:
