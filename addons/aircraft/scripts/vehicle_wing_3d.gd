@@ -309,15 +309,14 @@ func _calculate_airfoil_section_factors(section: Section, wind: Vector3) -> void
 	var angle_of_attack := atan2(local_wind.y, local_wind.z)
 	section.control_surface_angle = get_control_surface_angle(section.type, section.mirror)
 	section.lift_factor = airfoil.get_lift(angle_of_attack, section.control_surface_angle)
-	section.lift_factor /= 1.0 + section.lift_factor / (PI * _aspect_ratio)
+	section.lift_factor += Airfoil.get_inducd_lift(section.lift_factor, _aspect_ratio)
 	var zla := zero_lift_angle
 	var induced_angle := section.lift_factor / (PI * _aspect_ratio)
 	section.angle_of_attack = wrapf(angle_of_attack - zla - induced_angle, -PI, PI)
 	section.drag_factor = airfoil.get_drag(section.angle_of_attack, section.control_surface_angle)
 	section.torque_factor = airfoil.get_pitch(section.angle_of_attack, section.control_surface_angle)
-	var k := 1.0 / (PI * _aspect_ratio * 0.8)
-	var induced_drag := surface_friction + k * section.lift_factor * section.lift_factor
-	section.drag_factor += induced_drag
+	var induced_drag := Airfoil.get_induced_drag(section.lift_factor, _aspect_ratio)
+	section.drag_factor += surface_friction + induced_drag
 
 
 func _update_section_parameters(section: Section, wind: Vector3) -> void:

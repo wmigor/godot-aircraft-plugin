@@ -70,3 +70,23 @@ offset_right = 448.0
 offset_bottom = 16.0
 min_value = -50.0
 max_value = 50.0
+
+[node name="Label" type="Label" parent="Deflection"]
+layout_mode = 0
+offset_left = 448.0
+offset_right = 488.0
+offset_bottom = 23.0
+text = "0"
+
+[node name="AspectRatio" type="HSlider" parent="."]
+layout_mode = 0
+offset_top = 54.0
+offset_right = 448.0
+offset_bottom = 85.0
+
+[node name="Label" type="Label" parent="AspectRatio"]
+layout_mode = 0
+offset_left = 448.0
+offset_right = 500.0
+offset_bottom = 23.0
+text = "0"

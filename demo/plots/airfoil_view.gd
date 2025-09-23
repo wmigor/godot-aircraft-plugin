@@ -8,6 +8,7 @@ extends Control
 @onready var _pitch_label := $GridContainer/Pitch
 @onready var _deflection_label := $GridContainer/Deflection
 @onready var _deflection := $Deflection as Slider
+@onready var _aspect_ratio := $AspectRatio as Slider
 
 var _lift: Array[float]
 var _cursor: Vector2
@@ -16,6 +17,8 @@ var _cursor: Vector2
 func _ready() -> void:
 	_update_deflection_text(_deflection.value)
 	_deflection.value_changed.connect(_update_deflection_text)
+	_deflection.value_changed.connect(func(value: float): $Deflection/Label.text = str(value))
+	_aspect_ratio.value_changed.connect(func(value: float): $AspectRatio/Label.text = str(value))
 
 
 func _process(_delta: float) -> void:
@@ -72,11 +75,14 @@ func _draw_plot() -> void:
 	var lift_points := PackedVector2Array()
 	var drag_points := PackedVector2Array()
 	var pitches_points := PackedVector2Array()
+	var aspect_ratio := _aspect_ratio.value
 	while x <= rect.size.x:
 		var angle := _map_x_to_angle(x)
 		var lift := _get_lift(angle)
 		var drag := _get_drag(angle)
 		var pitch := _get_pitch(angle)
+		lift += Airfoil.get_inducd_lift(lift, aspect_ratio)
+		drag += Airfoil.get_induced_drag(lift, aspect_ratio)
 		lift_points.append(Vector2(x, center.y - lift * lift_scale))
 		drag_points.append(Vector2(x, center.y - drag * lift_scale))
 		pitches_points.append(Vector2(x, center.y - pitch * lift_scale))
