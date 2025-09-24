@@ -13,29 +13,38 @@ class_name AirfoilFormula
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
 @export var min_drag := 0.006
 @export var max_drag := 0.02
+@export var control_surface_fraction := 0.4
 @export_range(20.0, 180, 1.0) var interval := 180.0
 
 
 var stall_angle := deg_to_rad(20.0)
 
 
-func get_lift(alpha: float, _deflection: float) -> float:
-	return _get_lift(alpha)
+func get_lift(alpha: float, deflection: float) -> float:
+	var lift := _get_lift(alpha)
+	if alpha >= -stall_angle and alpha <= stall_angle:
+		var control_surface_lift := _get_control_surface_lift(alpha, deflection)
+		lift += control_surface_lift
+	return lift
 
 
-func get_drag(alpha: float, _deflection: float) -> float:
+func get_drag(alpha: float, deflection: float) -> float:
+	var d_drag := 0.0
+	if absf(deflection) > 0.0:
+		var lift := _get_control_surface_lift(alpha, deflection)
+		d_drag = 0.15 * lift * lift
 	if alpha >= 0.0 and alpha <= max_angle:
-		return lerpf(min_drag, max_drag, alpha / max_angle)
+		return d_drag + lerpf(min_drag, max_drag, alpha / max_angle)
 	if alpha >= min_angle and alpha <= 0.0:
-		return lerpf(max_drag, min_drag, -alpha / min_angle)
+		return d_drag + lerpf(max_drag, min_drag, 1.0 - alpha / min_angle)
 	var drag := 1.2 * sin(absf(alpha))
 	if alpha >= max_angle and alpha <= stall_angle:
 		var weight := (alpha - max_angle) / (stall_angle - max_angle)
-		return lerpf(max_drag, drag, pow(weight, 2.4))
+		return d_drag + lerpf(max_drag, drag, pow(weight, 2.4))
 	if alpha >= -stall_angle and alpha <= min_angle:
 		var weight := 1.0 - (alpha + stall_angle) / (min_angle + stall_angle)
-		return lerpf(max_drag, drag, pow(weight, 2.4))
-	return drag
+		return d_drag + lerpf(max_drag, drag, pow(weight, 2.4))
+	return d_drag + drag
 
 
 func get_pitch(_alpha: float, _deflection: float) -> float:
@@ -76,3 +85,9 @@ func _get_lift(angle: float) -> float:
 		var weight := (-angle - stall_angle) / (ta - stall_angle)
 		return lerpf(a, b, 1.0 - pow(1.0 - weight, 2.0))
 	return sin(angle * 2.0) * 1.144
+
+
+func _get_control_surface_lift(alpha: float, deflection: float) -> float:
+	if alpha <= -stall_angle or alpha >= stall_angle:
+		return 0.0
+	return lift_slope * deflection * control_surface_fraction * 0.5
