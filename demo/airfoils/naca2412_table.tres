@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="AirfoilTable" load_steps=2 format=3 uid="uid://bmjgx7wb5pbd5"]
+
+[ext_resource type="Script" uid="uid://dr07ocua7m5f6" path="res://demo/plots/airfoil_table.gd" id="1_07mhs"]
+
+[resource]
+script = ExtResource("1_07mhs")
+data_file = "res://tools/naca2412"
+metadata/_custom_type_script = "uid://dr07ocua7m5f6"

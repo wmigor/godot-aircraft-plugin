@@ -77,19 +77,31 @@ class MultiTable:
 		return 0.0
 
 
-func get_lift(alpha: float, deflection: float) -> float:
+func update_factors(data: Data) -> void:
 	_try_load()
-	return _lifts.sample(alpha, deflection)
+	data.lift_factor = _lifts.sample(data.angle_of_attack, data.control_surface_angle)
+	data.drag_factor = _drags.sample(data.angle_of_attack, data.control_surface_angle)
+	data.pitch_factor = _pitches.sample(data.angle_of_attack, data.control_surface_angle)
+	if absf(data.aspect_ratio) > 0.0:
+		data.lift_factor += get_inducd_lift(data.lift_factor, data.aspect_ratio)
+		data.drag_factor += get_induced_drag(data.lift_factor, data.aspect_ratio)
 
 
-func get_drag(alpha: float, deflection: float) -> float:
-	_try_load()
-	return _drags.sample(alpha, deflection)
+static func get_inducd_lift(lift: float, aspect_ratio: float) -> float:
+	if absf(aspect_ratio) <= 0.0:
+		return 0.0
+	var s := signf(lift)
+	lift = absf(lift)
+	var corrected_lift := lift / (1.0 + lift / (PI * aspect_ratio))
+	return (corrected_lift - lift) * s
 
 
-func get_pitch(alpha: float, deflection: float) -> float:
-	_try_load()
-	return _pitches.sample(alpha, deflection)
+static func get_induced_drag(lift: float, aspect_ratio: float) -> float:
+	if absf(aspect_ratio) <= 0.0:
+		return 0.0
+	var k := 1.0 / (PI * aspect_ratio * 0.8)
+	var induced_drag := k * lift * lift
+	return induced_drag
 
 
 func _try_load() -> void:

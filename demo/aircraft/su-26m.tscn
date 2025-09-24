@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_to4ok"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_ccpia"]
-[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="3_7e5sj"]
+[ext_resource type="Resource" uid="uid://dgq2qsgxw2d73" path="res://demo/airfoils/naca0012_table.tres" id="3_7e5sj"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_ccpia"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_to4ok"]
 
@@ -44,9 +44,6 @@ chord = 1.992
 taper = 0.523
 sweep = -0.0523599
 airfoil = ExtResource("3_7e5sj")
-stall_angle_max = 0.244346
-stall_angle_min = -0.244346
-stall_width = 0.20944
 flap_start = 0.0
 flap_end = 0.0
 flap_fraction = 0.0
@@ -66,9 +63,6 @@ span = 2.9
 chord = 1.1
 taper = 0.673
 airfoil = ExtResource("3_7e5sj")
-stall_angle_max = 0.244346
-stall_angle_min = -0.244346
-stall_width = 0.20944
 type = 1
 flap_start = 0.0
 flap_end = 1.0
@@ -90,9 +84,6 @@ chord = 1.65
 taper = 0.333
 mirror = false
 airfoil = ExtResource("3_7e5sj")
-stall_angle_max = 0.244346
-stall_angle_min = -0.244346
-stall_width = 0.20944
 type = 2
 flap_start = 0.0
 flap_end = 1.0

@@ -1,9 +1,9 @@
 [gd_scene load_steps=12 format=3 uid="uid://cymcchdpmb3iy"]
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_okv22"]
-[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://demo/airfoils/naca2412.tres" id="3_hwlby"]
+[ext_resource type="Resource" uid="uid://bmjgx7wb5pbd5" path="res://demo/airfoils/naca2412_table.tres" id="3_hwlby"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_y66pv"]
-[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="4_hwlby"]
+[ext_resource type="Resource" uid="uid://dgq2qsgxw2d73" path="res://demo/airfoils/naca0012_table.tres" id="4_hwlby"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_y66pv"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_auhpd"]
 
@@ -45,8 +45,6 @@ chord = 1.494
 twist = -0.0523599
 dihedral = 0.0302466
 airfoil = ExtResource("3_hwlby")
-zero_lift_angle = -0.0436332
-stall_angle_min = -0.235619
 flap_end = 0.45
 flap_fraction = 0.4
 flap_angle_min = 0.0

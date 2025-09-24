@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://chdd5i8w0sk2h"]
 
 [ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://demo/plots/airfoil_view.gd" id="1_kca72"]
-[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="2_3jeof"]
+[ext_resource type="Resource" uid="uid://dgq2qsgxw2d73" path="res://demo/airfoils/naca0012_table.tres" id="2_3jeof"]
 
 [node name="AirfoilView" type="Control"]
 layout_mode = 3
