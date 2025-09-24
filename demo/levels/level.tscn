@@ -63,7 +63,7 @@ shadow_enabled = true
 mesh = SubResource("ImmediateMesh_safpt")
 
 [node name="PrecisionApproachPathIndicator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.396, 0, -100)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.396, 0, -422.6512)
 script = ExtResource("8_ystn6")
 up_material = SubResource("StandardMaterial3D_ystn6")
 down_material = SubResource("StandardMaterial3D_2spen")
