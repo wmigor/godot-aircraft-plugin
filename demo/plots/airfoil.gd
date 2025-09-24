@@ -1,17 +1,12 @@
+@abstract
 extends Resource
 class_name Airfoil
 
 
-func get_lift(_alpha: float, _deflection: float) -> float:
-	return 0.0
-
-
-func get_drag(_alpha: float, _deflection: float) -> float:
-	return 0.0
-
-
-func get_pitch(_alpha: float, _deflection: float) -> float:
-	return 0.0
+#@abstract func get_coefficients(alpha: float, aspect_ratio: float, control_surface_angle: float, control_surface_fraction: float) -> Vector3
+@abstract func get_lift(alpha: float, deflection: float) -> float
+@abstract func get_drag(alpha: float, deflection: float) -> float
+@abstract func get_pitch(alpha: float, deflection: float) -> float
 
 
 static func get_inducd_lift(lift: float, aspect_ratio: float) -> float:
