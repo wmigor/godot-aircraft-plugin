@@ -105,7 +105,7 @@ func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
 		drag = surface_friction + k * lift * lift
 	else:
 		drag = normal * sin_ea + tangent * cos_ea
-	var pitch := section.control_surface_lift / 6.0 - normal * _get_pitch_factor(effective_angle)
+	var pitch := -normal * _get_pitch_factor(effective_angle)
 	return Vector3(lift, drag, pitch)
 
 
