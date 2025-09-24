@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://chdd5i8w0sk2h"]
+[gd_scene load_steps=4 format=3 uid="uid://chdd5i8w0sk2h"]
 
 [ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://demo/plots/airfoil_view.gd" id="1_kca72"]
-[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="2_3jeof"]
+[ext_resource type="Script" uid="uid://d315l1qemd2hb" path="res://addons/aircraft/scripts/airfoils/airfoil_xplane.gd" id="2_3jeof"]
+
+[sub_resource type="Resource" id="Resource_h6ldn"]
+script = ExtResource("2_3jeof")
+metadata/_custom_type_script = "uid://d315l1qemd2hb"
 
 [node name="AirfoilView" type="Control"]
 layout_mode = 3
@@ -11,7 +15,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_kca72")
-airfoil = ExtResource("2_3jeof")
+airfoil = SubResource("Resource_h6ldn")
 
 [node name="GridContainer" type="GridContainer" parent="."]
 layout_mode = 1
@@ -63,6 +67,7 @@ text = "Deflection"
 
 [node name="Deflection" type="Label" parent="GridContainer"]
 layout_mode = 2
+text = "0.0"
 
 [node name="Deflection" type="HSlider" parent="."]
 layout_mode = 0
