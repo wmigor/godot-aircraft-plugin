@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cs15w4fjixsu1"]
+[gd_scene load_steps=5 format=3 uid="uid://cs15w4fjixsu1"]
 
 [ext_resource type="Script" uid="uid://cfcue8y0x5t6l" path="res://demo/plots/plots.gd" id="1_ta4xi"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_tf1bq"]
+[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://demo/airfoils/naca2412.tres" id="3_b5yxt"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_s5pkl"]
 
 [node name="Plots" type="Node2D"]
@@ -10,15 +11,11 @@ show_fuselage = false
 
 [node name="Wing" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0, 0)
-visible = false
 script = ExtResource("2_tf1bq")
 span = 11.0
 chord = 1.494
 dihedral = 0.0302466
-zero_lift_angle = -0.0436332
-stall_angle_max = 0.261799
-stall_angle_min = -0.261799
-restore_stall_angle = 0.0543496
+airfoil = ExtResource("3_b5yxt")
 flap_start = 0.0
 flap_end = 1.0
 aileron_start = 0.0

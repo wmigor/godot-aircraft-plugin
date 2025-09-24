@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="AirfoilFormuls" load_steps=2 format=3 uid="uid://cghsdosexi3lx"]
+
+[ext_resource type="Script" uid="uid://d0gf8upd1k6k6" path="res://addons/aircraft/scripts/airfoils/airfoil_formula.gd" id="1_s2wjt"]
+
+[resource]
+script = ExtResource("1_s2wjt")
+zero_lift_angle = -0.04363323129985824
+metadata/_custom_type_script = "uid://d0gf8upd1k6k6"
