@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://by43jpuvixm2m"]
+[gd_scene load_steps=3 format=3 uid="uid://chdd5i8w0sk2h"]
 
 [ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://demo/plots/airfoil_view.gd" id="1_kca72"]
-[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://demo/airfoils/naca2412.tres" id="2_3jeof"]
+[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="2_3jeof"]
 
 [node name="AirfoilView" type="Control"]
 layout_mode = 3
@@ -76,17 +76,18 @@ layout_mode = 0
 offset_left = 448.0
 offset_right = 488.0
 offset_bottom = 23.0
-text = "0"
+text = "0.0"
 
 [node name="AspectRatio" type="HSlider" parent="."]
 layout_mode = 0
 offset_top = 54.0
 offset_right = 448.0
 offset_bottom = 85.0
+value = 7.0
 
 [node name="Label" type="Label" parent="AspectRatio"]
 layout_mode = 0
 offset_left = 448.0
 offset_right = 500.0
 offset_bottom = 23.0
-text = "0"
+text = "7.0"

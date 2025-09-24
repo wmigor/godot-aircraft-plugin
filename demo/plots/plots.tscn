@@ -10,15 +10,12 @@ script = ExtResource("1_ta4xi")
 show_fuselage = false
 
 [node name="Wing" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.99999964, 0, 0, 0, 0.99999964, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0, 0)
 script = ExtResource("2_tf1bq")
 span = 11.0
 chord = 1.494
+dihedral = 0.0302466
 airfoil = ExtResource("3_b5yxt")
-zero_lift_angle = -0.0436332
-stall_angle_max = 0.261799
-stall_angle_min = -0.261799
-restore_stall_angle = 0.0543496
 flap_start = 0.0
 flap_end = 1.0
 aileron_start = 0.0

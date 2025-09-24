@@ -10,8 +10,8 @@ extends Control
 @onready var _deflection := $Deflection as Slider
 @onready var _aspect_ratio := $AspectRatio as Slider
 
-var _lift: Array[float]
 var _cursor: Vector2
+var _airfoil_data := Airfoil.Data.new()
 
 
 func _ready() -> void:
@@ -19,29 +19,11 @@ func _ready() -> void:
 	_deflection.value_changed.connect(_update_deflection_text)
 	_deflection.value_changed.connect(func(value: float): $Deflection/Label.text = str(value))
 	_aspect_ratio.value_changed.connect(func(value: float): $AspectRatio/Label.text = str(value))
+	_airfoil_data.control_surface_fraction = 0.4
 
 
 func _process(_delta: float) -> void:
 	queue_redraw()
-
-
-func _make_plot() -> void:
-	_lift.clear()
-
-
-func _get_lift(angle: float) -> float:
-	var deflection := deg_to_rad(_deflection.value)
-	return airfoil.get_lift(angle, deflection) if airfoil != null else 0.0
-
-
-func _get_drag(angle: float) -> float:
-	var deflection := deg_to_rad(_deflection.value)
-	return airfoil.get_drag(angle, deflection) if airfoil != null else 0.0
-
-
-func _get_pitch(angle: float) -> float:
-	var deflection := deg_to_rad(_deflection.value)
-	return airfoil.get_pitch(angle, deflection) if airfoil != null else 0.0
 
 
 func _draw() -> void:
@@ -75,17 +57,15 @@ func _draw_plot() -> void:
 	var lift_points := PackedVector2Array()
 	var drag_points := PackedVector2Array()
 	var pitches_points := PackedVector2Array()
-	var aspect_ratio := _aspect_ratio.value
+	_airfoil_data.aspect_ratio = maxf(0.1, _aspect_ratio.value)
+	_airfoil_data.control_surface_angle = deg_to_rad(_deflection.value)
 	while x <= rect.size.x:
-		var angle := _map_x_to_angle(x)
-		var lift := _get_lift(angle)
-		var drag := _get_drag(angle)
-		var pitch := _get_pitch(angle)
-		lift += Airfoil.get_inducd_lift(lift, aspect_ratio)
-		drag += Airfoil.get_induced_drag(lift, aspect_ratio)
-		lift_points.append(Vector2(x, center.y - lift * lift_scale))
-		drag_points.append(Vector2(x, center.y - drag * lift_scale))
-		pitches_points.append(Vector2(x, center.y - pitch * lift_scale))
+		_airfoil_data.angle_of_attack = _map_x_to_angle(x)
+		_airfoil_data.stall = false
+		airfoil.update_factors(_airfoil_data)
+		lift_points.append(Vector2(x, center.y - _airfoil_data.lift_factor * lift_scale))
+		drag_points.append(Vector2(x, center.y - _airfoil_data.drag_factor * lift_scale))
+		pitches_points.append(Vector2(x, center.y - _airfoil_data.pitch_factor * lift_scale))
 		x += 1
 	draw_polyline(lift_points, Color.GREEN, 2.0, true)
 	draw_polyline(drag_points, Color.RED, 2.0, true)
@@ -101,12 +81,13 @@ func _map_x_to_angle(x: float) -> float:
 func _input(event: InputEvent) -> void:
 	var motion := event as InputEventMouseMotion
 	if motion != null:
-		var angle := _map_x_to_angle(motion.position.x)
-		var lift := _get_lift(angle)
-		var drag := _get_drag(angle)
-		var pitch := _get_pitch(angle)
+		_airfoil_data.angle_of_attack = _map_x_to_angle(motion.position.x)
+		_airfoil_data.aspect_ratio = maxf(0.1, _aspect_ratio.value)
+		_airfoil_data.stall = false
+		_airfoil_data.control_surface_angle = deg_to_rad(_deflection.value)
+		airfoil.update_factors(_airfoil_data)
 		_cursor = motion.position
-		_angle_label.text = str(snappedf(rad_to_deg(angle), 0.001))
-		_lift_label.text = str(snappedf(lift, 0.001))
-		_drag_label.text = str(snappedf(drag, 0.001))
-		_pitch_label.text = str(snappedf(pitch, 0.001))
+		_angle_label.text = str(snappedf(rad_to_deg(_airfoil_data.angle_of_attack), 0.001))
+		_lift_label.text = str(snappedf(_airfoil_data.lift_factor, 0.001))
+		_drag_label.text = str(snappedf(_airfoil_data.drag_factor, 0.001))
+		_pitch_label.text = str(snappedf(_airfoil_data.pitch_factor, 0.001))

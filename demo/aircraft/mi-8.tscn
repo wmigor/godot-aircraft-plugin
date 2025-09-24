@@ -23,6 +23,7 @@ input_throttle = 0.0
 [node name="Rotor" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 script = ExtResource("2_0x04r")
+blade_airfoil = ExtResource("3_1sdnb")
 blade_count = 5
 airfoil = ExtResource("3_1sdnb")
 

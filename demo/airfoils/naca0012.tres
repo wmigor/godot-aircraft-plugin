@@ -1,8 +1,11 @@
-[gd_resource type="Resource" script_class="AirfoilTable" load_steps=2 format=3 uid="uid://gk0nh7m2dbd4"]
+[gd_resource type="Resource" script_class="AirfoilFormuls" load_steps=2 format=3 uid="uid://gk0nh7m2dbd4"]
 
-[ext_resource type="Script" uid="uid://dr07ocua7m5f6" path="res://demo/plots/airfoil_table.gd" id="1_by33o"]
+[ext_resource type="Script" uid="uid://d0gf8upd1k6k6" path="res://addons/aircraft/scripts/airfoils/airfoil_formula.gd" id="1_by33o"]
 
 [resource]
 script = ExtResource("1_by33o")
-data_file = "res://tools/naca0012"
-metadata/_custom_type_script = "uid://dr07ocua7m5f6"
+lift_slope = 6.875
+stall_angle_max = 0.23561944901923448
+stall_angle_min = -0.23561944901923448
+stall_width = 0.11344640137963143
+metadata/_custom_type_script = "uid://d0gf8upd1k6k6"
