@@ -5,7 +5,7 @@
 
 [sub_resource type="Resource" id="Resource_h6ldn"]
 script = ExtResource("2_3jeof")
-zero_lift_angle = -0.04363323129985824
+zero_lift_angle = -0.039793506945470715
 metadata/_custom_type_script = "uid://d0gf8upd1k6k6"
 
 [node name="AirfoilView" type="Control"]

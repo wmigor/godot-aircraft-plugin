@@ -103,12 +103,14 @@ func _get_infinity_wing_lift(angle_of_attack: float) -> float:
 		return (angle_of_attack - section.corrected_zero_lift_angle) * section.corrected_lift_slope
 	if angle_of_attack >= linear_range and angle_of_attack <= section.corrected_stall_angle_max:
 		var weight := (angle_of_attack - linear_range) / (section.corrected_stall_angle_max - linear_range)
-		var a := (angle_of_attack - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+		var a := (linear_range - section.corrected_zero_lift_angle) * section.corrected_lift_slope
 		return lerpf(a, lift_max, 1.0 - pow(1.0 - weight, lift_power))
+	var zero_angle_lift := -section.corrected_zero_lift_angle * lift_slope
+	var min_lift := zero_angle_lift * 2.0 - lift_max
 	if angle_of_attack >= section.corrected_stall_angle_min and angle_of_attack <= -linear_range:
 		var weight := (angle_of_attack - section.corrected_stall_angle_min) / (-linear_range - section.corrected_stall_angle_min)
-		var b := (angle_of_attack - section.corrected_zero_lift_angle) * section.corrected_lift_slope
-		return lerpf(-lift_max, b, pow(weight, lift_power))
+		var b := (-linear_range - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+		return lerpf(min_lift, b, pow(weight, lift_power))
 	return 0.0
 
 
