@@ -33,6 +33,9 @@ class Paramters:
 	var corrected_stall_angle_min: float
 	var restore_stall_angle_max: float
 	var restore_stall_angle_min: float
+	var corrected_linear_max: float
+	var corrected_linear_min: float
+
 
 var section := Paramters.new()
 
@@ -53,6 +56,11 @@ func _update_parameters(data: Data) -> void:
 	var lift_min := section.corrected_lift_slope * (stall_angle_min - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
 	section.corrected_stall_angle_max = section.corrected_zero_lift_angle + lift_max / section.corrected_lift_slope
 	section.corrected_stall_angle_min = section.corrected_zero_lift_angle + lift_min / section.corrected_lift_slope
+	lift_max = section.corrected_lift_slope * (linear_range - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
+	lift_min = section.corrected_lift_slope * (-linear_range - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
+	section.corrected_linear_max = section.corrected_zero_lift_angle + lift_max / section.corrected_lift_slope
+	section.corrected_linear_min = section.corrected_zero_lift_angle + lift_min / section.corrected_lift_slope
+	
 	_update_section_hysteresis_stall(data)
 
 
@@ -100,18 +108,18 @@ func _calculate_factors(data: Data) -> void:
 
 func _get_infinity_wing_lift(angle_of_attack: float) -> float:
 	var max_lift := lift_max + section.control_surface_lift
-	if angle_of_attack >= -linear_range and angle_of_attack <= linear_range:
+	if angle_of_attack >= section.corrected_linear_min and angle_of_attack <= section.corrected_linear_max:
 		return (angle_of_attack - section.corrected_zero_lift_angle) * section.corrected_lift_slope
-	if angle_of_attack >= linear_range and angle_of_attack <= section.corrected_stall_angle_max:
-		var weight := (angle_of_attack - linear_range) / (section.corrected_stall_angle_max - linear_range)
-		var a := (linear_range - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+	if angle_of_attack >= section.corrected_linear_max and angle_of_attack <= section.corrected_stall_angle_max:
+		var weight := (angle_of_attack - section.corrected_linear_max) / (section.corrected_stall_angle_max - section.corrected_linear_max)
+		var a := (section.corrected_linear_max - section.corrected_zero_lift_angle) * section.corrected_lift_slope
 		return lerpf(a, max_lift, 1.0 - pow(1.0 - weight, lift_power))
-	var zero_angle_lift := -section.corrected_zero_lift_angle * lift_slope
-	var min_lift := zero_angle_lift * 2.0 - max_lift
-	if angle_of_attack >= section.corrected_stall_angle_min and angle_of_attack <= -linear_range:
-		var weight := (angle_of_attack - section.corrected_stall_angle_min) / (-linear_range - section.corrected_stall_angle_min)
-		var b := (-linear_range - section.corrected_zero_lift_angle) * section.corrected_lift_slope
-		return lerpf(min_lift, b, pow(weight, lift_power))
+	#var zero_angle_lift := -section.corrected_zero_lift_angle * lift_slope
+	#var min_lift := zero_angle_lift * 2.0 - max_lift
+	#if angle_of_attack >= section.corrected_stall_angle_min and angle_of_attack <= -linear_range:
+		#var weight := (angle_of_attack - section.corrected_stall_angle_min) / (-linear_range - section.corrected_stall_angle_min)
+		#var b := (-linear_range - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+		#return lerpf(min_lift, b, pow(weight, lift_power))
 	return 0.0
 
 
