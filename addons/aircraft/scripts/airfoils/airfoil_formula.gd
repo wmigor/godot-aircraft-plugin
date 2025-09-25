@@ -18,6 +18,7 @@ class_name AirfoilFormula
 @export_range(-30, 0, 0.001, "radians_as_degrees") var stall_angle_min := deg_to_rad(-15.0)
 ## Distance in degrees between the beginning of the stall and the complete stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
+## Stall drop at begin stall
 @export_range(0.0, 1.6, 0.001) var stall_drop := 0.1
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
 ## Surface friction factor.
@@ -34,9 +35,9 @@ var _corrected_stall_angle_max: float
 var _corrected_stall_angle_min: float
 var _restore_stall_angle_max: float
 var _restore_stall_angle_min: float
+var _correct_lift_factor: float
 var _corrected_linear_max: float
 var _corrected_linear_min: float
-var _correct_lift_factor: float
 
 
 func update_factors(data: Data) -> void:
@@ -94,11 +95,13 @@ func _calculate_factors(data: Data) -> void:
 		factors1 = _calculate_normal_factors(data, stall_angle_max)
 		factors1.x -= stall_drop * _correct_lift_factor
 		factors2 = _calculate_stall_factors(data, full_stall_angle_max)
+		factors1.x -= stall_drop * _correct_lift_factor
 		w = (data.angle_of_attack - stall_angle_max) / (full_stall_angle_max - stall_angle_max)
 	else:
 		factors1 = _calculate_normal_factors(data, stall_angle_min)
 		factors1.x += stall_drop * _correct_lift_factor
 		factors2 = _calculate_stall_factors(data, full_stall_angle_min)
+		factors1.x += stall_drop * _correct_lift_factor
 		w = (data.angle_of_attack - stall_angle_min) / (full_stall_angle_min - stall_angle_min)
 
 	w = w * w * (3 - 2 * w)
