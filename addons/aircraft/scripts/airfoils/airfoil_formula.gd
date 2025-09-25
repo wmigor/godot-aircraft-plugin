@@ -11,6 +11,8 @@ class_name AirfoilFormula
 @export_range(-30, 0, 0.001, "radians_as_degrees") var stall_angle_min := deg_to_rad(-15.0)
 ## Distance in degrees between the beginning of the stall and the complete stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
+## Stall drop at begin stall
+@export_range(0.0, 1.6, 0.001) var stall_drop := 0.1
 ## Surface friction factor.
 @export_range(0, 0.3, 0.001) var surface_friction := 0.023
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
@@ -25,6 +27,7 @@ var _corrected_stall_angle_max: float
 var _corrected_stall_angle_min: float
 var _restore_stall_angle_max: float
 var _restore_stall_angle_min: float
+var _correct_lift_factor: float
 
 
 func update_factors(data: Data) -> void:
@@ -33,7 +36,8 @@ func update_factors(data: Data) -> void:
 
 
 func _update_parameters(data: Data) -> void:
-	_corrected_lift_slope = lift_slope * data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else lift_slope
+	_correct_lift_factor = data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else 1.0
+	_corrected_lift_slope = lift_slope * _correct_lift_factor
 	var control_surface_effectivness_factor := acos(2.0 * data.control_surface_fraction - 1.0)
 	var control_surface_effectivness := 1.0 - (control_surface_effectivness_factor - sin(control_surface_effectivness_factor)) / PI
 	_control_surface_lift = _corrected_lift_slope * control_surface_effectivness * _get_control_surface_lift_factor(data.control_surface_angle) * data.control_surface_angle
@@ -76,10 +80,12 @@ func _calculate_factors(data: Data) -> void:
 	if data.angle_of_attack > stall_angle_max:
 		factors1 = _calculate_normal_factors(data, stall_angle_max)
 		factors2 = _calculate_stall_factors(data, full_stall_angle_max)
+		factors1.x -= stall_drop * _correct_lift_factor
 		w = (data.angle_of_attack - stall_angle_max) / (full_stall_angle_max - stall_angle_max)
 	else:
 		factors1 = _calculate_normal_factors(data, stall_angle_min)
 		factors2 = _calculate_stall_factors(data, full_stall_angle_min)
+		factors1.x += stall_drop * _correct_lift_factor
 		w = (data.angle_of_attack - stall_angle_min) / (full_stall_angle_min - stall_angle_min)
 
 	w = w * w * (3 - 2 * w)
