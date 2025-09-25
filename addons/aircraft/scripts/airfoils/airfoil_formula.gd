@@ -53,14 +53,14 @@ func _update_parameters(data: Data) -> void:
 	_control_surface_lift = _corrected_lift_slope * control_surface_effectivness * _get_control_surface_lift_factor(data.control_surface_angle) * data.control_surface_angle
 	_corrected_zero_lift_angle = zero_lift_angle - _control_surface_lift / _corrected_lift_slope
 	var control_surface_lift_max := _get_control_surface_lift_max(data.control_surface_fraction)
-	var lift_max := _corrected_lift_slope * (stall_angle_max - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
-	var lift_min := _corrected_lift_slope * (stall_angle_min - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
-	_corrected_stall_angle_max = _corrected_zero_lift_angle + lift_max / _corrected_lift_slope
-	_corrected_stall_angle_min = _corrected_zero_lift_angle + lift_min / _corrected_lift_slope
-	lift_max = _corrected_lift_slope * (linear_range - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
-	lift_min = _corrected_lift_slope * (-linear_range - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
-	_corrected_linear_max = _corrected_zero_lift_angle + lift_max / _corrected_lift_slope
-	_corrected_linear_min = _corrected_zero_lift_angle + lift_min / _corrected_lift_slope
+	var max_lift := _corrected_lift_slope * (stall_angle_max - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
+	var min_lift := _corrected_lift_slope * (stall_angle_min - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
+	_corrected_stall_angle_max = _corrected_zero_lift_angle + max_lift / _corrected_lift_slope
+	_corrected_stall_angle_min = _corrected_zero_lift_angle + min_lift / _corrected_lift_slope
+	max_lift = _corrected_lift_slope * (linear_range - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
+	min_lift = _corrected_lift_slope * (-linear_range - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
+	_corrected_linear_max = _corrected_zero_lift_angle + max_lift / _corrected_lift_slope
+	_corrected_linear_min = _corrected_zero_lift_angle + min_lift / _corrected_lift_slope
 	_update_section_hysteresis_stall(data)
 
 
