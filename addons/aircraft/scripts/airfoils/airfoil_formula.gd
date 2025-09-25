@@ -1,8 +1,15 @@
+@tool
 extends Airfoil
-class_name AirfoilFormuls
+class_name AirfoilFormula
 
 ## Determines how quickly the lift increases with the angle of rotation. For a normal wing it is 2 * PI.
 @export var lift_slope := TAU
+## Linear range of lift_slope
+@export_range(0.0, 19.0, 0.001, "radians_as_degrees") var linear_range := deg_to_rad(10.0)
+## Lift max
+@export var lift_max := 1.6
+## Lift power
+@export_range(0.0, 9.0, 0.001) var lift_power := 1.6
 ## Zero lift angle of attack.
 @export_range(-10, 10, 0.001, "radians_as_degrees") var zero_lift_angle := 0.0
 ## Positive stall angle.
@@ -91,8 +98,23 @@ func _calculate_factors(data: Data) -> void:
 	data.pitch_factor = lerpf(factors1.z, factors2.z, w)
 
 
+func _get_infinity_wing_lift(angle_of_attack: float) -> float:
+	if angle_of_attack >= -linear_range and angle_of_attack <= linear_range:
+		return (angle_of_attack - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+	if angle_of_attack >= linear_range and angle_of_attack <= section.corrected_stall_angle_max:
+		var weight := (angle_of_attack - linear_range) / (section.corrected_stall_angle_max - linear_range)
+		var a := (angle_of_attack - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+		return lerpf(a, lift_max, 1.0 - pow(1.0 - weight, lift_power))
+	if angle_of_attack >= section.corrected_stall_angle_min and angle_of_attack <= -linear_range:
+		var weight := (angle_of_attack - section.corrected_stall_angle_min) / (-linear_range - section.corrected_stall_angle_min)
+		var b := (angle_of_attack - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+		return lerpf(-lift_max, b, pow(weight, lift_power))
+	return 0.0
+
+
 func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
-	var lift := section.corrected_lift_slope * (angle_of_attack - section.corrected_zero_lift_angle)
+	#var lift := section.corrected_lift_slope * (angle_of_attack - section.corrected_zero_lift_angle)
+	var lift := _get_infinity_wing_lift(angle_of_attack)
 	var induced_angle := lift / (PI * data.aspect_ratio) if absf(data.aspect_ratio) > 0.0 else 0.0
 	var effective_angle := angle_of_attack - section.corrected_zero_lift_angle - induced_angle
 	var cos_ea := cos(effective_angle)
