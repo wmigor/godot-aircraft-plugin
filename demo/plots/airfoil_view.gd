@@ -10,6 +10,7 @@ extends Control
 @onready var _deflection := $Deflection as Slider
 @onready var _aspect_ratio := $AspectRatio as Slider
 
+var _interval := 180.0
 var _cursor: Vector2
 var _airfoil_data := Airfoil.Data.new()
 
@@ -67,15 +68,14 @@ func _draw_plot() -> void:
 		drag_points.append(Vector2(x, center.y - _airfoil_data.drag_factor * lift_scale))
 		pitches_points.append(Vector2(x, center.y - _airfoil_data.pitch_factor * lift_scale))
 		x += 1
-	draw_polyline(lift_points, Color.GREEN, 2.0, true)
-	draw_polyline(drag_points, Color.RED, 2.0, true)
-	draw_polyline(pitches_points, Color.YELLOW, 2.0, true)
+	draw_polyline(lift_points, Color.GREEN, 1.0, true)
+	draw_polyline(drag_points, Color.RED, 1.0, true)
+	draw_polyline(pitches_points, Color.YELLOW, 1.0, true)
 
 
 func _map_x_to_angle(x: float) -> float:
-	var interval := 180.0
-	var s := interval / 180.0
-	return deg_to_rad(x * 360.0 * s / get_rect().size.x - interval)
+	var s := _interval / 180.0
+	return wrapf(deg_to_rad(x * 360.0 * s / get_rect().size.x - _interval), -PI, PI)
 
 
 func _input(event: InputEvent) -> void:
@@ -91,3 +91,7 @@ func _input(event: InputEvent) -> void:
 		_lift_label.text = str(snappedf(_airfoil_data.lift_factor, 0.001))
 		_drag_label.text = str(snappedf(_airfoil_data.drag_factor, 0.001))
 		_pitch_label.text = str(snappedf(_airfoil_data.pitch_factor, 0.001))
+	elif event.is_action_pressed("ui_up"):
+		_interval -= 10.0
+	elif event.is_action_pressed("ui_down"):
+		_interval += 10.0
