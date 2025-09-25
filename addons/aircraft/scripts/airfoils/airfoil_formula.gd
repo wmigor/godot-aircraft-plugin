@@ -27,19 +27,16 @@ class_name AirfoilFormula
 ## Enables an alternative drag calculation method. If the aircraft seems to have too much drag, enable this option. Also, make sure to disable damping in the VehicleBody3D.
 @export var alternative_drag := true
 
-class Paramters:
-	var control_surface_lift: float
-	var corrected_lift_slope: float
-	var corrected_zero_lift_angle: float
-	var corrected_stall_angle_max: float
-	var corrected_stall_angle_min: float
-	var restore_stall_angle_max: float
-	var restore_stall_angle_min: float
-	var corrected_linear_max: float
-	var corrected_linear_min: float
-	var correct_lift_factor: float
-
-var section := Paramters.new()
+var _control_surface_lift: float
+var _corrected_lift_slope: float
+var _corrected_zero_lift_angle: float
+var _corrected_stall_angle_max: float
+var _corrected_stall_angle_min: float
+var _restore_stall_angle_max: float
+var _restore_stall_angle_min: float
+var _corrected_linear_max: float
+var _corrected_linear_min: float
+var _correct_lift_factor: float
 
 
 func update_factors(data: Data) -> void:
@@ -48,27 +45,27 @@ func update_factors(data: Data) -> void:
 
 
 func _update_parameters(data: Data) -> void:
-	section.correct_lift_factor = data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else 1.0
-	section.corrected_lift_slope = lift_slope * section.correct_lift_factor
+	_correct_lift_factor = data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else 1.0
+	_corrected_lift_slope = lift_slope * _correct_lift_factor
 	var control_surface_effectivness_factor := acos(2.0 * data.control_surface_fraction - 1.0)
 	var control_surface_effectivness := 1.0 - (control_surface_effectivness_factor - sin(control_surface_effectivness_factor)) / PI
-	section.control_surface_lift = section.corrected_lift_slope * control_surface_effectivness * _get_control_surface_lift_factor(data.control_surface_angle) * data.control_surface_angle
-	section.corrected_zero_lift_angle = zero_lift_angle - section.control_surface_lift / section.corrected_lift_slope
+	_control_surface_lift = _corrected_lift_slope * control_surface_effectivness * _get_control_surface_lift_factor(data.control_surface_angle) * data.control_surface_angle
+	_corrected_zero_lift_angle = zero_lift_angle - _control_surface_lift / _corrected_lift_slope
 	var control_surface_lift_max := _get_control_surface_lift_max(data.control_surface_fraction)
-	var lift_max := section.corrected_lift_slope * (stall_angle_max - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
-	var lift_min := section.corrected_lift_slope * (stall_angle_min - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
-	section.corrected_stall_angle_max = section.corrected_zero_lift_angle + lift_max / section.corrected_lift_slope
-	section.corrected_stall_angle_min = section.corrected_zero_lift_angle + lift_min / section.corrected_lift_slope
-	lift_max = section.corrected_lift_slope * (linear_range - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
-	lift_min = section.corrected_lift_slope * (-linear_range - zero_lift_angle) + section.control_surface_lift * control_surface_lift_max
-	section.corrected_linear_max = section.corrected_zero_lift_angle + lift_max / section.corrected_lift_slope
-	section.corrected_linear_min = section.corrected_zero_lift_angle + lift_min / section.corrected_lift_slope
+	var lift_max := _corrected_lift_slope * (stall_angle_max - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
+	var lift_min := _corrected_lift_slope * (stall_angle_min - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
+	_corrected_stall_angle_max = _corrected_zero_lift_angle + lift_max / _corrected_lift_slope
+	_corrected_stall_angle_min = _corrected_zero_lift_angle + lift_min / _corrected_lift_slope
+	lift_max = _corrected_lift_slope * (linear_range - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
+	lift_min = _corrected_lift_slope * (-linear_range - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
+	_corrected_linear_max = _corrected_zero_lift_angle + lift_max / _corrected_lift_slope
+	_corrected_linear_min = _corrected_zero_lift_angle + lift_min / _corrected_lift_slope
 	_update_section_hysteresis_stall(data)
 
 
 func _calculate_factors(data: Data) -> void:
-	var stall_angle_max := section.restore_stall_angle_max if data.stall else section.corrected_stall_angle_max
-	var stall_angle_min := section.restore_stall_angle_min if data.stall else section.corrected_stall_angle_min
+	var stall_angle_max := _restore_stall_angle_max if data.stall else _corrected_stall_angle_max
+	var stall_angle_min := _restore_stall_angle_min if data.stall else _corrected_stall_angle_min
 
 	if data.angle_of_attack >= stall_angle_min and data.angle_of_attack <= stall_angle_max:
 		var factors := _calculate_normal_factors(data, data.angle_of_attack)
@@ -79,8 +76,8 @@ func _calculate_factors(data: Data) -> void:
 		return
 
 	data.stall_warning = data.wind.length_squared() >= data.chord * data.chord
-	var full_stall_angle_max := section.corrected_stall_angle_max + stall_width
-	var full_stall_angle_min := section.corrected_stall_angle_min - stall_width
+	var full_stall_angle_max := _corrected_stall_angle_max + stall_width
+	var full_stall_angle_min := _corrected_stall_angle_min - stall_width
 
 	if data.angle_of_attack > full_stall_angle_max or data.angle_of_attack < full_stall_angle_min:
 		var factors := _calculate_stall_factors(data, data.angle_of_attack)
@@ -95,12 +92,12 @@ func _calculate_factors(data: Data) -> void:
 
 	if data.angle_of_attack > stall_angle_max:
 		factors1 = _calculate_normal_factors(data, stall_angle_max)
-		factors1.x -= stall_drop * section.correct_lift_factor
+		factors1.x -= stall_drop * _correct_lift_factor
 		factors2 = _calculate_stall_factors(data, full_stall_angle_max)
 		w = (data.angle_of_attack - stall_angle_max) / (full_stall_angle_max - stall_angle_max)
 	else:
 		factors1 = _calculate_normal_factors(data, stall_angle_min)
-		factors1.x += stall_drop * section.correct_lift_factor
+		factors1.x += stall_drop * _correct_lift_factor
 		factors2 = _calculate_stall_factors(data, full_stall_angle_min)
 		w = (data.angle_of_attack - stall_angle_min) / (full_stall_angle_min - stall_angle_min)
 
@@ -111,29 +108,29 @@ func _calculate_factors(data: Data) -> void:
 
 
 func _get_infinity_wing_lift(data: Data, angle_of_attack: float) -> float:
-	if angle_of_attack >= section.corrected_linear_min and angle_of_attack <= section.corrected_linear_max:
-		return (angle_of_attack - section.corrected_zero_lift_angle) * section.corrected_lift_slope
-	var lift_offset := section.corrected_lift_slope * linear_range - section.corrected_linear_max * section.corrected_lift_slope
-	var max_lift := lift_max * section.correct_lift_factor + lift_offset
-	if angle_of_attack >= section.corrected_linear_max and angle_of_attack <= section.corrected_stall_angle_max:
-		var weight := (angle_of_attack - section.corrected_linear_max) / (section.corrected_stall_angle_max - section.corrected_linear_max)
-		var a := (section.corrected_linear_max - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+	if angle_of_attack >= _corrected_linear_min and angle_of_attack <= _corrected_linear_max:
+		return (angle_of_attack - _corrected_zero_lift_angle) * _corrected_lift_slope
+	var lift_offset := _corrected_lift_slope * linear_range - _corrected_linear_max * _corrected_lift_slope
+	var max_lift := lift_max * _correct_lift_factor + lift_offset
+	if angle_of_attack >= _corrected_linear_max and angle_of_attack <= _corrected_stall_angle_max:
+		var weight := (angle_of_attack - _corrected_linear_max) / (_corrected_stall_angle_max - _corrected_linear_max)
+		var a := (_corrected_linear_max - _corrected_zero_lift_angle) * _corrected_lift_slope
 		return lerpf(a, max_lift, 1.0 - pow(1.0 - weight, lift_power))
-	var zero_angle_lift := -section.corrected_zero_lift_angle * section.corrected_lift_slope
+	var zero_angle_lift := -_corrected_zero_lift_angle * _corrected_lift_slope
 	var z := -zero_lift_angle * lift_slope
 	var min_lift := zero_angle_lift - max_lift + z
-	if angle_of_attack >= section.corrected_stall_angle_min and angle_of_attack <= section.corrected_linear_min:
-		var weight := (angle_of_attack - section.corrected_stall_angle_min) / (section.corrected_linear_min - section.corrected_stall_angle_min)
-		var b := (section.corrected_linear_min - section.corrected_zero_lift_angle) * section.corrected_lift_slope
+	if angle_of_attack >= _corrected_stall_angle_min and angle_of_attack <= _corrected_linear_min:
+		var weight := (angle_of_attack - _corrected_stall_angle_min) / (_corrected_linear_min - _corrected_stall_angle_min)
+		var b := (_corrected_linear_min - _corrected_zero_lift_angle) * _corrected_lift_slope
 		return lerpf(min_lift, b, pow(weight, lift_power))
 	return 0.0
 
 
 func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
-	#var lift := section.corrected_lift_slope * (angle_of_attack - section.corrected_zero_lift_angle)
+	#var lift := _corrected_lift_slope * (angle_of_attack - _corrected_zero_lift_angle)
 	var lift := _get_infinity_wing_lift(data, angle_of_attack)
 	var induced_angle := lift / (PI * data.aspect_ratio) if absf(data.aspect_ratio) > 0.0 else 0.0
-	var effective_angle := angle_of_attack - section.corrected_zero_lift_angle - induced_angle
+	var effective_angle := angle_of_attack - _corrected_zero_lift_angle - induced_angle
 	var cos_ea := cos(effective_angle)
 	var sin_ea := sin(effective_angle)
 	var tangent := surface_friction * cos_ea
@@ -151,25 +148,25 @@ func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
 
 func _get_infinity_wing_drag(data: Data, angle_of_attack: float) -> float:
 	var k := 1.0 / (PI * data.aspect_ratio * 0.8) if absf(data.aspect_ratio) > 0.0 else 0.0
-	var drag = k * section.control_surface_lift * section.control_surface_lift
-	if angle_of_attack >= 0.0 and angle_of_attack <= section.corrected_stall_angle_max:
-		var weight := angle_of_attack / section.corrected_stall_angle_max
+	var drag = k * _control_surface_lift * _control_surface_lift
+	if angle_of_attack >= 0.0 and angle_of_attack <= _corrected_stall_angle_max:
+		var weight := angle_of_attack / _corrected_stall_angle_max
 		return lerpf(0.006, 0.02, weight * weight) + drag
-	if angle_of_attack >= section.corrected_stall_angle_min and angle_of_attack <= 0.0:
-		var weight := 1.0 - angle_of_attack / section.corrected_stall_angle_min
+	if angle_of_attack >= _corrected_stall_angle_min and angle_of_attack <= 0.0:
+		var weight := 1.0 - angle_of_attack / _corrected_stall_angle_min
 		return lerpf(0.02, 0.006, weight * weight) + drag
 	return 0.0
 
 
 func _calculate_stall_factors(data: Data, angle_of_attack: float) -> Vector3:
-	var stall_angle := section.corrected_stall_angle_max if angle_of_attack > section.corrected_stall_angle_max else section.corrected_stall_angle_min
-	var stall_lift := section.corrected_lift_slope * (stall_angle - section.corrected_zero_lift_angle)
+	var stall_angle := _corrected_stall_angle_max if angle_of_attack > _corrected_stall_angle_max else _corrected_stall_angle_min
+	var stall_lift := _corrected_lift_slope * (stall_angle - _corrected_zero_lift_angle)
 	var induced_angle := stall_lift / (PI * data.aspect_ratio) if absf(data.aspect_ratio) > 0.0 else 0.0
 	var half_pi := PI / 2.0
-	var z := half_pi - section.corrected_stall_angle_max if angle_of_attack > section.corrected_stall_angle_max else -half_pi - section.corrected_stall_angle_min
+	var z := half_pi - _corrected_stall_angle_max if angle_of_attack > _corrected_stall_angle_max else -half_pi - _corrected_stall_angle_min
 	var w := (half_pi - clampf(angle_of_attack, -half_pi, half_pi)) / z if absf(z) >= 0.001 else 0.0
 	induced_angle = lerpf(0.0, induced_angle, clampf(w, 0.0, 1.0))
-	var effective_angle := angle_of_attack - section.corrected_zero_lift_angle - induced_angle
+	var effective_angle := angle_of_attack - _corrected_zero_lift_angle - induced_angle
 	var sin_ea := sin(effective_angle)
 	var cos_ea := cos(effective_angle)
 	
@@ -188,10 +185,10 @@ func _update_section_hysteresis_stall(data: Data) -> void:
 	if data.wind.length_squared() < data.chord * data.chord:
 		data.stall = false
 		return
-	var start_hysteresis_angle_max := section.corrected_stall_angle_max + stall_width
-	var start_hysteresis_angle_min := section.corrected_stall_angle_min - stall_width
-	section.restore_stall_angle_max = minf(section.corrected_stall_angle_max, restore_stall_angle)
-	section.restore_stall_angle_min = minf(section.corrected_stall_angle_min, -restore_stall_angle)
+	var start_hysteresis_angle_max := _corrected_stall_angle_max + stall_width
+	var start_hysteresis_angle_min := _corrected_stall_angle_min - stall_width
+	_restore_stall_angle_max = minf(_corrected_stall_angle_max, restore_stall_angle)
+	_restore_stall_angle_min = minf(_corrected_stall_angle_min, -restore_stall_angle)
 	if not data.stall and (data.angle_of_attack >= start_hysteresis_angle_max or data.angle_of_attack <= start_hysteresis_angle_min):
 		data.stall = true
 	elif data.stall and data.angle_of_attack <= restore_stall_angle and data.angle_of_attack >= -restore_stall_angle:
