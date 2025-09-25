@@ -1,5 +1,5 @@
 extends Airfoil
-class_name AirfoilFormuls
+class_name AirfoilFormula
 
 ## Determines how quickly the lift increases with the angle of rotation. For a normal wing it is 2 * PI.
 @export var lift_slope := TAU
