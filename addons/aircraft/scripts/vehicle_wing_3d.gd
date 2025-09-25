@@ -218,6 +218,11 @@ var _sections: Array[Section]
 var _debug_view: Node3D
 
 
+func _ready() -> void:
+	if airfoil == null:
+		airfoil = AirfoilFormula.new()
+
+
 func _enter_tree() -> void:
 	_body = get_parent() as RigidBody3D
 	_try_rebuild()

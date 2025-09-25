@@ -58,7 +58,7 @@ func _draw_plot() -> void:
 	var lift_points := PackedVector2Array()
 	var drag_points := PackedVector2Array()
 	var pitches_points := PackedVector2Array()
-	_airfoil_data.aspect_ratio = maxf(0.1, _aspect_ratio.value)
+	_airfoil_data.aspect_ratio = _aspect_ratio.value
 	_airfoil_data.control_surface_angle = deg_to_rad(_deflection.value)
 	while x <= rect.size.x:
 		_airfoil_data.angle_of_attack = _map_x_to_angle(x)
@@ -83,7 +83,7 @@ func _input(event: InputEvent) -> void:
 	var motion := event as InputEventMouseMotion
 	if motion != null:
 		_airfoil_data.angle_of_attack = _map_x_to_angle(motion.position.x)
-		_airfoil_data.aspect_ratio = maxf(0.1, _aspect_ratio.value)
+		_airfoil_data.aspect_ratio = _aspect_ratio.value
 		_airfoil_data.stall = false
 		_airfoil_data.control_surface_angle = deg_to_rad(_deflection.value)
 		airfoil.update_factors(_airfoil_data)
