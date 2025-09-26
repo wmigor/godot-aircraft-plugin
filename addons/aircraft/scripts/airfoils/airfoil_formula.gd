@@ -7,9 +7,9 @@ class_name AirfoilFormula
 ## Linear range of lift_slope
 @export_range(0.0, 19.0, 0.001, "radians_as_degrees") var linear_range := deg_to_rad(10.0)
 ## Lift max
-@export var lift_max := 1.6
+@export var lift_max := 1.5
 ## Lift power
-@export_range(0.0, 9.0, 0.001) var lift_power := 1.6
+@export_range(0.0, 9.0, 0.001) var lift_power := 1.5
 ## Zero lift angle of attack.
 @export_range(-10, 10, 0.001, "radians_as_degrees") var zero_lift_angle := 0.0
 ## Positive stall angle.
@@ -20,7 +20,6 @@ class_name AirfoilFormula
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
 ## Stall drop at begin stall
 @export_range(0.0, 1.6, 0.001) var stall_drop := 0.0
-@export_range(0.0, 1.6, 0.001) var stalled_drop := 0.9
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
 ## Surface friction factor.
 @export_range(0, 0.3, 0.001) var surface_friction := 0.023
@@ -109,13 +108,13 @@ func _calculate_factors(data: Data) -> void:
 		factors1.x += stall_drop * _correct_lift_factor
 		w = (data.angle_of_attack - stall_angle_min) / (full_stall_angle_min - stall_angle_min)
 
-	w = w * w * (3 - 2 * w)
-	data.lift_factor = lerpf(factors1.x, factors2.x, pow(w, stall_power))
+	w = pow(w, stall_power)
+	data.lift_factor = lerpf(factors1.x, factors2.x, w)
 	data.drag_factor = lerpf(factors1.y, factors2.y, w)
 	data.pitch_factor = lerpf(factors1.z, factors2.z, w)
 
 
-func _get_infinity_wing_lift(data: Data, angle_of_attack: float) -> float:
+func _get_normal_lift(data: Data, angle_of_attack: float) -> float:
 	if angle_of_attack >= _corrected_linear_min and angle_of_attack <= _corrected_linear_max:
 		return (angle_of_attack - _corrected_zero_lift_angle) * _corrected_lift_slope
 	var lift_offset := _corrected_lift_slope * linear_range - _corrected_linear_max * _corrected_lift_slope
@@ -135,8 +134,7 @@ func _get_infinity_wing_lift(data: Data, angle_of_attack: float) -> float:
 
 
 func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
-	#var lift := _corrected_lift_slope * (angle_of_attack - _corrected_zero_lift_angle)
-	var lift := _get_infinity_wing_lift(data, angle_of_attack)
+	var lift := _get_normal_lift(data, angle_of_attack)
 	var induced_angle := lift / (PI * data.aspect_ratio) if absf(data.aspect_ratio) > 0.0 else 0.0
 	var effective_angle := angle_of_attack - _corrected_zero_lift_angle - induced_angle
 	var cos_ea := cos(effective_angle)
@@ -183,14 +181,14 @@ func _calculate_stall_factors(data: Data, angle_of_attack: float) -> Vector3:
 	var tangent := 0.5 * surface_friction * cos_ea
 	var infinity_wing_drag := _get_infinity_wing_drag(data, angle_of_attack)
 
-	var lift := 0.0
-	if angle_of_attack >= _corrected_stall_angle_max + stall_width and angle_of_attack <= PI / 4.0 + _corrected_zero_lift_angle:
-		w = (angle_of_attack - _corrected_stall_angle_max - stall_width - _corrected_zero_lift_angle) / (PI / 4.0 - _corrected_stall_angle_max - stall_width)
-		lift = lerpf(_correct_lift_factor * (lift_max - stalled_drop - stall_drop), 1.144 * sin(2.0 * PI / 4.0) * _correct_lift_factor, 1.0 - pow(1.0 - w, 2.0))
-	else:
-		lift = 1.144 * sin(2.0 * (angle_of_attack - _corrected_zero_lift_angle)) * _correct_lift_factor
+	#var lift := 0.0
+	#if angle_of_attack >= _corrected_stall_angle_max + stall_width and angle_of_attack <= PI / 4.0 + _corrected_zero_lift_angle:
+		#w = (angle_of_attack - _corrected_stall_angle_max - stall_width - _corrected_zero_lift_angle) / (PI / 4.0 - _corrected_stall_angle_max - stall_width)
+		#lift = lerpf(_correct_lift_factor * (lift_max - stalled_drop - stall_drop), 1.144 * sin(2.0 * PI / 4.0) * _correct_lift_factor, 1.0 - pow(1.0 - w, 2.0))
+	#else:
+		#lift = 1.144 * sin(2.0 * (angle_of_attack - _corrected_zero_lift_angle)) * _correct_lift_factor
 
-	#var lift := normal * cos_ea - tangent * sin_ea
+	var lift := normal * cos_ea - tangent * sin_ea
 	var drag := normal * sin_ea + tangent * cos_ea + infinity_wing_drag
 	var pitch := -normal * _get_pitch_factor(effective_angle)
 	return Vector3(lift, drag, pitch)
