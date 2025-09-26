@@ -20,6 +20,7 @@ class_name AirfoilFormula
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
 ## Stall drop at begin stall
 @export_range(0.0, 1.6, 0.001) var stall_drop := 0.0
+@export_range(0.0, 1.6, 0.001) var stalled_drop := 0.9
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
 ## Surface friction factor.
 @export_range(0, 0.3, 0.001) var surface_friction := 0.023
@@ -181,6 +182,13 @@ func _calculate_stall_factors(data: Data, angle_of_attack: float) -> Vector3:
 	var normal := _get_drag_max(data.control_surface_angle) * sin_ea * (1.0 / (0.56 + 0.44 * absf(sin_ea)) - 0.41 * (1.0 - e))
 	var tangent := 0.5 * surface_friction * cos_ea
 	var infinity_wing_drag := _get_infinity_wing_drag(data, angle_of_attack)
+
+	#var lift := 0.0
+	#if angle_of_attack >= _corrected_stall_angle_max + stall_width and angle_of_attack <= PI / 4.0:
+		#w = (angle_of_attack - _corrected_stall_angle_max - stall_width) / (PI / 4.0 - _corrected_stall_angle_max - stall_width)
+		#lift = lerpf(lift_max - stalled_drop - stall_drop, 1.144 * sin(2.0 * PI / 4.0) * _correct_lift_factor, 1.0 - pow(1.0 - w, 2.0))
+	#else:
+		#lift = 1.144 * sin(2.0 * angle_of_attack) * _correct_lift_factor
 
 	var lift := normal * cos_ea - tangent * sin_ea
 	var drag := normal * sin_ea + tangent * cos_ea + infinity_wing_drag

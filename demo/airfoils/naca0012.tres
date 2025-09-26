@@ -5,6 +5,8 @@
 [resource]
 script = ExtResource("1_by33o")
 lift_slope = 6.875
+lift_max = 1.5
+lift_power = 1.5
 stall_angle_max = 0.23561944901923448
 stall_angle_min = -0.23561944901923448
 stall_width = 0.11344640137963144
