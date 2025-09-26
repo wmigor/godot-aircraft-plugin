@@ -22,6 +22,8 @@ class_name VehiclePropeller3D
 @export var reverse := false
 ## Propeller radius
 @export var radius := 1.0
+## Feather the propeller
+@export var feather: bool
 
 var min_rpm: float:
 	get(): return max_rpm * 0.2
@@ -84,20 +86,22 @@ func _calculate(velocity: float, forward: Vector3) -> void:
 	thrust = 0.5 * density * v2 * _f0 * tc
 	torque = thrust / gamma
 	wind = -forward * _calc_wind(velocity, density)
-	if lambda > 1.0:
+	if lambda > 1.0 and not feather:
 		var tau0 := (0.25 * j0) / (efficiency * _beta * (1.0 - _lambda_peak))
 		var lambda_wm = 1.2
 		torque = tau0 - tau0 * (lambda - 1.0) / (lambda_wm - 1.0)
 		torque *= 0.5 * density * v2 * _f0
+	if feather:
+		thrust = 0.0
 
 
 func _get_engine_torque() -> float:
+	var starter_torque := max_torque * 0.2
+	if throttle <= 0:
+		return -starter_torque - angular_velocity * 0.1
 	if rpm >= min_rpm:
 		return throttle * _get_nominal_engine_torque()
-	var starter_torque := max_torque * 0.2
-	if throttle > 0.0:
-		return starter_torque
-	return -starter_torque - angular_velocity * 0.1
+	return starter_torque
 
 
 func _get_nominal_engine_torque() -> float:
@@ -127,11 +131,17 @@ func _process_pitch(delta: float) -> void:
 
 
 func _calc_wind(velocity: float, density: float) -> float:
+	if feather:
+		return 0.0
 	var area := radius * radius * PI
 	var vel2sum := velocity * absf(velocity) + 2.0 * thrust / (density * area)
 	if vel2sum > 0.0:
 		return -velocity + sqrt(vel2sum)
 	return -velocity - sqrt(-vel2sum)
+
+
+func toggle_mode() -> void:
+	feather = not feather
 
 
 var VehiclePropeller3DDebugView := preload("uid://bi5f3pjnf633x")
