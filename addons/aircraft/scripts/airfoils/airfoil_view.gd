@@ -27,8 +27,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint():
-		var pos := get_viewport().get_mouse_position()
-		_set_mouse_position(pos)
+		_set_mouse_position(get_local_mouse_position())
 	queue_redraw()
 
 
@@ -39,15 +38,14 @@ func _draw() -> void:
 
 
 func _draw_axis() -> void:
-	var rect := get_rect()
-	var center := rect.get_center()
-	draw_line(Vector2(0.0, center.y), Vector2(rect.size.x, center.y), Color.WHITE)
-	draw_line(Vector2(center.x, 0.0), Vector2(center.x, rect.size.y), Color.WHITE)
+	var center := size * 0.5
+	draw_line(Vector2(0.0, center.y), Vector2(size.x, center.y), Color.WHITE)
+	draw_line(Vector2(center.x, 0.0), Vector2(center.x, size.y), Color.WHITE)
 
 
 func _draw_cursor() -> void:
-	var rect := get_rect()
-	draw_line(Vector2(_cursor.x, 0.0), Vector2(_cursor.x, rect.size.y), Color.ORANGE)
+	var x := _cursor.x
+	draw_line(Vector2(x, 0.0), Vector2(x, size.y), Color.ORANGE)
 
 
 func _draw_plot() -> void:
@@ -55,8 +53,8 @@ func _draw_plot() -> void:
 		return
 	var rect := get_rect()
 	var max_value := 2.2
-	var lift_scale := rect.size.y / max_value / 2.0
-	var center := rect.get_center()
+	var lift_scale := size.y / max_value / 2.0
+	var center := size * 0.5
 	var x := 0.0
 	var lift_points := PackedVector2Array()
 	var drag_points := PackedVector2Array()
@@ -64,7 +62,7 @@ func _draw_plot() -> void:
 	_airfoil_data.aspect_ratio = aspect_ratio
 	_airfoil_data.control_surface_angle = deg_to_rad(control_surface_agnle)
 	_airfoil_data.control_surface_fraction = control_surface_fraction
-	while x <= rect.size.x:
+	while x <= size.x:
 		_airfoil_data.angle_of_attack = _map_x_to_angle(x)
 		_airfoil_data.stall = false
 		airfoil.update_factors(_airfoil_data)
@@ -79,13 +77,12 @@ func _draw_plot() -> void:
 
 func _map_x_to_angle(x: float) -> float:
 	var s := _interval / 180.0
-	return wrapf(deg_to_rad(x * 360.0 * s / get_rect().size.x - _interval), -PI, PI)
+	return wrapf(deg_to_rad(x * 360.0 * s / size.x - _interval), -PI, PI)
 
 
 func _input(event: InputEvent) -> void:
-	var motion := event as InputEventMouseMotion
-	if motion != null:
-		_set_mouse_position(motion.position)
+	if event as InputEventMouseMotion:
+		_set_mouse_position(get_local_mouse_position())
 	elif event.is_action_pressed("ui_up"):
 		_interval -= 10.0
 	elif event.is_action_pressed("ui_down"):
