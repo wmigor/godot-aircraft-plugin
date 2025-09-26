@@ -25,6 +25,10 @@ class_name AirfoilFormula
 @export_range(0, 0.3, 0.001) var surface_friction := 0.023
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(5.0)
+
+@export var drag_min := 0.005
+@export var drag_max := 0.025
+
 ## Enables an alternative drag calculation method. If the aircraft seems to have too much drag, enable this option. Also, make sure to disable damping in the VehicleBody3D.
 @export var alternative_drag := true
 
@@ -154,10 +158,10 @@ func _get_infinity_wing_drag(data: Data, angle_of_attack: float) -> float:
 	var drag = k * _control_surface_lift * _control_surface_lift
 	if angle_of_attack >= 0.0 and angle_of_attack <= _corrected_stall_angle_max:
 		var weight := angle_of_attack / _corrected_stall_angle_max
-		return lerpf(0.006, 0.02, weight * weight) + drag
+		return lerpf(drag_min, drag_max, weight * weight) + drag
 	if angle_of_attack >= _corrected_stall_angle_min and angle_of_attack <= 0.0:
 		var weight := 1.0 - angle_of_attack / _corrected_stall_angle_min
-		return lerpf(0.02, 0.006, weight * weight) + drag
+		return lerpf(drag_max, drag_min, weight * weight) + drag
 	return 0.0
 
 
