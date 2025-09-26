@@ -1,3 +1,4 @@
+@tool
 extends Control
 
 @export var airfoil: Airfoil
@@ -24,6 +25,9 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	if Engine.is_editor_hint():
+		var pos := get_viewport().get_mouse_position()
+		_set_mouse_position(pos)
 	queue_redraw()
 
 
@@ -81,17 +85,21 @@ func _map_x_to_angle(x: float) -> float:
 func _input(event: InputEvent) -> void:
 	var motion := event as InputEventMouseMotion
 	if motion != null:
-		_airfoil_data.angle_of_attack = _map_x_to_angle(motion.position.x)
-		_airfoil_data.aspect_ratio = _aspect_ratio.value
-		_airfoil_data.stall = false
-		_airfoil_data.control_surface_angle = deg_to_rad(_deflection.value)
-		airfoil.update_factors(_airfoil_data)
-		_cursor = motion.position
-		_angle_label.text = str(snappedf(rad_to_deg(_airfoil_data.angle_of_attack), 0.001))
-		_lift_label.text = str(snappedf(_airfoil_data.lift_factor, 0.001))
-		_drag_label.text = str(snappedf(_airfoil_data.drag_factor, 0.001))
-		_pitch_label.text = str(snappedf(_airfoil_data.pitch_factor, 0.001))
+		_set_mouse_position(motion.position)
 	elif event.is_action_pressed("ui_up"):
 		_interval -= 10.0
 	elif event.is_action_pressed("ui_down"):
 		_interval += 10.0
+
+
+func _set_mouse_position(pos: Vector2) -> void:
+	_airfoil_data.angle_of_attack = _map_x_to_angle(pos.x)
+	_airfoil_data.aspect_ratio = _aspect_ratio.value
+	_airfoil_data.stall = false
+	_airfoil_data.control_surface_angle = deg_to_rad(_deflection.value)
+	airfoil.update_factors(_airfoil_data)
+	_cursor = pos
+	_angle_label.text = str(snappedf(rad_to_deg(_airfoil_data.angle_of_attack), 0.001))
+	_lift_label.text = str(snappedf(_airfoil_data.lift_factor, 0.001))
+	_drag_label.text = str(snappedf(_airfoil_data.drag_factor, 0.001))
+	_pitch_label.text = str(snappedf(_airfoil_data.pitch_factor, 0.001))

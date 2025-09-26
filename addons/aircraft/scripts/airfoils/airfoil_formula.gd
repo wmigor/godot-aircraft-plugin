@@ -1,3 +1,4 @@
+@tool
 extends Airfoil
 class_name AirfoilFormula
 
