@@ -12,7 +12,7 @@ class_name AirfoilFormula
 ## Distance in degrees between the beginning of the stall and the complete stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
 ## Stall drop at begin stall
-@export_range(0.0, 1.6, 0.001) var stall_drop := 0.1
+@export_range(0.0, 1.6, 0.001) var stall_drop := 0.0
 ## Surface friction factor.
 @export_range(0, 0.3, 0.001) var surface_friction := 0.023
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
