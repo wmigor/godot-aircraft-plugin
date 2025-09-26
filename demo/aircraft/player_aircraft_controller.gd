@@ -46,6 +46,8 @@ func _input(event: InputEvent) -> void:
 			aircraft.change_flap_mode(-1)
 		elif event.is_action_pressed("left"):
 			aircraft.input_engine_running = not aircraft.input_engine_running
+		elif event.is_action_pressed("thruster_mode"):
+			aircraft.toggle_thruster_mode()
 
 
 func process_keyboard_values(delta: float) -> void:

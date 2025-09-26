@@ -104,3 +104,8 @@ func change_trim_elevator(direction: int) -> void:
 
 func change_trim_aileron(direction: int) -> void:
 	trim_aileron = clampf(trim_aileron + direction * trim_step, -1.0, 1.0)
+
+
+func toggle_thruster_mode() -> void:
+	for thruster in _thrusters:
+		thruster.toggle_mode()
