@@ -181,13 +181,6 @@ func _calculate_stall_factors(data: Data, angle_of_attack: float) -> Vector3:
 	var tangent := 0.5 * surface_friction * cos_ea
 	var infinity_wing_drag := _get_infinity_wing_drag(data, angle_of_attack)
 
-	#var lift := 0.0
-	#if angle_of_attack >= _corrected_stall_angle_max + stall_width and angle_of_attack <= PI / 4.0 + _corrected_zero_lift_angle:
-		#w = (angle_of_attack - _corrected_stall_angle_max - stall_width - _corrected_zero_lift_angle) / (PI / 4.0 - _corrected_stall_angle_max - stall_width)
-		#lift = lerpf(_correct_lift_factor * (lift_max - stalled_drop - stall_drop), 1.144 * sin(2.0 * PI / 4.0) * _correct_lift_factor, 1.0 - pow(1.0 - w, 2.0))
-	#else:
-		#lift = 1.144 * sin(2.0 * (angle_of_attack - _corrected_zero_lift_angle)) * _correct_lift_factor
-
 	var lift := normal * cos_ea - tangent * sin_ea
 	var drag := normal * sin_ea + tangent * cos_ea + infinity_wing_drag
 	var pitch := -normal * _get_pitch_factor(effective_angle)
