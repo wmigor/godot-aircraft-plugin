@@ -44,5 +44,9 @@ func _get_configuration_warnings() -> PackedStringArray:
 	return warnings
 
 
+func toggle_mode() -> void:
+	pass
+
+
 func _update_debug_view() -> void:
 	pass

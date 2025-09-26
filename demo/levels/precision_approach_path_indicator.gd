@@ -26,8 +26,9 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if target == null:
 		return
-	var vector := global_transform.affine_inverse() * (target.global_position - global_position)
-	var angle := rad_to_deg(atan2(vector.y, -vector.z))
+	var vector := target.global_position - global_position
+	var h_distance = (vector - Vector3.UP * vector.dot(Vector3.UP)).length()
+	var angle := rad_to_deg(atan2(vector.y, h_distance))
 	for i in len(_lights):
 		var light := _lights[i]
 		var switch_angle := angles[i]

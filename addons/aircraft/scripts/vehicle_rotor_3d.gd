@@ -3,6 +3,7 @@ extends VehicleThruster3D
 class_name VehicleRotor3D
 
 @export_group("Blades")
+@export var blade_airfoil: Airfoil
 @export var radius := 10.5:
 	set(value):
 		radius = value
@@ -221,19 +222,14 @@ func _get_dynamic_pitch(blade_nagle: float) -> float:
 
 func _create_blade(index: int) -> VehicleWing3D:
 	var blade := VehicleWing3D.new()
+	blade.airfoil = blade_airfoil
 	blade.mirror = false
 	blade.relax_forces = false
-	blade.alternative_drag = alternative_drag
 	blade.debug = debug
 	blade.span = radius
 	blade.chord = blade_chord
 	blade.twist = blade_twist
 	blade.twist_power = blade_twist_power
-	blade.zero_lift_angle = blade_zero_lift_angle
-	blade.stall_angle_max = stall_angle
-	blade.stall_angle_min = -stall_angle - blade_zero_lift_angle
-	blade.stall_width = stall_width
-	blade.restore_stall_angle = restore_stall_angle
 	blade.flap_angle_min = 0.0
 	blade.flap_angle_max = 0.0
 	blade.flap_start = 0.0
