@@ -1,27 +1,28 @@
 @tool
 extends Control
+class_name AirfoiView
 
 @export var airfoil: Airfoil
-
-@onready var _angle_label := $GridContainer/Angle
-@onready var _lift_label := $GridContainer/Lift
-@onready var _drag_label := $GridContainer/Drag
-@onready var _pitch_label := $GridContainer/Pitch
-@onready var _deflection_label := $GridContainer/Deflection
-@onready var _deflection := $Deflection as Slider
-@onready var _aspect_ratio := $AspectRatio as Slider
+@export_range(0, 0.9, 0.001) var control_surface_fraction := 0.4
+@export_range(-50, 50, 1) var control_surface_agnle := 0.0
+@export_range(0, 100, 0.1) var aspect_ratio := 0.0
 
 var _interval := 180.0
 var _cursor: Vector2
 var _airfoil_data := Airfoil.Data.new()
+var _angle_label := Label.new()
+var _lift_label := Label.new()
+var _drag_label := Label.new()
+var _pitch_label := Label.new()
+var _grid := GridContainer.new()
+var _control_surface_angle_slider := HSlider.new()
+var _aspect_ratio_slider := HSlider.new()
 
 
 func _ready() -> void:
-	_update_deflection_text(_deflection.value)
-	_deflection.value_changed.connect(_update_deflection_text)
-	_deflection.value_changed.connect(func(value: float): $Deflection/Label.text = str(value))
-	_aspect_ratio.value_changed.connect(func(value: float): $AspectRatio/Label.text = str(value))
-	_airfoil_data.control_surface_fraction = 0.4
+	_build_controls()
+	if airfoil == null:
+		airfoil = AirfoilFormula.new()
 
 
 func _process(_delta: float) -> void:
@@ -49,11 +50,9 @@ func _draw_cursor() -> void:
 	draw_line(Vector2(_cursor.x, 0.0), Vector2(_cursor.x, rect.size.y), Color.ORANGE)
 
 
-func _update_deflection_text(value: float) -> void:
-	_deflection_label.text = str(value)
-
-
 func _draw_plot() -> void:
+	if airfoil == null:
+		return
 	var rect := get_rect()
 	var max_value := 2.2
 	var lift_scale := rect.size.y / max_value / 2.0
@@ -62,8 +61,9 @@ func _draw_plot() -> void:
 	var lift_points := PackedVector2Array()
 	var drag_points := PackedVector2Array()
 	var pitches_points := PackedVector2Array()
-	_airfoil_data.aspect_ratio = _aspect_ratio.value
-	_airfoil_data.control_surface_angle = deg_to_rad(_deflection.value)
+	_airfoil_data.aspect_ratio = aspect_ratio
+	_airfoil_data.control_surface_angle = deg_to_rad(control_surface_agnle)
+	_airfoil_data.control_surface_fraction = control_surface_fraction
 	while x <= rect.size.x:
 		_airfoil_data.angle_of_attack = _map_x_to_angle(x)
 		_airfoil_data.stall = false
@@ -94,12 +94,41 @@ func _input(event: InputEvent) -> void:
 
 func _set_mouse_position(pos: Vector2) -> void:
 	_airfoil_data.angle_of_attack = _map_x_to_angle(pos.x)
-	_airfoil_data.aspect_ratio = _aspect_ratio.value
+	_airfoil_data.aspect_ratio = aspect_ratio
 	_airfoil_data.stall = false
-	_airfoil_data.control_surface_angle = deg_to_rad(_deflection.value)
-	airfoil.update_factors(_airfoil_data)
+	_airfoil_data.control_surface_angle = deg_to_rad(control_surface_agnle)
+	if airfoil != null:
+		airfoil.update_factors(_airfoil_data)
 	_cursor = pos
 	_angle_label.text = str(snappedf(rad_to_deg(_airfoil_data.angle_of_attack), 0.001))
 	_lift_label.text = str(snappedf(_airfoil_data.lift_factor, 0.001))
 	_drag_label.text = str(snappedf(_airfoil_data.drag_factor, 0.001))
 	_pitch_label.text = str(snappedf(_airfoil_data.pitch_factor, 0.001))
+
+
+func _build_controls() -> void:
+	_grid.columns = 2
+	_grid.size = Vector2(256, 256)
+	_grid.position = Vector2(0, 0)
+	add_child(_grid)
+	_add_to_grid(_angle_label, "Angle", Color.WHITE)	
+	_add_to_grid(_lift_label, "Lift", Color.GREEN)	
+	_add_to_grid(_drag_label, "Drag", Color.RED)	
+	_add_to_grid(_pitch_label, "Pitch", Color.YELLOW)
+	_add_to_grid(_control_surface_angle_slider, "Deflection", Color.WHITE)
+	_add_to_grid(_aspect_ratio_slider, "Aspect ratio", Color.WHITE)
+	_aspect_ratio_slider.max_value = 100
+	_control_surface_angle_slider.min_value = -50
+	_control_surface_angle_slider.max_value = 50
+	_aspect_ratio_slider.value_changed.connect(func(value): aspect_ratio = value)
+	_control_surface_angle_slider.value_changed.connect(func(value): control_surface_agnle = value)
+
+
+func _add_to_grid(control: Control, title: String, color: Color) -> void:
+	var title_label := Label.new()
+	title_label.text = title
+	title_label.modulate = color
+	control.modulate = color
+	_grid.add_child(title_label)
+	_grid.add_child(control)
+	control.size_flags_horizontal = Control.SIZE_EXPAND | Control.SIZE_FILL
