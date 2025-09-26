@@ -13,11 +13,11 @@ class_name AirfoilFormula
 ## Zero lift angle of attack.
 @export_range(-10, 10, 0.001, "radians_as_degrees") var zero_lift_angle := 0.0
 ## Positive stall angle.
-@export_range(0, 30, 0.001, "radians_as_degrees") var stall_angle_max := deg_to_rad(15.0)
+@export_range(0, 19, 0.001, "radians_as_degrees") var stall_angle_max := deg_to_rad(15.0)
 ## Negative stall angle.
-@export_range(-30, 0, 0.001, "radians_as_degrees") var stall_angle_min := deg_to_rad(-15.0)
+@export_range(-19, 0, 0.001, "radians_as_degrees") var stall_angle_min := deg_to_rad(-15.0)
 ## Distance in degrees between the beginning of the stall and the complete stall.
-@export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
+@export_range(0, 20, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
 ## Stall drop at begin stall
 @export_range(0.0, 1.6, 0.001) var stall_drop := 0.0
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
