@@ -29,6 +29,7 @@ text = "Angle"
 
 [node name="Angle" type="Label" parent="GridContainer"]
 layout_mode = 2
+text = "88.75"
 
 [node name="LiftLabel" type="Label" parent="GridContainer"]
 layout_mode = 2
@@ -38,6 +39,7 @@ text = "Lift"
 [node name="Lift" type="Label" parent="GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0, 1)
+text = "-0.024"
 
 [node name="DragLabel" type="Label" parent="GridContainer"]
 layout_mode = 2
@@ -47,6 +49,7 @@ text = "Drag"
 [node name="Drag" type="Label" parent="GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
+text = "1.168"
 
 [node name="PitchLabel" type="Label" parent="GridContainer"]
 layout_mode = 2
@@ -56,6 +59,7 @@ text = "Pitch"
 [node name="Pitch" type="Label" parent="GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 0, 1)
+text = "-0.295"
 
 [node name="DeflectionLabel" type="Label" parent="GridContainer"]
 layout_mode = 2
