@@ -1,9 +1,19 @@
-[gd_scene load_steps=10 format=3 uid="uid://b5lj0nc8qwqtd"]
+[gd_scene load_steps=14 format=3 uid="uid://b5lj0nc8qwqtd"]
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_wbti5"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_wos3d"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_6nxcw"]
+[ext_resource type="Script" uid="uid://d0gf8upd1k6k6" path="res://addons/aircraft/scripts/airfoils/airfoil_formula.gd" id="3_wos3d"]
 [ext_resource type="Script" uid="uid://n0qycfy5ewx7" path="res://demo/aircraft/turbine.gd" id="4_wbti5"]
+
+[sub_resource type="Resource" id="Resource_6nxcw"]
+script = ExtResource("3_wos3d")
+
+[sub_resource type="Resource" id="Resource_v26s5"]
+script = ExtResource("3_wos3d")
+
+[sub_resource type="Resource" id="Resource_6e24p"]
+script = ExtResource("3_wos3d")
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
 height = 6.18188
@@ -42,8 +52,7 @@ chord = 2.47
 taper = 0.4
 sweep = -0.05235987755982989
 dihedral = 0.04363323129985824
-zero_lift_angle = -0.00034906585039885
-stall_width = 0.06981317007977318
+airfoil = SubResource("Resource_6nxcw")
 flap_start = 0.09
 flap_end = 0.638
 flap_angle_max = 0.767944870877505
@@ -62,7 +71,7 @@ span = 3.95
 chord = 1.402
 taper = 0.51
 sweep = 0.06981317007977318
-stall_width = 0.06981317007977318
+airfoil = SubResource("Resource_v26s5")
 type = 1
 flap_end = 1.0
 flap_fraction = 0.4
@@ -83,7 +92,7 @@ chord = 2.22
 taper = 0.35
 sweep = 0.5934119456780721
 mirror = false
-stall_width = 0.06981317007977318
+airfoil = SubResource("Resource_6e24p")
 type = 2
 flap_start = 0.2
 flap_end = 0.86
