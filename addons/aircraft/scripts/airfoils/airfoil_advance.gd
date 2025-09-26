@@ -21,16 +21,11 @@ class_name AirfoilAdvance
 ## Stall drop at begin stall
 @export_range(0.0, 1.6, 0.001) var stall_drop := 0.0
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
-## Surface friction factor.
-@export_range(0, 0.3, 0.001) var surface_friction := 0.023
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(5.0)
 
 @export var drag_min := 0.005
 @export var drag_max := 0.025
-
-## Enables an alternative drag calculation method. If the aircraft seems to have too much drag, enable this option. Also, make sure to disable damping in the VehicleBody3D.
-@export var alternative_drag := true
 
 var _control_surface_lift: float
 var _corrected_lift_slope: float
@@ -139,15 +134,13 @@ func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
 	var effective_angle := angle_of_attack - _corrected_zero_lift_angle - induced_angle
 	var cos_ea := cos(effective_angle)
 	var sin_ea := sin(effective_angle)
-	var tangent := surface_friction * cos_ea
+	var infinity_wing_drag := _get_infinity_wing_drag(data, angle_of_attack)
+	var tangent := infinity_wing_drag * cos_ea
 	var normal := (lift + sin_ea * tangent) / cos_ea if absf(cos_ea) >= 0.001 else 0.0
-	var drag := _get_infinity_wing_drag(data, angle_of_attack)
+	var drag := infinity_wing_drag
 	if absf(data.aspect_ratio) > 0.0:
-		if alternative_drag:
-			var k := 1.0 / (PI * data.aspect_ratio * 0.8)
-			drag += surface_friction + k * lift * lift
-		else:
-			drag += normal * sin_ea + tangent * cos_ea
+		var k := 1.0 / (PI * data.aspect_ratio * 0.8)
+		drag += k * lift * lift
 	var pitch := -normal * _get_pitch_factor(effective_angle)
 	return Vector3(lift, drag, pitch)
 
@@ -178,8 +171,8 @@ func _calculate_stall_factors(data: Data, angle_of_attack: float) -> Vector3:
 	
 	var e := exp(-17.0 / data.aspect_ratio) if absf(data.aspect_ratio) > 0.0 else 0.0
 	var normal := _get_drag_max(data.control_surface_angle) * sin_ea * (1.0 / (0.56 + 0.44 * absf(sin_ea)) - 0.41 * (1.0 - e))
-	var tangent := 0.5 * surface_friction * cos_ea
 	var infinity_wing_drag := _get_infinity_wing_drag(data, angle_of_attack)
+	var tangent := 0.5 * infinity_wing_drag * cos_ea
 
 	var lift := normal * cos_ea - tangent * sin_ea
 	var drag := normal * sin_ea + tangent * cos_ea + infinity_wing_drag
