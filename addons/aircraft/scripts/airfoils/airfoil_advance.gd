@@ -6,10 +6,10 @@ class_name AirfoilAdvance
 @export var lift_slope := TAU
 ## Linear range of lift_slope
 @export_range(0.0, 19.0, 0.001, "radians_as_degrees") var linear_range := deg_to_rad(10.0)
-## Lift max
-@export var lift_max := 1.5
-## Lift power
-@export_range(0.0, 9.0, 0.001) var lift_power := 1.5
+## Lift drop at begin stall
+@export_range(0.0, 1.0, 0.001) var lift_drop := 0.0
+## Lift drop power
+@export_range(0.0, 9.0, 0.001) var lift_power := 1.0
 ## Zero lift angle of attack.
 @export_range(-10, 10, 0.001, "radians_as_degrees") var zero_lift_angle := 0.0
 ## Positive stall angle.
@@ -19,7 +19,8 @@ class_name AirfoilAdvance
 ## Distance in degrees between the beginning of the stall and the complete stall.
 @export_range(0, 20, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
 ## Stall drop at begin stall
-@export_range(0.0, 1.6, 0.001) var stall_drop := 0.0
+@export_range(0.0, 1.0, 0.001) var stall_drop := 0.0
+#3 Stall drop power
 @export_range(0.0, 9.0, 0.001) var stall_power := 1.4
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(5.0)
@@ -113,7 +114,7 @@ func _get_normal_lift(data: Data, angle_of_attack: float) -> float:
 	if angle_of_attack >= _corrected_linear_min and angle_of_attack <= _corrected_linear_max:
 		return (angle_of_attack - _corrected_zero_lift_angle) * _corrected_lift_slope
 	var lift_offset := _corrected_lift_slope * linear_range - _corrected_linear_max * _corrected_lift_slope
-	var max_lift := lift_max * _correct_lift_factor + lift_offset
+	var max_lift := (lift_slope * stall_angle_max - lift_drop) * _correct_lift_factor + lift_offset
 	if angle_of_attack >= _corrected_linear_max and angle_of_attack <= _corrected_stall_angle_max:
 		var weight := (angle_of_attack - _corrected_linear_max) / (_corrected_stall_angle_max - _corrected_linear_max)
 		var a := (_corrected_linear_max - _corrected_zero_lift_angle) * _corrected_lift_slope
