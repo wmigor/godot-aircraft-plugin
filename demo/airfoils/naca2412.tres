@@ -4,5 +4,9 @@
 
 [resource]
 script = ExtResource("1_s2wjt")
-zero_lift_angle = -0.04363323129985824
+lift_slope = 5.844
+lift_drop = 0.18
+lift_power = 1.6
+zero_lift_angle = -0.04276056667386108
+stall_drop = 0.1
 metadata/_custom_type_script = "uid://d0gf8upd1k6k6"

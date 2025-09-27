@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://chdd5i8w0sk2h"]
 
-[ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://demo/plots/airfoil_view.gd" id="1_kca72"]
-[ext_resource type="Resource" uid="uid://dgq2qsgxw2d73" path="res://demo/airfoils/naca0012_table.tres" id="2_3jeof"]
+[ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://addons/aircraft/scripts/airfoils/airfoil_view.gd" id="1_3jeof"]
+[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="2_h6ldn"]
 
 [node name="AirfoilView" type="Control"]
 layout_mode = 3
@@ -10,84 +10,5 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_kca72")
-airfoil = ExtResource("2_3jeof")
-
-[node name="GridContainer" type="GridContainer" parent="."]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -50.0
-offset_right = 273.0
-grow_vertical = 0
-columns = 2
-
-[node name="AnleLable" type="Label" parent="GridContainer"]
-layout_mode = 2
-text = "Angle"
-
-[node name="Angle" type="Label" parent="GridContainer"]
-layout_mode = 2
-
-[node name="LiftLabel" type="Label" parent="GridContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0, 1)
-text = "Lift"
-
-[node name="Lift" type="Label" parent="GridContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0, 1)
-
-[node name="DragLabel" type="Label" parent="GridContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0, 0, 1)
-text = "Drag"
-
-[node name="Drag" type="Label" parent="GridContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0, 0, 1)
-
-[node name="PitchLabel" type="Label" parent="GridContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 0, 1)
-text = "Pitch"
-
-[node name="Pitch" type="Label" parent="GridContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 0, 1)
-
-[node name="DeflectionLabel" type="Label" parent="GridContainer"]
-layout_mode = 2
-text = "Deflection"
-
-[node name="Deflection" type="Label" parent="GridContainer"]
-layout_mode = 2
-
-[node name="Deflection" type="HSlider" parent="."]
-layout_mode = 0
-offset_right = 448.0
-offset_bottom = 16.0
-min_value = -50.0
-max_value = 50.0
-
-[node name="Label" type="Label" parent="Deflection"]
-layout_mode = 0
-offset_left = 448.0
-offset_right = 488.0
-offset_bottom = 23.0
-text = "0.0"
-
-[node name="AspectRatio" type="HSlider" parent="."]
-layout_mode = 0
-offset_top = 54.0
-offset_right = 448.0
-offset_bottom = 85.0
-value = 7.0
-
-[node name="Label" type="Label" parent="AspectRatio"]
-layout_mode = 0
-offset_left = 448.0
-offset_right = 500.0
-offset_bottom = 23.0
-text = "7.0"
+script = ExtResource("1_3jeof")
+airfoil = ExtResource("2_h6ldn")
