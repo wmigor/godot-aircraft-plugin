@@ -220,7 +220,7 @@ var _debug_view: Node3D
 
 func _ready() -> void:
 	if airfoil == null:
-		airfoil = AirfoilSimple.new()
+		airfoil = AirfoilFormula.new()
 
 
 func _enter_tree() -> void:

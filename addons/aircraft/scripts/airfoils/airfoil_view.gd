@@ -22,7 +22,7 @@ var _aspect_ratio_slider := HSlider.new()
 func _ready() -> void:
 	_build_controls()
 	if airfoil == null:
-		airfoil = AirfoilAdvance.new()
+		airfoil = AirfoilFormula.new()
 
 
 func _process(_delta: float) -> void:
