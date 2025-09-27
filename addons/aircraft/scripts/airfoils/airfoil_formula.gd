@@ -3,31 +3,70 @@ extends Airfoil
 class_name AirfoilFormula
 
 ## Determines how quickly the lift increases with the angle of rotation. For a normal wing it is 2 * PI.
-@export var lift_slope := TAU
+@export var lift_slope := TAU:
+	set(value):
+		lift_slope = value
+		emit_changed()
 ## Linear range of lift_slope
-@export_range(0.0, 19.0, 0.001, "radians_as_degrees") var linear_range := deg_to_rad(10.0)
+@export_range(0.0, 19.0, 0.001, "radians_as_degrees") var linear_range := deg_to_rad(10.0):
+	set(value):
+		linear_range = value
+		emit_changed()
 ## Lift drop at begin stall
-@export_range(0.0, 1.0, 0.001) var lift_drop := 0.0
+@export_range(0.0, 1.0, 0.001) var lift_drop := 0.0:
+	set(value):
+		lift_drop = value
+		emit_changed()
 ## Lift drop power
-@export_range(0.0, 9.0, 0.001) var lift_power := 1.0
+@export_range(0.0, 9.0, 0.001) var lift_power := 1.0:
+	set(value):
+		lift_power = value
+		emit_changed()
 ## Zero lift angle of attack.
-@export_range(-10, 10, 0.001, "radians_as_degrees") var zero_lift_angle := 0.0
+@export_range(-10, 10, 0.001, "radians_as_degrees") var zero_lift_angle := 0.0:
+	set(value):
+		zero_lift_angle = value
+		emit_changed()
 ## Positive stall angle.
-@export_range(0, 19, 0.001, "radians_as_degrees") var stall_angle_max := deg_to_rad(15.0)
+@export_range(0, 19, 0.001, "radians_as_degrees") var stall_angle_max := deg_to_rad(15.0):
+	set(value):
+		stall_angle_max = value
+		emit_changed()
 ## Negative stall angle.
-@export_range(-19, 0, 0.001, "radians_as_degrees") var stall_angle_min := deg_to_rad(-15.0)
+@export_range(-19, 0, 0.001, "radians_as_degrees") var stall_angle_min := deg_to_rad(-15.0):
+	set(value):
+		stall_angle_min = value
+		emit_changed()
 ## Distance in degrees between the beginning of the stall and the complete stall.
-@export_range(0, 20, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0)
+@export_range(0, 20, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(5.0):
+	set(value):
+		stall_width = value
+		emit_changed()
 ## Stall drop at begin stall
-@export_range(0.0, 1.0, 0.001) var stall_drop := 0.0
+@export_range(0.0, 1.0, 0.001) var stall_drop := 0.0:
+	set(value):
+		stall_drop = value
+		emit_changed()
 #3 Stall drop power
-@export_range(0.0, 9.0, 0.001) var stall_power := 1.4
+@export_range(0.0, 9.0, 0.001) var stall_power := 1.4:
+	set(value):
+		stall_power = value
+		emit_changed()
 ## Surface friction factor.
-@export_range(0, 0.3, 0.001) var surface_friction := 0.023
+@export_range(0, 0.3, 0.001) var surface_friction := 0.023:
+	set(value):
+		surface_friction = value
+		emit_changed()
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
-@export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(5.0)
+@export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(5.0):
+	set(value):
+		restore_stall_angle = value
+		emit_changed()
 ## Enables an alternative drag calculation method. If the aircraft seems to have too much drag, enable this option. Also, make sure to disable damping in the VehicleBody3D.
-@export var alternative_drag := true
+@export var alternative_drag := true:
+	set(value):
+		alternative_drag = value
+		emit_changed()
 
 var _control_surface_lift: float
 var _corrected_lift_slope: float
@@ -144,7 +183,7 @@ func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
 
 
 func _get_alternative_drag(data: Data, lift: float) -> float:
-	var aspect_ratio := data.aspect_ratio if absf(data.aspect_ratio) > 0.0 else 50.0 
+	var aspect_ratio := data.aspect_ratio if absf(data.aspect_ratio) > 0.0 else 10.0
 	var k := 1.0 / (PI * aspect_ratio * 0.8)
 	var drag := surface_friction + k * lift * lift
 	return drag
