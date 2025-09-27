@@ -115,7 +115,7 @@ func _get_normal_lift(data: Data, angle_of_attack: float) -> float:
 	if angle_of_attack >= _corrected_linear_min and angle_of_attack <= _corrected_linear_max:
 		return (angle_of_attack - _corrected_zero_lift_angle) * _corrected_lift_slope
 	var lift_offset := _corrected_lift_slope * linear_range - _corrected_linear_max * _corrected_lift_slope
-	var max_lift := (lift_slope * stall_angle_max - lift_drop) * _correct_lift_factor + lift_offset
+	var max_lift := (lift_slope * (stall_angle_max - zero_lift_angle) - lift_drop) * _correct_lift_factor + lift_offset
 	if angle_of_attack >= _corrected_linear_max and angle_of_attack <= _corrected_stall_angle_max:
 		var weight := (angle_of_attack - _corrected_linear_max) / (_corrected_stall_angle_max - _corrected_linear_max)
 		var a := (_corrected_linear_max - _corrected_zero_lift_angle) * _corrected_lift_slope
