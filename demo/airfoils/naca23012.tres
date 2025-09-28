@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AirfoilFormula" load_steps=2 format=3 uid="uid://dqufekt7quaif"]
+
+[ext_resource type="Script" uid="uid://d0gf8upd1k6k6" path="res://addons/aircraft/scripts/airfoils/airfoil_formula.gd" id="1_5a27m"]
+
+[resource]
+script = ExtResource("1_5a27m")
+lift_slope = 6.016
+lift_drop = 0.237
+lift_power = 1.4
+zero_lift_angle = -0.02443460952792062
+stall_angle_max = 0.3141592653589793
+stall_angle_min = -0.3141592653589793
+stall_width = 0.03490658503988659
+stall_drop = 0.1
+metadata/_custom_type_script = "uid://d0gf8upd1k6k6"
