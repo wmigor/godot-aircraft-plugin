@@ -1,22 +1,37 @@
 extends VehicleBody3D
 class_name AircraftBody3D
 
+## Flap modes
 @export var flap_modes: Array[float] = [0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0]
+## Brake value
 @export var brake_value := 1.0
+## Steering max angle
 @export var steering_value := 5.0
+## Height for spawn
 @export var horizontal_height := 0.0
+## x-axis rotation for spawn 
 @export var horizontal_rotation := 0.0
+## Camera distance
 @export var camera_distance := 8.0
+## Trimmer scale
 @export var trim_scale := 0.2
+## Trimmer step
 @export var trim_step := 0.1
+## Multiplier of the effect of wind from the thrusteer on the tail unit
 @export_range(0.0, 1.0, 0.001) var thruster_wind_factor := 0.1
+## Enables debug view
 @export var debug := true
 
 @export_group("Input")
+## Controls the aileron angle.
 @export_range(-1.0, 1.0, 0.001) var input_ailerons := 0.0
+## Controls the elevator angle.
 @export_range(-1.0, 1.0, 0.001) var input_elevator := 0.0
+## Controls the rudder angle.
 @export_range(-1.0, 1.0, 0.001) var input_rudder := 0.0
+## Controls the thrusters throttle.
 @export_range(0.0, 1.0, 0.001) var input_throttle := 1.0
+## Enables thrusters.
 @export var input_engine_running := true
 
 var _wings: Array[VehicleWing3D]
@@ -109,3 +124,11 @@ func change_trim_aileron(direction: int) -> void:
 func toggle_thruster_mode() -> void:
 	for thruster in _thrusters:
 		thruster.toggle_mode()
+
+
+func set_brake_rate(rate: float) -> void:
+	brake = rate * brake_value
+
+
+func set_steering_rate(rate: float) -> void:
+	steering = deg_to_rad(rate * steering_value)

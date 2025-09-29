@@ -20,7 +20,7 @@ class_name VehiclePropeller3D
 @export var apply_gyroscopic_torque := false
 ## Reverse rotation
 @export var reverse := false
-## Propeller radius
+## Propeller radius, affects only the generated wind and visual
 @export var radius := 1.0
 ## Feather the propeller
 @export var feather: bool
@@ -97,7 +97,7 @@ func _calculate(velocity: float, forward: Vector3) -> void:
 
 func _get_engine_torque() -> float:
 	var starter_torque := max_torque * 0.2
-	if throttle <= 0:
+	if throttle <= 0 or not running:
 		return -starter_torque - angular_velocity * 0.1
 	if rpm >= min_rpm:
 		return throttle * _get_nominal_engine_torque()

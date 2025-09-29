@@ -3,104 +3,108 @@ extends VehicleThruster3D
 class_name VehicleRotor3D
 
 @export_group("Blades")
+## Airfoil of blades
 @export var blade_airfoil: Airfoil
+## radius
 @export var radius := 10.5:
 	set(value):
 		radius = value
 		update_gizmos()
-
+## Number of blades
 @export_range(2, 10, 1) var blade_count := 4:
 	set(value):
 		blade_count = value
 		update_gizmos()
-
+## Blade chord
 @export var blade_chord := 0.5:
 	set(value):
 		blade_chord = value
 		update_gizmos()
-
+## Blade twist angle.
 @export_range(-15, 0, 0.001, "radians_as_degrees") var blade_twist := deg_to_rad(-12.0):
 	set(value):
 		blade_twist = value
 		update_gizmos()
-
+## Blade twist power
+@export_range(0.0, 6, 0.001) var blade_twist_power := 3.0
+## Collective min pitch
 @export_range(-10, 10.0, 0.001, "radians_as_degrees") var collective_angle_min := deg_to_rad(2.0):
 	set(value):
 		collective_angle_min = value
 		update_gizmos()
-
+## Collective max pitch
 @export_range(0, 30, 0.001, "radians_as_degrees") var collective_angle_max := deg_to_rad(16.0):
 	set(value):
 		collective_angle_max = value
 		update_gizmos()
-
+## Blade azimuth min angle
 @export_range(-30, 0, 0.001, "radians_as_degrees") var azimuthal_angle_min := deg_to_rad(-6.0):
 	set(value):
 		azimuthal_angle_min = value
 		update_gizmos()
-
+## Blade azimuth max angle
 @export_range(0, 30, 0.001, "radians_as_degrees") var azimuthal_angle_max := deg_to_rad(6.0):
 	set(value):
 		azimuthal_angle_max = value
 		update_gizmos()
 
-@export_range(0.0, 6, 0.001) var blade_twist_power := 3.0
-@export_range(0, 30, 0.001, "radians_as_degrees") var stall_angle := deg_to_rad(14.0)
-@export_range(0, 30, 0.001, "radians_as_degrees") var stall_width := deg_to_rad(2.0)
-@export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(30.0)
-@export_range(-10, 0.0, 0.001, "radians_as_degrees") var blade_zero_lift_angle := deg_to_rad(-2.0)
-@export var alternative_drag := true
-
 @export_group("Engine")
+## Max RPM
 @export var max_rpm := 192.0
+## Inertia
 @export var inertia := 25000.0
+## Max engine power
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 3800.0
 
 @export_group("Tail")
+## Tail gear ratio
 @export var tail_gear_ratio := 6.0
+## Tail blades stall angle
+@export_range(0, 30, 0.001, "radians_as_degrees") var tail_stall_angle := deg_to_rad(14.0)
+## Tail arm
 @export var tail_arm := 12.5:
 	set(value):
 		tail_arm = value
 		update_gizmos()
-
+## Tail radius
 @export var tail_radius := 2.0:
 	set(value):
 		tail_radius = value
 		update_gizmos()
-
+## Tail blade chord
 @export var tail_blade_chord := 0.28:
 	set(value):
 		tail_blade_chord = value
 		update_gizmos()
-
+## Tail blade count
 @export_range(2, 10, 1) var tail_blade_count := 3:
 	set(value):
 		tail_blade_count = value
 		update_gizmos()
-
+## Tail blade max angle
 @export_range(0, 30.0, 0.001, "radians_as_degrees") var tail_max_angle := deg_to_rad(10.0):
 	set(value):
 		tail_max_angle = value
 		update_gizmos()
 
 
-
 @export_group("Input")
+## Controls collective pitch
 @export_range(0.0, 1.0, 0.01) var pitch := 0.0:
 	set(value):
 		pitch = value
 		update_gizmos()
-
+## Controls azimuth
 @export_range(0.0, TAU, 0.01) var stick_angle: float:
 	set(value):
 		stick_angle = value
 		update_gizmos()
-
+## Controls azimuthal angle
 @export_range(0.0, 1.0, 0.01) var stick_len: float:
 	set(value):
 		stick_len = value
 		update_gizmos()
-
+## Controls tail pitch
 @export_range(-1.0, 1.0, 0.01) var tail_pitch: float:
 	set(value):
 		tail_pitch = value
@@ -206,7 +210,7 @@ func _calc_fake_tail_torque(aircraft_velocity: Vector3, aircraft_angular_velocit
 	var pressure := 0.5 * velocity * velocity * density * work_area
 	var lift_direction := -right
 	var angle_of_attack := atan2(lateral_velocity, blade_velocity) + tail_pitch * tail_max_angle
-	var lift := TAU * angle_of_attack if absf(angle_of_attack) < stall_angle else 0.0
+	var lift := TAU * angle_of_attack if absf(angle_of_attack) < tail_stall_angle else 0.0
 	var force := lift * pressure * lift_direction
 	var torque := arm.cross(force).dot(up) * up
 	return torque
