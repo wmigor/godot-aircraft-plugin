@@ -30,8 +30,13 @@ How to setup an airplane:
   - Flaps deflect in same directions on different sides of the wing. They should be used for tail empennage.
 <br>![Controls](images/input.png)
 - Aerodynamic settings:
-  - By default, it's configured for a standard wing, except for zero_lift_angle - this should be set to about -2.5 degrees on the main wing and 0.0 on tail empennage
+  - Airfoil settings
+  - Air density
 <br>![Aerodynamics](images/aerodynamics.png)
+- Airfoil:
+  - Contains graphs of aerodynamic coefficients
+  - By default, it's configured for a standard airfoil, except for zero_lift_angle - this should be set to about -2.5 degrees on the main wing and 0.0 on tail empennage
+<br>![Aerodynamics](images/airfoil.png)
 
 
 Add `VehiclePropeller3D` for thrust, position the center of mass near the wing location, setup the mass corresponding to the wing size, disable damping, and enjoy the flight
