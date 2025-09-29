@@ -30,17 +30,22 @@ aircrafts = Array[PackedScene]([ExtResource("4_gjl0y"), ExtResource("3_5mrsh"), 
 anchors_preset = -1
 anchor_left = 0.994
 anchor_right = 0.994
-offset_left = -204.088
+offset_left = -245.08801
 offset_top = 6.0
-offset_right = -0.0880127
-offset_bottom = 29.0
+offset_right = 4.9119873
+offset_bottom = 315.0
 text = "Help:
 Ailerons: A/D, Left stick
 Elevator: W/S, Left stick
 Rudder: Q/E, RT/LT
 Flaps: Down/Up
 Throttle: +/-, A/B
-Next aircraft: F1, RT"
+Mode: Shift, LB
+Next aircraft: F1, RT (+Mode)
+Thruster running toggle: Right
+Thruster feather: F, Y
+Trim elevator: Mode+Up/Down
+Trim ailerons: Mode+Left/Right"
 
 [node name="AircraftName" type="Label" parent="."]
 anchors_preset = 5
