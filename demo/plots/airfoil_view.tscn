@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://chdd5i8w0sk2h"]
 
-[ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://addons/aircraft/scripts/airfoils/airfoil_view.gd" id="1_3jeof"]
-[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="2_h6ldn"]
+[ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://addons/aircraft/inspector/airfoil_view.gd" id="1_3jeof"]
+[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://addons/aircraft/airfoils/naca0012.tres" id="2_h6ldn"]
 
 [node name="AirfoilView" type="Control"]
 layout_mode = 3

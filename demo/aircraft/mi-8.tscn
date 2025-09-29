@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_td68f"]
 [ext_resource type="Script" uid="uid://blc3x0y8gvux8" path="res://addons/aircraft/scripts/vehicle_rotor_3d.gd" id="2_0x04r"]
-[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://demo/airfoils/naca2412.tres" id="3_1sdnb"]
+[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://addons/aircraft/airfoils/naca2412.tres" id="3_1sdnb"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_rkqbg"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_td68f"]

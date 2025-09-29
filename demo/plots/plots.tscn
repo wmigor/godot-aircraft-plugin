@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cfcue8y0x5t6l" path="res://demo/plots/plots.gd" id="1_ta4xi"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_tf1bq"]
-[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://demo/airfoils/naca2412.tres" id="3_b5yxt"]
+[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://addons/aircraft/airfoils/naca2412.tres" id="3_b5yxt"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_s5pkl"]
 
 [node name="Plots" type="Node2D"]

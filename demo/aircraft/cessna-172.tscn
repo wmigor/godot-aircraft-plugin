@@ -1,9 +1,9 @@
 [gd_scene load_steps=12 format=3 uid="uid://cymcchdpmb3iy"]
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_okv22"]
-[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://demo/airfoils/naca2412.tres" id="3_hwlby"]
+[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://addons/aircraft/airfoils/naca2412.tres" id="3_hwlby"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_y66pv"]
-[ext_resource type="Resource" uid="uid://bd1juidqjscrp" path="res://demo/airfoils/naca0009.tres" id="4_hwlby"]
+[ext_resource type="Resource" uid="uid://bd1juidqjscrp" path="res://addons/aircraft/airfoils/naca0009.tres" id="4_hwlby"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_y66pv"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_auhpd"]
 

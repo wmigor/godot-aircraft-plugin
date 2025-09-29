@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_3r63h"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_3r63h"]
-[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://demo/airfoils/naca2412.tres" id="3_l8sau"]
+[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://addons/aircraft/airfoils/naca2412.tres" id="3_l8sau"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_2460t"]
-[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://demo/airfoils/naca0012.tres" id="4_l8sau"]
+[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://addons/aircraft/airfoils/naca0012.tres" id="4_l8sau"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
