@@ -47,6 +47,8 @@ class_name VehicleRotor3D
 	set(value):
 		azimuthal_angle_max = value
 		update_gizmos()
+## Rotor brake max torque
+@export var rotor_brake_max_torque := 25000.0
 
 @export_group("Engine")
 ## Max RPM
@@ -108,6 +110,11 @@ class_name VehicleRotor3D
 @export_range(-1.0, 1.0, 0.01) var tail_pitch: float:
 	set(value):
 		tail_pitch = value
+		update_gizmos()
+## Rotor brake input
+@export_range(0.0, 1.0, 0.01) var rotor_brake: float:
+	set(value):
+		rotor_brake = value
 		update_gizmos()
 
 var collective_angle: float:
@@ -181,6 +188,11 @@ func _get_blade_bend_angle(blade_lift: float) -> float:
 func _process_engine(delta: float, rotor_torque: float) -> void:
 	var engine_torque := _get_engine_torque()
 	angular_velocity += (rotor_torque + engine_torque) / inertia * delta
+	var friction_torque := -signf(angular_velocity) * rotor_brake * rotor_brake_max_torque
+	var old := angular_velocity
+	angular_velocity += friction_torque / inertia * delta
+	if old * angular_velocity < 0:
+		angular_velocity = 0.0
 	_rotor_pivot.rotate_y(angular_velocity * delta)
 
 

@@ -128,6 +128,8 @@ func toggle_thruster_mode() -> void:
 
 func set_brake_rate(rate: float) -> void:
 	brake = rate * brake_value
+	for rotor in _rotors:
+		rotor.rotor_brake = rate
 
 
 func set_steering_rate(rate: float) -> void:
