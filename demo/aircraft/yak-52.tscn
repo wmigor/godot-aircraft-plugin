@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://pt5e5ymsx528"]
+[gd_scene load_steps=14 format=3 uid="uid://pt5e5ymsx528"]
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_3r63h"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_3r63h"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_2460t"]
 [ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://addons/aircraft/airfoils/naca0012.tres" id="4_l8sau"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
+[ext_resource type="AudioStream" uid="uid://c53svf2cbmdh3" path="res://demo/sounds/engine.ogg" id="7_wwlae"]
+[ext_resource type="Script" uid="uid://cmgf0tj8j3tbf" path="res://demo/aircraft/thruster_sound.gd" id="8_11t4g"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
 height = 6.18188
@@ -114,6 +116,10 @@ script = ExtResource("4_2460t")
 max_rpm_velocity = 240.0
 radius = 1.2
 metadata/_custom_type_script = "uid://1ure55g3chtu"
+
+[node name="ThrusterSound" type="AudioStreamPlayer3D" parent="Propeller"]
+stream = ExtResource("7_wwlae")
+script = ExtResource("8_11t4g")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 0.934058)
