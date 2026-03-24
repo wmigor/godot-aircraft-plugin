@@ -1,10 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://pt5e5ymsx528"]
+[gd_scene format=3 uid="uid://pt5e5ymsx528"]
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_3r63h"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_3r63h"]
-[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://addons/aircraft/airfoils/naca2412.tres" id="3_l8sau"]
+[ext_resource type="Resource" uid="uid://cxagawcom1sac" path="res://demo/naca2412_table.tres" id="3_wwlae"]
+[ext_resource type="Resource" uid="uid://cq54m1hsb0t5m" path="res://demo/naca0012_table.tres" id="4_11t4g"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="4_2460t"]
-[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://addons/aircraft/airfoils/naca0012.tres" id="4_l8sau"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
 [ext_resource type="AudioStream" uid="uid://c53svf2cbmdh3" path="res://demo/sounds/engine.ogg" id="7_wwlae"]
 [ext_resource type="Script" uid="uid://cmgf0tj8j3tbf" path="res://demo/aircraft/thruster_sound.gd" id="8_11t4g"]
@@ -25,7 +25,7 @@ size = Vector3(3.108, 0.1, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_7bubi"]
 size = Vector3(0.001, 1.74402, 1.17969)
 
-[node name="Yak-52" type="VehicleBody3D"]
+[node name="Yak-52" type="VehicleBody3D" unique_id=1341361869]
 mass = 1000.0
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 1, 0)
@@ -39,7 +39,7 @@ horizontal_rotation = -4.7
 camera_distance = 11.0
 thruster_wind_factor = 0.5
 
-[node name="Wing" type="Node3D" parent="."]
+[node name="Wing" type="Node3D" parent="." unique_id=1213649107]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0.831, -0.1)
 script = ExtResource("5_hocnw")
 span = 9.3
@@ -48,7 +48,7 @@ taper = 0.5
 twist = -0.0436332
 sweep = -0.0174533
 dihedral = 0.0349066
-airfoil = ExtResource("3_l8sau")
+airfoil = ExtResource("3_wwlae")
 flap_angle_min = 0.0
 aileron_start = 0.45
 aileron_end = 1.0
@@ -57,14 +57,14 @@ aileron_angle_max = 0.279253
 aileron_angle_min = -0.383972
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
-[node name="Elevator" type="Node3D" parent="."]
+[node name="Elevator" type="Node3D" parent="." unique_id=2125321654]
 transform = Transform3D(1, 0, 0, 0, 0.999656, 0.0261769, 0, -0.0261769, 0.999656, 0, 1.387, 4.54)
 script = ExtResource("5_hocnw")
 span = 3.214
 chord = 1.184
 taper = 0.6
 sweep = 0.0349066
-airfoil = ExtResource("4_l8sau")
+airfoil = ExtResource("4_11t4g")
 type = 1
 flap_start = 0.0
 flap_end = 1.0
@@ -78,7 +78,7 @@ aileron_angle_max = 0.0
 aileron_angle_min = 0.0
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
-[node name="Rudder" type="Node3D" parent="."]
+[node name="Rudder" type="Node3D" parent="." unique_id=1537496189]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 1.085, 4.54)
 script = ExtResource("5_hocnw")
 span = 1.554
@@ -86,7 +86,7 @@ chord = 1.441
 taper = 0.7
 sweep = 0.122173
 mirror = false
-airfoil = ExtResource("4_l8sau")
+airfoil = ExtResource("4_11t4g")
 type = 2
 flap_start = 0.0
 flap_end = 1.0
@@ -100,7 +100,7 @@ aileron_angle_max = 0.0
 aileron_angle_min = 0.0
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
-[node name="Fuselage" type="Node3D" parent="."]
+[node name="Fuselage" type="Node3D" parent="." unique_id=1186873362]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 1.7)
 script = ExtResource("3_3r63h")
 length = 7.75
@@ -110,67 +110,67 @@ midpoint = 0.3
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
-[node name="Propeller" type="Node3D" parent="."]
+[node name="Propeller" type="Node3D" parent="." unique_id=1442570069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -2.3)
 script = ExtResource("4_2460t")
 max_rpm_velocity = 240.0
 radius = 1.2
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
-[node name="ThrusterSound" type="AudioStreamPlayer3D" parent="Propeller"]
+[node name="ThrusterSound" type="AudioStreamPlayer3D" parent="Propeller" unique_id=829338203]
 stream = ExtResource("7_wwlae")
 script = ExtResource("8_11t4g")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=146301616]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 0.934058)
 shape = SubResource("CylinderShape3D_c4w4o")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=1358539924]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.831, 0.595937)
 shape = SubResource("BoxShape3D_c4w4o")
 
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="." unique_id=1871283039]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.627915, -0.165173)
 shape = SubResource("BoxShape3D_qxvgi")
 
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="." unique_id=54203324]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.387, 4.78886)
 shape = SubResource("BoxShape3D_ivdla")
 
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="." unique_id=1283750627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0495, 1.75901, 4.8787)
 shape = SubResource("BoxShape3D_7bubi")
 
-[node name="WheelF" type="VehicleWheel3D" parent="."]
+[node name="WheelF" type="VehicleWheel3D" parent="." unique_id=1183471599]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
 use_as_steering = true
 wheel_radius = 0.25
 suspension_stiffness = 50.0
 suspension_max_force = 600000.0
 
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelF"]
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelF" unique_id=422659585]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.25
 height = 0.2
 
-[node name="WheelL" type="VehicleWheel3D" parent="."]
+[node name="WheelL" type="VehicleWheel3D" parent="." unique_id=1251954423]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0.7)
 wheel_radius = 0.25
 suspension_stiffness = 50.0
 suspension_max_force = 600000.0
 
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelL"]
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelL" unique_id=1754613802]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.25
 height = 0.2
 
-[node name="WheelR" type="VehicleWheel3D" parent="."]
+[node name="WheelR" type="VehicleWheel3D" parent="." unique_id=1429130910]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.7)
 wheel_radius = 0.25
 suspension_stiffness = 50.0
 suspension_max_force = 600000.0
 
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelR"]
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="WheelR" unique_id=2093019088]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.25
 height = 0.2

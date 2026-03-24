@@ -9,6 +9,7 @@ class Data:
 	var aspect_ratio: float
 	var control_surface_fraction: float
 	var control_surface_angle: float
+	var control_surface_normalized_angle: float
 	var wind: Vector3
 	var chord: float
 	var lift_factor: float

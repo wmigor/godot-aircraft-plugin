@@ -272,6 +272,7 @@ func _calculate_section_forces(section: Section, wind: Vector3) -> void:
 	var local_wind := to_local * wind - to_local * Vector3.ZERO
 	section.angle_of_attack = atan2(local_wind.y, local_wind.z)
 	section.control_surface_angle = get_control_surface_angle(section.type, section.mirror)
+	section.control_surface_normalized_angle = get_control_surface_normalized_angle(section.type, section.mirror)
 	section.aspect_ratio = _aspect_ratio
 	section.wind = wind
 	airfoil.update_factors(section)
@@ -296,10 +297,19 @@ func get_control_surface_angle(type: ControlSurfaceType, is_mirror: bool) -> flo
 	return 0.0
 
 
+func get_control_surface_normalized_angle(type: ControlSurfaceType, is_mirror: bool) -> float:
+	if type == ControlSurfaceType.Aileron:
+		return -aileron_value if is_mirror else aileron_value
+	elif type == ControlSurfaceType.Flap:
+		return flap_value
+	return 0.0
+
+
 func _get_aileron_angle(is_mirror: bool) -> float:
 	if is_mirror:
 		return (aileron_angle_min if aileron_value > 0.0 else -aileron_angle_max) * aileron_value
 	return (aileron_angle_max if aileron_value > 0.0 else -aileron_angle_min) * aileron_value
+
 
 func _get_flap_angle() -> float:
 	return (flap_angle_max if flap_value >= 0.0 else -flap_angle_min) * flap_value

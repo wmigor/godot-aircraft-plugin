@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="AirfoilTable" format=3 uid="uid://cxagawcom1sac"]
+
+[ext_resource type="Script" uid="uid://d26nsy17a63qy" path="res://addons/aircraft/scripts/airfoils/airfoil_table.gd" id="1_llcp2"]
+
+[resource]
+script = ExtResource("1_llcp2")
+file_path = "res://demo/naca2412_table.afl"
+metadata/_custom_type_script = "uid://d26nsy17a63qy"
