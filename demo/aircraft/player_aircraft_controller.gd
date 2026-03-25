@@ -19,11 +19,12 @@ func _process(delta: float) -> void:
 	aircraft.input_rudder = clampf(rudder_key + Input.get_axis("rudder_left", "rudder_right"), -1.0, 1.0)
 	aircraft.set_steering_rate(-aircraft.input_rudder)
 	aircraft.set_brake_rate(Input.get_action_strength("brake"))
-
+	
+	var mode := Input.is_action_pressed("mode")
 	if Input.is_action_pressed("throttle_down"):
-		aircraft.input_throttle = move_toward(aircraft.input_throttle, 0.0, delta)
+		aircraft.input_throttle = move_toward(aircraft.input_throttle, 0.0, delta * 0.1 if mode else delta)
 	if Input.is_action_pressed("throttle_up"):
-		aircraft.input_throttle = move_toward(aircraft.input_throttle, 1.0, delta)
+		aircraft.input_throttle = move_toward(aircraft.input_throttle, 1.0, delta * 0.1 if mode else delta)
 
 
 func _input(event: InputEvent) -> void:

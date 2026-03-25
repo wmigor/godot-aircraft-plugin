@@ -57,6 +57,16 @@ class_name AirfoilFormula
 	set(value):
 		surface_friction = value
 		emit_changed()
+## Alternative drag min value at zero angle.
+@export_range(0, 0.3, 0.001) var alternative_drag_min := 0.005:
+	set(value):
+		alternative_drag_min = value
+		emit_changed()
+## Alternative drag min value at stall angle.
+@export_range(0, 0.3, 0.001) var alternative_drag_max := 0.05:
+	set(value):
+		alternative_drag_max = value
+		emit_changed()
 ## Stall hysteresis is implemented here. This parameter determines the angle of attack at which normal flight conditions are restored after stall.
 @export_range(0, 30, 0.001, "radians_as_degrees") var restore_stall_angle := deg_to_rad(5.0):
 	set(value):
@@ -135,13 +145,11 @@ func _calculate_factors(data: Data) -> void:
 		factors1 = _calculate_normal_factors(data, stall_angle_max)
 		factors1.x -= stall_drop * _correct_lift_factor
 		factors2 = _calculate_stall_factors(data, full_stall_angle_max)
-		factors1.x -= stall_drop * _correct_lift_factor
 		w = (data.angle_of_attack - stall_angle_max) / (full_stall_angle_max - stall_angle_max)
 	else:
 		factors1 = _calculate_normal_factors(data, stall_angle_min)
 		factors1.x += stall_drop * _correct_lift_factor
 		factors2 = _calculate_stall_factors(data, full_stall_angle_min)
-		factors1.x += stall_drop * _correct_lift_factor
 		w = (data.angle_of_attack - stall_angle_min) / (full_stall_angle_min - stall_angle_min)
 
 	w = pow(w, stall_power)
@@ -183,11 +191,13 @@ func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
 
 
 func _get_alternative_drag(data: Data, lift: float) -> float:
-	var aspect_ratio := data.aspect_ratio if absf(data.aspect_ratio) > 0.0 else 10.0
-	var k := 1.0 / (PI * aspect_ratio * 0.8)
-	var drag := surface_friction + k * lift * lift
+	var weight := (data.angle_of_attack / _corrected_stall_angle_max) if data.angle_of_attack > 0.0 else (data.angle_of_attack / _corrected_stall_angle_min)
+	var drag := lerpf(alternative_drag_min, alternative_drag_max, weight * weight)
+	if data.aspect_ratio > 0.0:
+		var drag_induced := lift * lift / (PI * data.aspect_ratio * 0.8)
+		drag += drag_induced
 	return drag
-	
+
 
 func _calculate_stall_factors(data: Data, angle_of_attack: float) -> Vector3:
 	var stall_angle := _corrected_stall_angle_max if angle_of_attack > _corrected_stall_angle_max else _corrected_stall_angle_min

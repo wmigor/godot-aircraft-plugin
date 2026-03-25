@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://chdd5i8w0sk2h"]
+[gd_scene format=3 uid="uid://chdd5i8w0sk2h"]
 
 [ext_resource type="Script" uid="uid://c2njpwvtq5rff" path="res://addons/aircraft/inspector/airfoil_view.gd" id="1_3jeof"]
-[ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://addons/aircraft/airfoils/naca0012.tres" id="2_h6ldn"]
+[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://addons/aircraft/airfoils/naca2412.tres" id="2_3jeof"]
 
-[node name="AirfoilView" type="Control"]
+[node name="AirfoilView" type="Control" unique_id=2081175236]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,4 +11,4 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3jeof")
-airfoil = ExtResource("2_h6ldn")
+airfoil = ExtResource("2_3jeof")
