@@ -96,7 +96,7 @@ func update_factors(data: Data) -> void:
 
 
 func _update_parameters(data: Data) -> void:
-	_correct_lift_factor = data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else 1.0
+	_correct_lift_factor = data.correct_lift_geometry_factor * data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else 1.0
 	_corrected_lift_slope = lift_slope * _correct_lift_factor
 	var control_surface_effectivness_factor := acos(2.0 * data.control_surface_fraction - 1.0)
 	var control_surface_effectivness := 1.0 - (control_surface_effectivness_factor - sin(control_surface_effectivness_factor)) / PI

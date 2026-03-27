@@ -16,6 +16,7 @@ class Data:
 	var pitch_factor: float
 	var stall: bool
 	var stall_warning: bool
+	var correct_lift_geometry_factor := 1.0
 
 
 @abstract func update_factors(data: Data) -> void

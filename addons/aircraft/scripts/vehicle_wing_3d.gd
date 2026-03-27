@@ -353,6 +353,13 @@ func _build_wing_sections() -> void:
 			if mirror:
 				section_pos.x = -section_pos.x
 				_sections.append(_create_wing_section(control_surface, section_pos, section_chord, section_length, section_twist, true))
+	if len(_sections) > 0 and mirror:
+		var avg := 0.0
+		for section in _sections:
+			avg += section.correct_lift_geometry_factor
+		avg /= len(_sections)
+		for section in _sections:
+			section.correct_lift_geometry_factor /= avg
 
 
 func _build_control_surface_sections() -> Array[ControlSurface]:
@@ -413,6 +420,10 @@ func _create_wing_section(p_control_surface: ControlSurface, p_position: Vector3
 	section.type = p_control_surface.type
 	section.mirror = is_mirror
 	section.stall = false
+	if mirror:
+		section.correct_lift_geometry_factor = sqrt(1.0 - pow(absf(p_position.x) / (span / 2.0), 2.0))
+	else:
+		section.correct_lift_geometry_factor = 1.0
 	if p_control_surface.type != ControlSurfaceType.None and p_control_surface.fraction > 0.0:
 		section.control_surface_fraction = p_control_surface.fraction
 	else:
