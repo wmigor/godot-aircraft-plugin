@@ -39,6 +39,7 @@ var _elevators: Array[VehicleWing3D]
 var _rudders: Array[VehicleWing3D]
 var _thrusters: Array[VehicleThruster3D]
 var _rotors: Array[VehicleRotor3D]
+var _fuselages: Array[VehicleFuselage3D]
 var _flap_mode := 0
 
 var rpm: float:
@@ -107,6 +108,7 @@ func _find_objects() -> void:
 		wing.debug = debug
 	for fuselage in find_children("*", "VehicleFuselage3D"):
 		fuselage.debug = debug
+		_fuselages.append(fuselage)
 
 
 func change_flap_mode(delta: int) -> void:

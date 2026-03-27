@@ -1,15 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://cs15w4fjixsu1"]
+[gd_scene format=3 uid="uid://cs15w4fjixsu1"]
 
 [ext_resource type="Script" uid="uid://cfcue8y0x5t6l" path="res://demo/plots/plots.gd" id="1_ta4xi"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="2_tf1bq"]
 [ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://addons/aircraft/airfoils/naca2412.tres" id="3_b5yxt"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_s5pkl"]
+[ext_resource type="PackedScene" uid="uid://cymcchdpmb3iy" path="res://demo/aircraft/cessna-172.tscn" id="5_tbg4s"]
 
-[node name="Plots" type="Node2D"]
+[node name="Plots" type="Node2D" unique_id=1544924460]
 script = ExtResource("1_ta4xi")
-show_fuselage = false
 
-[node name="Wing" type="Node3D" parent="."]
+[node name="Wing" type="Node3D" parent="." unique_id=476359080]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 0, 0)
 script = ExtResource("2_tf1bq")
 span = 11.0
@@ -24,25 +24,27 @@ aileron_angle_max = 0.0
 aileron_angle_min = 0.0
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
-[node name="Fuselage" type="Node3D" parent="."]
+[node name="Fuselage" type="Node3D" parent="." unique_id=1107671128]
 script = ExtResource("3_s5pkl")
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="Cessna-172" parent="." unique_id=93815311 instance=ExtResource("5_tbg4s")]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=453461401]
 offset_right = 474.0
 offset_bottom = 51.0
 
-[node name="Flap" type="HSlider" parent="VBoxContainer"]
+[node name="Flap" type="HSlider" parent="VBoxContainer" unique_id=1869103050]
 layout_mode = 2
 min_value = -1.0
 max_value = 1.0
 step = 0.1
 
-[node name="Forward" type="CheckBox" parent="VBoxContainer"]
+[node name="Forward" type="CheckBox" parent="VBoxContainer" unique_id=1504508255]
 layout_mode = 2
 button_pressed = true
 text = "Forward"
 
-[node name="Backward" type="CheckBox" parent="VBoxContainer"]
+[node name="Backward" type="CheckBox" parent="VBoxContainer" unique_id=1335162433]
 layout_mode = 2
 text = "Backward"
