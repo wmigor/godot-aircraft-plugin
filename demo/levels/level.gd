@@ -5,6 +5,7 @@ extends Node3D
 @onready var info_panel := $InfoPanel as InfoPanel
 @onready var aircraft_name := $AircraftName as Label
 @onready var papi := $PrecisionApproachPathIndicator as PrecisionApproachPathIndicator
+@onready var virtual_stick := $VirtualStick as VirtualStick
 
 var aircraft: AircraftBody3D
 var aircraft_index := 0
@@ -31,13 +32,15 @@ func spawn_aircraft(index: int) -> void:
 	var camera := AircraftCamera.new()
 	camera.distance = aircraft.camera_distance
 	aircraft.add_child(camera, true)
-	aircraft.add_child(PlayerAircraftController.new())
+	var controller := PlayerAircraftController.new()
+	aircraft.add_child(controller)
 	add_child(aircraft, true)
 	if info_panel != null:
 		info_panel.aircraft = aircraft
 	if aircraft_name != null:
 		aircraft_name.text = aircraft.name
 	papi.target = aircraft
+	virtual_stick.controller = controller
 
 
 func clear() -> void:
@@ -47,6 +50,7 @@ func clear() -> void:
 	if info_panel != null:
 		info_panel.aircraft = null
 	papi.target = null
+	virtual_stick.controller = null
 
 
 func _input(event: InputEvent) -> void:
