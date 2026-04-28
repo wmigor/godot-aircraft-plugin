@@ -196,6 +196,8 @@ func _get_alternative_drag(data: Data, lift: float) -> float:
 	if data.aspect_ratio > 0.0:
 		var drag_induced := lift * lift / (PI * data.aspect_ratio * 0.8)
 		drag += drag_induced
+	var control_surface_drag := _get_control_surface_drag(data)
+	drag += control_surface_drag
 	return drag
 
 
@@ -241,6 +243,10 @@ func _get_control_surface_lift_factor(control_surface_angle: float) -> float:
 
 func _get_control_surface_lift_max(control_surface_fraction: float) -> float:
 	return clampf(1.0 - 0.5 * (control_surface_fraction - 0.1) / 0.3, 0.0, 1.0)
+
+
+func _get_control_surface_drag(data: Data) -> float:
+	return 0.15 * data.control_surface_angle * data.control_surface_angle
 
 
 func _get_pitch_factor(effective_angle: float) -> float:
