@@ -78,6 +78,21 @@ class_name AirfoilFormula
 		alternative_drag = value
 		emit_changed()
 
+@export var alternative_pitch := true:
+	set(value):
+		alternative_pitch = value
+		emit_changed()
+
+@export var alternative_pitch_min := 0.0:
+	set(value):
+		alternative_pitch_min = value
+		emit_changed()
+
+@export var alternative_pitch_max := 0.0:
+	set(value):
+		alternative_pitch_max = value
+		emit_changed()
+
 var _control_surface_lift: float
 var _corrected_lift_slope: float
 var _corrected_zero_lift_angle: float
@@ -88,6 +103,7 @@ var _restore_stall_angle_min: float
 var _correct_lift_factor: float
 var _corrected_linear_max: float
 var _corrected_linear_min: float
+var _control_surface_effectivness: float
 
 
 func update_factors(data: Data) -> void:
@@ -99,8 +115,8 @@ func _update_parameters(data: Data) -> void:
 	_correct_lift_factor = data.correct_lift_geometry_factor * data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else 1.0
 	_corrected_lift_slope = lift_slope * _correct_lift_factor
 	var control_surface_effectivness_factor := acos(2.0 * data.control_surface_fraction - 1.0)
-	var control_surface_effectivness := 1.0 - (control_surface_effectivness_factor - sin(control_surface_effectivness_factor)) / PI
-	_control_surface_lift = _corrected_lift_slope * control_surface_effectivness * _get_control_surface_lift_factor(data.control_surface_angle) * data.control_surface_angle
+	_control_surface_effectivness = 1.0 - (control_surface_effectivness_factor - sin(control_surface_effectivness_factor)) / PI
+	_control_surface_lift = _corrected_lift_slope * _control_surface_effectivness * _get_control_surface_lift_factor(data.control_surface_angle) * data.control_surface_angle
 	_corrected_zero_lift_angle = zero_lift_angle - _control_surface_lift / _corrected_lift_slope
 	var control_surface_lift_max := _get_control_surface_lift_max(data.control_surface_fraction)
 	var max_lift := _corrected_lift_slope * (stall_angle_max - zero_lift_angle) + _control_surface_lift * control_surface_lift_max
@@ -186,8 +202,21 @@ func _calculate_normal_factors(data: Data, angle_of_attack: float) -> Vector3:
 	var tangent := surface_friction * cos_ea
 	var normal := (lift + sin_ea * tangent) / cos_ea if absf(cos_ea) >= 0.001 else 0.0
 	var drag := _get_alternative_drag(data, lift) if alternative_drag else normal * sin_ea + tangent * cos_ea
-	var pitch := -normal * _get_pitch_factor(effective_angle)
+	var pitch: float
+	if alternative_pitch:
+		pitch = lerpf(alternative_pitch_min, alternative_pitch_max, (effective_angle - _corrected_stall_angle_min) / (_corrected_stall_angle_max - _corrected_stall_angle_min))
+	else:
+		pitch = -normal * _get_pitch_factor(effective_angle)
+	pitch += _get_control_surface_pitch(data)
 	return Vector3(lift, drag, pitch)
+
+
+func _get_control_surface_pitch(data: Data) -> float:
+	var cla := _corrected_lift_slope
+	var n := _control_surface_effectivness
+	var b := data.control_surface_angle
+	var e := data.control_surface_fraction
+	return -(cla * n * b) / 4.0 * (2.0 / PI * (1.0 - e) * sqrt(e * (1.0 - e)))
 
 
 func _get_alternative_drag(data: Data, lift: float) -> float:
