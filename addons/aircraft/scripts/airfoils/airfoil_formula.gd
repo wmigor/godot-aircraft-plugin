@@ -248,7 +248,7 @@ func _calculate_stall_factors(data: Data, angle_of_attack: float) -> Vector3:
 
 	var lift := normal * cos_ea - tangent * sin_ea
 	var drag := normal * sin_ea + tangent * cos_ea
-	var pitch := -normal * _get_pitch_factor(effective_angle)
+	var pitch := -normal * _get_pitch_factor(absf(effective_angle))
 	return Vector3(lift, drag, pitch)
 
 
