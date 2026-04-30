@@ -6,6 +6,8 @@ class_name PlayerAircraftController
 var aileron_key := 0.0
 var elevator_key := 0.0
 var rudder_key := 0.0
+var aileron_virtual := 0.0
+var elevator_virtual := 0.0
 
 
 func _process(delta: float) -> void:
@@ -14,8 +16,8 @@ func _process(delta: float) -> void:
 
 	process_keyboard_values(delta)
 
-	aircraft.input_ailerons = clampf(aileron_key + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
-	aircraft.input_elevator = clampf(elevator_key + Input.get_axis("elevator_down", "elevator_up"), -1.0, 1.0)
+	aircraft.input_ailerons = clampf(aileron_key + aileron_virtual + Input.get_axis("aileron_right", "aileron_left"), -1.0, 1.0)
+	aircraft.input_elevator = clampf(elevator_key + elevator_virtual + Input.get_axis("elevator_down", "elevator_up"), -1.0, 1.0)
 	aircraft.input_rudder = clampf(rudder_key + Input.get_axis("rudder_left", "rudder_right"), -1.0, 1.0)
 	aircraft.set_steering_rate(-aircraft.input_rudder)
 	aircraft.set_brake_rate(Input.get_action_strength("brake"))

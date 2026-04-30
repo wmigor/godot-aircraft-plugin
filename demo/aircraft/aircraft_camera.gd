@@ -38,7 +38,7 @@ func _process_stick(delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	var motion := event as InputEventMouseMotion
-	if motion != null and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if motion != null and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 		yaw -= deg_to_rad(motion.relative.x) * mouse_sens
 		pitch -= deg_to_rad(motion.relative.y) * mouse_sens
 		return

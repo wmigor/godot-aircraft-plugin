@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://boonkhcx0sdwp"]
+[gd_scene format=3 uid="uid://boonkhcx0sdwp"]
 
 [ext_resource type="Script" uid="uid://csp8ors3tvmcv" path="res://demo/levels/level.gd" id="1_5mrsh"]
 [ext_resource type="PackedScene" uid="uid://cymcchdpmb3iy" path="res://demo/aircraft/cessna-172.tscn" id="3_5mrsh"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://byms7r5tty5kg" path="res://demo/aircraft/su-26m.tscn" id="5_ya3gt"]
 [ext_resource type="PackedScene" uid="uid://cog35xpdqehjv" path="res://demo/aircraft/mi-8.tscn" id="5_ystn6"]
 [ext_resource type="PackedScene" uid="uid://b1o38th6yrrkr" path="res://demo/levels/ground.tscn" id="6_gjl0y"]
+[ext_resource type="Script" uid="uid://krv3rikj3ot" path="res://demo/levels/virtual_stick.gd" id="7_2spen"]
 [ext_resource type="Script" uid="uid://bymnx35p5kuhr" path="res://demo/levels/precision_approach_path_indicator.gd" id="8_ystn6"]
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_safpt"]
@@ -20,13 +21,13 @@ albedo_color = Color(1, 0, 0, 1)
 emission_enabled = true
 emission = Color(1, 0, 0, 1)
 
-[node name="Level" type="Node3D"]
+[node name="Level" type="Node3D" unique_id=850345445]
 script = ExtResource("1_5mrsh")
 aircrafts = Array[PackedScene]([ExtResource("4_gjl0y"), ExtResource("3_5mrsh"), ExtResource("5_ya3gt"), ExtResource("5_ystn6")])
 
-[node name="InfoPanel" parent="." instance=ExtResource("4_safpt")]
+[node name="InfoPanel" parent="." unique_id=1672083877 instance=ExtResource("4_safpt")]
 
-[node name="Help" type="Label" parent="."]
+[node name="Help" type="Label" parent="." unique_id=1719645952]
 anchors_preset = -1
 anchor_left = 0.994
 anchor_right = 0.994
@@ -47,7 +48,7 @@ Thruster feather: F, Y
 Trim elevator: Mode+Up/Down
 Trim ailerons: Mode+Left/Right"
 
-[node name="AircraftName" type="Label" parent="."]
+[node name="AircraftName" type="Label" parent="." unique_id=848275331]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -60,14 +61,26 @@ text = "cessna 172"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Sun" type="DirectionalLight3D" parent="."]
+[node name="VirtualStick" type="Control" parent="." unique_id=392198202]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 48.0
+offset_right = 180.0
+offset_bottom = 360.0
+grow_horizontal = 2
+script = ExtResource("7_2spen")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=451912092]
 transform = Transform3D(0.97282, 7.45058e-09, 0.231561, -0.188047, 0.583541, 0.790011, -0.135125, -0.812084, 0.567681, 0, 0, 0)
 shadow_enabled = true
 
-[node name="Ground" parent="." instance=ExtResource("6_gjl0y")]
+[node name="Ground" parent="." unique_id=825589596 instance=ExtResource("6_gjl0y")]
 mesh = SubResource("ImmediateMesh_safpt")
 
-[node name="PrecisionApproachPathIndicator" type="Node3D" parent="."]
+[node name="PrecisionApproachPathIndicator" type="Node3D" parent="." unique_id=1339341962]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.396, 0, -422.6512)
 script = ExtResource("8_ystn6")
 up_material = SubResource("StandardMaterial3D_ystn6")

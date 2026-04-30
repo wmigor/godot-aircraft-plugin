@@ -12,4 +12,6 @@ stall_angle_max = 0.3141592653589793
 stall_angle_min = -0.3141592653589793
 stall_width = 0.03490658503988659
 stall_drop = 0.2
+alternative_pitch_min = -0.05
+alternative_pitch_max = -0.025
 metadata/_custom_type_script = "uid://d0gf8upd1k6k6"

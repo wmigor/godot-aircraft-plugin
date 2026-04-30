@@ -20,7 +20,8 @@ func _process(_delta: float) -> void:
 	var forward := -aircraft.basis.z
 	throttle_label.text = "Pitch" if aircraft.has_rotor else "Throttle"
 	throttle.text = str(roundi(100 * aircraft.input_throttle)) + " %"
-	speed.text = str(roundi(aircraft.linear_velocity.dot(forward) * VehicleThruster3D.TO_KMPH)) + " km/h"
+	var velocity := aircraft.linear_velocity.dot(forward)
+	speed.text = str(roundi(velocity * VehicleThruster3D.TO_KMPH)) + " (" + str(int(velocity * 1.94384)) + ")" + " km/h (knts)"
 	vertical_speed.text = str(snappedf(aircraft.linear_velocity.dot(Vector3.UP), 0.1)) + " m/s"
 	altitude.text = str(snappedf(aircraft.position.y, 0.1)) + " m"
 	angle_of_attack.text = str(snappedf(get_attack_angle(), 0.1))
