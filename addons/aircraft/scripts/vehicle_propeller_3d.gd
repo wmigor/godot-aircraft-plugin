@@ -24,6 +24,10 @@ class_name VehiclePropeller3D
 @export var radius := 1.0
 ## Feather the propeller
 @export var feather: bool
+## takeoff rpm
+@export var takeoff_rpm := 0.0
+## takeoff power
+@export_custom(PROPERTY_HINT_NONE, "suffix:hp") var takeoff_power := 0.0
 
 var min_rpm: float:
 	get(): return max_rpm * 0.2
@@ -36,6 +40,7 @@ var _beta: float
 var _base_j0: float
 var _f0: float
 var _pitch := 0.5
+var _tc_takeoff := 0.0
 var _debug_view: Node3D
 
 
@@ -48,6 +53,18 @@ func  _ready() -> void:
 	_beta = 1.0 / (pow(5.0, -1.0 / 4.0) - pow(5.0, -5.0 / 4.0))
 	_base_j0 = velocity / (angular_velocity * _lambda_peak)
 	_f0 = 2.0 * efficiency * power / (density * velocity * v2)
+	_setup_takeoff()
+
+
+func _setup_takeoff() -> void:
+	if takeoff_rpm <= 0.0 or takeoff_power <= 0.0:
+		_tc_takeoff = 0.0
+		return
+	var takeoff_av := takeoff_rpm / TO_RPM
+	var v2 := radius * takeoff_av * radius * takeoff_av
+	var gamma := efficiency * _beta / _base_j0
+	var takeoff_torque := takeoff_power * HP_TO_W / takeoff_av
+	_tc_takeoff = takeoff_torque * gamma / (0.5 * density * v2 * _f0)
 
 
 func _physics_process(delta: float) -> void:
@@ -83,6 +100,8 @@ func _calculate(velocity: float, forward: Vector3) -> void:
 	var l4 := lambda * lambda * lambda * lambda
 	var gamma := (efficiency * _beta / j0) * (1.0 - l4)
 	var tc := (1.0 - lambda) / (1.0 - _lambda_peak)
+	if _tc_takeoff > 0.0 and tc > _tc_takeoff:
+		tc = _tc_takeoff
 	thrust = 0.5 * density * v2 * _f0 * tc
 	torque = thrust / gamma
 	wind = -forward * _calc_wind(velocity, density)

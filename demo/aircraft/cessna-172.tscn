@@ -115,8 +115,9 @@ max_rpm = 2700.0
 max_rpm_velocity = 200.0
 max_engine_power = 160.0
 inertia = 6.5
-constant_speed = true
 radius = 0.953
+takeoff_rpm = 2400.0
+takeoff_power = 142.0
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
 [node name="ThrusterSound" type="AudioStreamPlayer3D" parent="Propeller" unique_id=279603521]
