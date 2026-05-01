@@ -17,6 +17,7 @@ class Data:
 	var stall: bool
 	var stall_warning: bool
 	var correct_lift_geometry_factor := 1.0
+	var oswald_factor := 0.85
 
 
 @abstract func update_factors(data: Data) -> void
