@@ -217,7 +217,7 @@ class Section extends Airfoil.Data:
 	var restore_stall_angle_max: float
 	var restore_stall_angle_min: float
 
-
+var thrusters: Array[VehicleThruster3D]
 var relax_forces := true
 
 var _force: Vector3
@@ -311,10 +311,40 @@ func calculate(linear_velocity: Vector3, angular_velocity: Vector3, center_of_ma
 	for section in _sections:
 		section.global_transform = global_transform * section.transform
 		var arm := section.global_transform.origin - center_of_mass
-		var wind := global_wind - (linear_velocity + angular_velocity.cross(arm))
+		var section_velocity := linear_velocity + angular_velocity.cross(arm)
+		var thruster_wind := _get_section_thruster_wind(section)
+		var wind := global_wind + thruster_wind - section_velocity
 		_calculate_section_forces(section, wind)
 		_force += section.force
 		_torque += section.torque + arm.cross(section.force)
+
+
+func _get_section_thruster_wind(section: Section) -> Vector3:
+	var wind := Vector3.ZERO
+	for thruster in thrusters:
+		if thruster.wind_induced.length_squared() <= 0.0:
+			continue
+		var axis := thruster.wind_induced.normalized()
+		var section_pos := section.global_transform.origin
+		var thruster_pos := thruster.global_transform.origin
+		var vector := section_pos - thruster_pos
+		var distance_to_section := vector.dot(axis)
+		if distance_to_section <= 0.0:
+			continue
+		var distance_to_axis := vector.cross(axis).length()
+		var half_length := section.length * 0.5
+		var radius := thruster.get_radius()
+		if radius <= distance_to_axis - half_length:
+			continue
+		var efficiency := 1.0 + (distance_to_section / (sqrt(radius ** 2 + distance_to_section ** 2)))
+		var wind_radius := radius
+		var section_wind := efficiency * thruster.wind_induced
+		if wind_radius >= distance_to_axis + half_length:
+			wind += section_wind
+		else:
+			var weight := clampf((distance_to_axis + half_length - wind_radius) / section.length, 0.0, 1.0)
+			wind += section_wind.lerp(Vector3.ZERO, weight)
+	return wind
 
 
 func _calculate_section_forces(section: Section, wind: Vector3) -> void:

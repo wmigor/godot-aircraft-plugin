@@ -17,8 +17,6 @@ class_name AircraftBody3D
 @export var trim_scale := 0.2
 ## Trimmer step
 @export var trim_step := 0.1
-## Multiplier of the effect of wind from the thrusteer on the tail unit
-@export_range(0.0, 1.0, 0.001) var thruster_wind_factor := 0.1
 ## Enables debug view
 @export var debug := true
 
@@ -57,18 +55,16 @@ var trim_elevator := 0.0:
 
 func _ready() -> void:
 	_find_objects()
-
+	for thruster in _thrusters:
+		for wing in _wings:
+			wing.thrusters.append(thruster)
+		for wing in _elevators:
+			wing.thrusters.append(thruster)
+		for wing in _rudders:
+			wing.thrusters.append(thruster)
 
 func _physics_process(delta: float) -> void:
 	_apply_input(delta)
-	if thruster_wind_factor > 0.0:
-		var wind := Vector3.ZERO
-		for thruster in _thrusters:
-			wind += thruster.wind * thruster_wind_factor
-		for rudder in _rudders:
-			rudder.global_wind = wind
-		for elevator in _elevators:
-			elevator.global_wind = wind
 
 
 func _apply_input(delta: float) -> void:

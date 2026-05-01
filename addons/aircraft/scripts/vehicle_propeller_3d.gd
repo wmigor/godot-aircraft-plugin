@@ -104,7 +104,7 @@ func _calculate(velocity: float, forward: Vector3) -> void:
 		tc = _tc_takeoff
 	thrust = 0.5 * density * v2 * _f0 * tc
 	torque = thrust / gamma
-	wind = -forward * _calc_wind(velocity, density)
+	wind_induced = -forward * _calc_wind_induced(velocity, density)
 	if lambda > 1.0 and not feather:
 		var tau0 := (0.25 * j0) / (efficiency * _beta * (1.0 - _lambda_peak))
 		var lambda_wm = 1.2
@@ -149,14 +149,18 @@ func _process_pitch(delta: float) -> void:
 	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.8)
 
 
-func _calc_wind(velocity: float, density: float) -> float:
+func _calc_wind_induced(velocity: float, density: float) -> float:
 	if feather:
 		return 0.0
 	var area := radius * radius * PI
 	var vel2sum := velocity * absf(velocity) + 2.0 * thrust / (density * area)
 	if vel2sum > 0.0:
-		return -velocity + sqrt(vel2sum)
-	return -velocity - sqrt(-vel2sum)
+		return 0.5 * (-velocity + sqrt(vel2sum))
+	return 0.5 * (-velocity - sqrt(-vel2sum))
+
+
+func get_radius() -> float:
+	return radius
 
 
 func toggle_mode() -> void:

@@ -37,7 +37,6 @@ brake_value = 10.0
 horizontal_height = 0.332
 horizontal_rotation = 1.2
 camera_distance = 11.0
-thruster_wind_factor = 0.25
 
 [node name="Wing" type="Node3D" parent="." unique_id=461101743]
 transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 1.509, -0.06)
