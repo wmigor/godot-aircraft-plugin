@@ -230,11 +230,15 @@ var _dirty := true
 var _aspect_ratio: float
 var _sections: Array[Section]
 var _debug_view: Node3D
+var shapes: Array[WingShape]
+
 
 
 func _ready() -> void:
 	if airfoil == null:
 		airfoil = AirfoilFormula.new()
+	shapes.clear()
+	shapes.append_array(find_children("*", "WingShape"))
 
 
 func _enter_tree() -> void:
@@ -582,16 +586,28 @@ func get_console_length() -> float:
 
 ## Returns the mean aerodynamic chord of wing.
 func get_mac() -> float:
-	if _root_wing == null or len(_root_wing._total_wings) <= 0:
-		return get_mac_local()
+	if len(shapes) <= 0:
+		return chord
 	var total_area := 0.0
 	var sum := 0.0
-	for wing in _root_wing._total_wings:
-		var area := wing.get_area_local()
-		var mac := wing.get_mac_local()
+	var base_chord := chord
+	for shape in shapes:
+		var area := shape.get_area(base_chord, mirror)
+		var mac := shape.get_mac(base_chord)
 		sum += area * mac
 		total_area += area
+		base_chord = shape.chord
 	return sum / total_area
+	#if _root_wing == null or len(_root_wing._total_wings) <= 0:
+		#return get_mac_local()
+	#var total_area := 0.0
+	#var sum := 0.0
+	#for wing in _root_wing._total_wings:
+		#var area := wing.get_area_local()
+		#var mac := wing.get_mac_local()
+		#sum += area * mac
+		#total_area += area
+	#return sum / total_area
 
 
 func get_mac_local() -> float:
@@ -614,16 +630,29 @@ func get_mac_right_position() -> float:
 
 ## Returns z-axis distance to mac
 func get_mac_forward_position() -> float:
-	if _root_wing == null or len(_root_wing._total_wings) <= 0:
-		return get_mac_forward_position_local()
+	if len(shapes) <= 0:
+		return 0.0
 	var total_area := 0.0
 	var sum := 0.0
-	for wing in _root_wing._total_wings:
-		var area := wing.get_area_local()
-		var pos := wing.get_mac_forward_position_local()
+	var base_chord := chord
+	var mac := get_mac()
+	for shape in shapes:
+		var area := shape.get_area(base_chord, mirror)
+		var pos := shape.get_mac_forward_position(base_chord, mac, mirror)
 		sum += area * pos
 		total_area += area
+		base_chord = shape.chord
 	return sum / total_area
+	#if _root_wing == null or len(_root_wing._total_wings) <= 0:
+		#return get_mac_forward_position_local()
+	#var total_area := 0.0
+	#var sum := 0.0
+	#for wing in _root_wing._total_wings:
+		#var area := wing.get_area_local()
+		#var pos := wing.get_mac_forward_position_local()
+		#sum += area * pos
+		#total_area += area
+	#return sum / total_area
 
 
 func get_mac_forward_position_local() -> float:
@@ -692,3 +721,13 @@ func _update_debug_view() -> void:
 	if debug:
 		_debug_view = VehicleWing3DDebugView.new()
 		add_child(_debug_view)
+
+
+func add_shape(shape: WingShape) -> void:
+	shapes.append(shape)
+	update_gizmos()
+
+
+func remove_shape(shape: WingShape) -> void:
+	shapes.erase(shape)
+	update_gizmos()

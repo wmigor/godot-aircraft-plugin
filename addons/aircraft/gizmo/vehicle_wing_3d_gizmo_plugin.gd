@@ -15,11 +15,49 @@ func _has_gizmo(for_node_3d: Node3D) -> bool:
 	return for_node_3d is VehicleWing3D
 
 
+func _draw_shapes(gizmo: EditorNode3DGizmo, wing: VehicleWing3D) -> void:
+	var lines := PackedVector3Array()
+	_add_shape_lines(wing, lines)
+	gizmo.add_lines(lines, get_material("mac_material", gizmo), false, Color.WHITE)
+
+
+func _add_shape_lines(wing: VehicleWing3D, lines: PackedVector3Array) -> void:
+	var mac := wing.get_mac()
+	var mac_z := wing.get_mac_forward_position()
+	var start := Vector3.RIGHT * wing.offset
+	start.z += mac * 0.25 - mac_z
+	var wing_chord := wing.chord
+	var base := start
+	var base_chord := wing_chord
+	var base_twist := 0.0
+	for shape in wing.shapes:
+		var tip := shape.get_tip(base)
+		var tip_chord := shape.chord
+		var p1 := _get_wing_point(base, tip, 0.0, -base_chord * 0.5, base_twist)
+		var p2 := _get_wing_point(base, tip, 1.0, -tip_chord * 0.5, shape.twist)
+		var p3 := _get_wing_point(base, tip, 1.0, tip_chord * 0.5, shape.twist)
+		var p4 := _get_wing_point(base, tip, 0.0, base_chord * 0.5, base_twist)
+		lines.append(p1)
+		lines.append(p2)
+		lines.append(p2)
+		lines.append(p3)
+		lines.append(p3)
+		lines.append(p4)
+		lines.append(p4)
+		lines.append(p1)
+		base = tip
+		base_chord = tip_chord
+		base_twist = shape.twist
+
+
 func _redraw(gizmo: EditorNode3DGizmo) -> void:
 	gizmo.clear()
 	var wing := gizmo.get_node_3d() as VehicleWing3D
 	if wing == null:
 		return
+
+	_draw_shapes(gizmo, wing)
+	#return
 
 	var lines := PackedVector3Array()
 	var valid := _add_wing_lines(wing, false, lines);
