@@ -36,6 +36,7 @@ func build() -> void:
 	_clear()
 	if _wing == null:
 		return
+	var mac := _wing.get_mac()
 	for i in _wing.get_section_count():
 		var section := Section.new()
 		_sections.append(section)
@@ -49,7 +50,7 @@ func build() -> void:
 		section.view.basis = section_transform.basis
 		section.view.position = section_transform.origin + Vector3.FORWARD * control_surface_chord * 0.5 + Vector3.BACK * (_wing.get_mac() * 0.25)
 		section.view.size.x = _wing.get_section_length(i) * 0.95
-		section.view.size.y = chord * 0.05 * _wing._sections[i].correct_lift_geometry_factor
+		section.view.size.y = mac * 0.05 * _wing._sections[i].correct_lift_geometry_factor
 		section.view.size.z = chord
 		add_child(section.view)
 		if control_surface_chord > 0.0:

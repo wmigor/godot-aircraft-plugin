@@ -23,7 +23,7 @@ emission = Color(1, 0, 0, 1)
 
 [node name="Level" type="Node3D" unique_id=850345445]
 script = ExtResource("1_5mrsh")
-aircrafts = Array[PackedScene]([ExtResource("4_gjl0y"), ExtResource("3_5mrsh"), ExtResource("5_ya3gt"), ExtResource("5_ystn6")])
+aircrafts = Array[PackedScene]([ExtResource("3_5mrsh"), ExtResource("4_gjl0y"), ExtResource("5_ya3gt"), ExtResource("5_ystn6")])
 
 [node name="InfoPanel" parent="." unique_id=1672083877 instance=ExtResource("4_safpt")]
 

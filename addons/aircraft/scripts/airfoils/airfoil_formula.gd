@@ -112,7 +112,12 @@ func update_factors(data: Data) -> void:
 
 
 func _update_parameters(data: Data) -> void:
-	_correct_lift_factor = data.correct_lift_geometry_factor * data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else 1.0
+	if data.aspect_ratio >= 4.0:
+		_correct_lift_factor = data.correct_lift_geometry_factor / (1.0 + lift_slope / (PI * data.aspect_ratio * data.oswald_factor))
+	elif data.aspect_ratio > 0.0:
+		_correct_lift_factor = data.correct_lift_geometry_factor * data.aspect_ratio / (data.aspect_ratio + 2.0 * (data.aspect_ratio + 4.0) / (data.aspect_ratio + 2.0)) if absf(data.aspect_ratio) > 0.0 else 1.0
+	else:
+		_correct_lift_factor = 1.0
 	_corrected_lift_slope = lift_slope * _correct_lift_factor
 	var control_surface_effectivness_factor := acos(2.0 * data.control_surface_fraction - 1.0)
 	_control_surface_effectivness = 1.0 - (control_surface_effectivness_factor - sin(control_surface_effectivness_factor)) / PI
@@ -223,7 +228,7 @@ func _get_alternative_drag(data: Data, lift: float) -> float:
 	var weight := (data.angle_of_attack / _corrected_stall_angle_max) if data.angle_of_attack > 0.0 else (data.angle_of_attack / _corrected_stall_angle_min)
 	var drag := lerpf(alternative_drag_min, alternative_drag_max, weight * weight)
 	if data.aspect_ratio > 0.0:
-		var drag_induced := lift * lift / (PI * data.aspect_ratio * 0.8)
+		var drag_induced := lift * lift / (PI * data.aspect_ratio * data.oswald_factor)
 		drag += drag_induced
 	var control_surface_drag := _get_control_surface_drag(data)
 	drag += control_surface_drag
