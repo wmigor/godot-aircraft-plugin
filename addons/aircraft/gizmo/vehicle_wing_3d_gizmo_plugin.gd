@@ -49,8 +49,11 @@ func _add_shape_lines(wing: VehicleWing3D, lines: PackedVector3Array) -> void:
 		var shape_mac := shape.get_mac(base_chord)
 		var mac_x := shape.get_mac_right_position(base_chord)
 		var mac_z := shape.get_mac_forward_position(base_chord)
-		lines.append(Vector3(base.x + mac_x, 0, base.z + mac_z - shape_mac * 0.5))
-		lines.append(Vector3(base.x + mac_x, 0, base.z + mac_z + shape_mac * 0.5))
+		var mac_y := lerpf(base.y, tip.y, mac_x / (tip.x - base.x))
+		var mac_p1 := Vector3(base.x + mac_x, mac_y, base.z + mac_z - shape_mac * 0.5)
+		var mac_p2 := Vector3(base.x + mac_x, mac_y, base.z + mac_z + shape_mac * 0.5)
+		lines.append(mac_p1)
+		lines.append(mac_p2)
 		base = tip
 		base_chord = tip_chord
 		base_twist = shape.twist
