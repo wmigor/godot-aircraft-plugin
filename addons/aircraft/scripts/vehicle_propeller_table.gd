@@ -82,7 +82,7 @@ func _build_curve(points: Array[Vector2]) -> Curve:
 func _calculate_factors(velocity: float) -> void:
 	var diameter := radius * 2.0
 	var j := velocity / (diameter * rps) if absf(rps) > 0.1 else velocity / diameter
-	_required_power_factor = _power_curve.sample_baked(j)
+	_power_required_factor = _power_curve.sample_baked(j)
 	_thrust_factor = _thrust_curve.sample_baked(j)
 
 #

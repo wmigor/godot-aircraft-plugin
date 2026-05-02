@@ -1,47 +1,22 @@
 @tool
-extends VehicleThruster3D
+extends VehiclePropeller3D
 class_name VehiclePropellerSimple3D
 
-## Maximum RPM
-@export var max_rpm := 2900.0
 ## Velocity at maximum RPM
 @export_custom(PROPERTY_HINT_NONE, "suffix:km/h") var max_rpm_velocity := 300.0
-## Peak engine power at maximum RPM
-@export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 360.0
-## Propeller intertia
-@export var inertia := 10.0
 ## Propeller efficiency
 @export_range(0.0, 1.0) var efficiency := 0.85
 ## Constant-speed propeller
-@export var constant_speed := false
-## Apply engine torque to body
-@export var apply_engine_torque := false
-## Apply gyroscopic torque to body
-@export var apply_gyroscopic_torque := false
-## Reverse rotation
-@export var reverse := false
-## Propeller radius, affects only the generated wind and visual
-@export var radius := 1.0
-## Feather the propeller
-@export var feather: bool
-## takeoff rpm
+@export var constant_speed := false## takeoff rpm
 @export var takeoff_rpm := 0.0
 ## takeoff power
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var takeoff_power := 0.0
-
-var min_rpm: float:
-	get(): return max_rpm * 0.2
-
-var max_torque: float:
-	get(): return max_engine_power * HP_TO_W / max_rpm * TO_RPM
 
 var _lambda_peak: float
 var _beta: float
 var _base_j0: float
 var _f0: float
-var _pitch := 0.5
 var _tc_takeoff := 0.0
-var _debug_view: Node3D
 
 
 func  _ready() -> void:
@@ -67,31 +42,11 @@ func _setup_takeoff() -> void:
 	_tc_takeoff = takeoff_torque * gamma / (0.5 * density * v2 * _f0)
 
 
-func _physics_process(delta: float) -> void:
-	if _body == null or not visible or Engine.is_editor_hint():
-		return
-	var forward := -_body.basis.z
-	var velocity := _body.linear_velocity.dot(forward)
-	var engine_torque := _get_engine_torque()
-	if constant_speed:
-		_process_pitch(delta)
-	_calculate(velocity, forward)
-	var force := thrust * forward
-	_body.apply_force(force, global_position - _body.global_position)
-	if apply_engine_torque:
-		_apply_engine_torque(forward)
-	if apply_gyroscopic_torque:
-		_apply_gyroscopic_torque(forward)
-	angular_velocity += (engine_torque - torque) / inertia * delta
-	if angular_velocity	 < 0.0:
-		angular_velocity = 0.0
 
-
-func _calculate(velocity: float, forward: Vector3) -> void:
+func _calculate_factors(velocity: float) -> void:
 	if velocity < 0.0:
 		velocity = 0.0
 
-	var angular_velocity := angular_velocity
 	var j0 := _base_j0 * pow(2.0, 2.0 - 4.0 * _pitch) if _pitch != 0.5 else _base_j0
 	var tipspd := radius * angular_velocity
 	var v2 := velocity * velocity + tipspd * tipspd
@@ -102,76 +57,15 @@ func _calculate(velocity: float, forward: Vector3) -> void:
 	var tc := (1.0 - lambda) / (1.0 - _lambda_peak)
 	if _tc_takeoff > 0.0 and tc > _tc_takeoff:
 		tc = _tc_takeoff
-	thrust = 0.5 * density * v2 * _f0 * tc
-	torque = thrust / gamma
-	wind_induced = -forward * _calc_wind_induced(velocity, density)
+	var thrust_required := 0.5 * density * v2 * _f0 * tc
+	var torque_required := thrust_required / gamma
 	if lambda > 1.0 and not feather:
 		var tau0 := (0.25 * j0) / (efficiency * _beta * (1.0 - _lambda_peak))
 		var lambda_wm = 1.2
-		torque = tau0 - tau0 * (lambda - 1.0) / (lambda_wm - 1.0)
-		torque *= 0.5 * density * v2 * _f0
-	if feather:
-		thrust = 0.0
-
-
-func _get_engine_torque() -> float:
-	var starter_torque := max_torque * 0.2
-	if throttle <= 0 or not running:
-		return -starter_torque - angular_velocity * 0.1
-	if rpm >= min_rpm:
-		return throttle * _get_nominal_engine_torque()
-	return starter_torque
-
-
-func _get_nominal_engine_torque() -> float:
-	if rpm > max_rpm:
-		var x := clampf((rpm - max_rpm) / (max_rpm * 0.25), 0.0, 1.0)
-		return lerpf(max_torque, 0.0, x * x * (3.0 - 2.0 * x))
-	var x := 1.0 - rpm / max_rpm
-	x = 1.0 - x * x * x * x
-	return lerpf(0.0, max_torque, x)
-
-
-func _apply_engine_torque(forward: Vector3) -> void:
-	var direction := 1.0 if reverse else -1.0
-	_body.apply_torque(direction * forward * torque)
-
-
-func _apply_gyroscopic_torque(forward: Vector3) -> void:
-	var direction := -1.0 if reverse else 1.0
-	var gyro_torque := direction * forward * angular_velocity * inertia
-	_body.apply_torque(gyro_torque.cross(_body.angular_velocity))
-
-
-func _process_pitch(delta: float) -> void:
-	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
-	var rpm_delta := target_rpm - rpm
-	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.8)
-
-
-func _calc_wind_induced(velocity: float, density: float) -> float:
-	if feather:
-		return 0.0
-	var area := radius * radius * PI
-	var vel2sum := velocity * absf(velocity) + 2.0 * thrust / (density * area)
-	if vel2sum > 0.0:
-		return 0.5 * (-velocity + sqrt(vel2sum))
-	return 0.5 * (-velocity - sqrt(-vel2sum))
-
-
-func get_radius() -> float:
-	return radius
-
-
-func toggle_mode() -> void:
-	feather = not feather
-
-
-var VehiclePropeller3DDebugView := preload("uid://bi5f3pjnf633x")
-func _update_debug_view() -> void:
-	if _debug_view != null:
-		_debug_view.queue_free()
-		_debug_view = null
-	if debug:
-		_debug_view = VehiclePropeller3DDebugView.new()
-		add_child(_debug_view)
+		torque_required = tau0 - tau0 * (lambda - 1.0) / (lambda_wm - 1.0)
+		torque_required *= 0.5 * density * v2 * _f0
+	var power_required := torque_required * angular_velocity
+	var diameter := radius * 2.0
+	var safe_rps := maxf(0.01, absf(rps))
+	_thrust_factor = thrust_required / (pow(safe_rps, 2.0) * pow(diameter, 4.0) * density)
+	_power_required_factor = power_required / (pow(safe_rps, 3.0) * pow(diameter, 5.0) * density)
