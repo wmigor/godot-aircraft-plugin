@@ -79,7 +79,7 @@ func _get_nominal_engine_torque() -> float:
 
 
 func _apply_engine_torque(engine_torque: float, forward: Vector3) -> void:
-	var direction := 1.0 if reverse else -1.0
+	var direction := -1.0 if reverse else 1.0
 	_body.apply_torque(direction * forward * engine_torque)
 
 
