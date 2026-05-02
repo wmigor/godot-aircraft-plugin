@@ -389,11 +389,16 @@ func _get_flap_angle() -> float:
 
 
 func _try_rebuild() -> void:
+	if _root_wing == null:
+		return
+	var dirty := false
 	for wing in _root_wing._total_wings:
 		if not wing._dirty:
 			continue
 		wing._try_rebuild_local()
-	_update_lift_geometry_factor()
+		dirty = true
+	if dirty:
+		_update_lift_geometry_factor()
 
 
 func _try_rebuild_local() -> void:
@@ -688,5 +693,6 @@ func _update_debug_view() -> void:
 		_debug_view.queue_free()
 		_debug_view = null
 	if debug:
+		_try_rebuild()
 		_debug_view = VehicleWing3DDebugView.new()
 		add_child(_debug_view)
