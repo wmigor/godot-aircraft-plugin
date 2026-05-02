@@ -125,7 +125,11 @@ func _calculate(engine_torque: float, velocity: float, forward: Vector3) -> void
 	var torque_required := power_required / angular_velocity if absf(angular_velocity) > 0.1 else power_required
 	thrust = ct * pow(rps, 2) * pow(diameter, 4) * density
 	torque = torque_required
-	wind = -forward * _calc_wind(velocity, density)
+	wind_induced = -forward * _calc_wind_induced(velocity, density)
+
+
+func get_radius() -> float:
+	return radius
 
 
 func _get_engine_torque() -> float:
@@ -157,14 +161,14 @@ func _apply_gyroscopic_torque(forward: Vector3) -> void:
 	_body.apply_torque(gyro_torque.cross(_body.angular_velocity))
 
 
-func _calc_wind(velocity: float, density: float) -> float:
+func _calc_wind_induced(velocity: float, density: float) -> float:
 	if feather:
 		return 0.0
 	var area := radius * radius * PI
 	var vel2sum := velocity * absf(velocity) + 2.0 * thrust / (density * area)
 	if vel2sum > 0.0:
-		return -velocity + sqrt(vel2sum)
-	return -velocity - sqrt(-vel2sum)
+		return 0.5 * (-velocity + sqrt(vel2sum))
+	return 0.5 * (-velocity - sqrt(-vel2sum))
 
 
 func toggle_mode() -> void:
