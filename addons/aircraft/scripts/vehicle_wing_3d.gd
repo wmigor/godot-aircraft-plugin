@@ -608,8 +608,8 @@ func get_area_local() -> float:
 
 ## Returns x-axis distance to mac
 func get_mac_right_position() -> float:
-	var length := get_console_length() * 2.0 if mirror else get_console_length()
-	return length / 6.0 * (1.0 + 2.0 * taper) / (1.0 + taper)
+	var length := get_console_length()
+	return length / 3.0 * (1.0 + 2.0 * taper) / (1.0 + taper)
 
 
 ## Returns z-axis distance to mac
@@ -629,8 +629,8 @@ func get_mac_forward_position() -> float:
 func get_mac_forward_position_local() -> float:
 	var mac := get_mac()
 	var pos := mac / 4.0 * (1.0 - taper)
-	if sweep != 0.0:
-		pos += tan(sweep) * get_mac_right_position()
+	var tan_sweep_le := tan(sweep) + (chord - chord * taper) / (2.0 * get_console_length())
+	pos += tan_sweep_le * get_mac_right_position()
 	return pos - (chord - mac) * 0.5
 
 
