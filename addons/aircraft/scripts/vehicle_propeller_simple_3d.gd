@@ -1,6 +1,6 @@
 @tool
 extends VehicleThruster3D
-class_name VehiclePropeller3D
+class_name VehiclePropellerSimple3D
 
 ## Maximum RPM
 @export var max_rpm := 2900.0
