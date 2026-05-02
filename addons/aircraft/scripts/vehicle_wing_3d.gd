@@ -566,7 +566,7 @@ func get_tip() -> Vector3:
 	var direction := Vector3.RIGHT
 	direction = direction.rotated(Vector3.DOWN, sweep)
 	direction = direction.rotated(Vector3.BACK, dihedral)
-	var tip := direction * get_console_length() / direction.x
+	var tip := direction * get_console_span() / direction.x
 	return get_base() + tip
 
 
@@ -580,9 +580,14 @@ func has_aileron() -> bool:
 	return aileron_start != aileron_end and aileron_fraction > 0.0
 
 
-## Returns console length
-func get_console_length() -> float:
+## Returns console span (length of vertical projection)
+func get_console_span() -> float:
 	return span / 2.0 - offset if mirror else span - offset
+
+
+## Returns console length (restored from projection)
+func get_console_length() -> float:
+	return get_console_span() / cos(dihedral)
 
 
 ## Returns the mean aerodynamic chord of wing.
@@ -604,7 +609,7 @@ func get_mac_local() -> float:
 
 
 func get_area_local() -> float:
-	var length := get_console_length()
+	var length := get_console_span()
 	var area := (chord + chord * taper) * length * 0.5
 	if mirror:
 		area *= 2.0
@@ -613,7 +618,7 @@ func get_area_local() -> float:
 
 ## Returns x-axis distance to mac
 func get_mac_right_position_local() -> float:
-	var length := get_console_length()
+	var length := get_console_span()
 	return length / 3.0 * (1.0 + 2.0 * taper) / (1.0 + taper)
 
 
@@ -632,7 +637,7 @@ func get_mac_forward_position() -> float:
 
 
 func get_mac_forward_position_local() -> float:
-	var tan_sweep_le := tan(sweep) + (chord - chord * taper) / (2.0 * get_console_length())
+	var tan_sweep_le := tan(sweep) + (chord - chord * taper) / (2.0 * get_console_span())
 	var pos := tan_sweep_le * get_mac_right_position_local()
 	return pos - chord * 0.5 + get_mac() * 0.5
 
