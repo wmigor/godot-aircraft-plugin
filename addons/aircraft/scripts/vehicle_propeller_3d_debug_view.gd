@@ -1,6 +1,6 @@
 extends Node3D
 
-@onready var _propeller := get_parent()
+@onready var _propeller := get_parent() as VehiclePropeller3D
 
 static var _material: Material = null
 var _blade: CSGBox3D
@@ -19,13 +19,13 @@ func _process(delta: float) -> void:
 		return
 	_process_feather(delta)
 	var rpm = _propeller.rpm
-	var min_rpm = _propeller.min_rpm
+	var min_rpm = _propeller.min_engine_rpm
 	var axis := Vector3.FORWARD if _propeller.reverse else Vector3.BACK
 	if rpm < min_rpm:
 		rotate(axis, _propeller.angular_velocity * delta)
 	else:
 		var delta_angle := TAU / 8
-		var speed = delta_angle * (rpm - min_rpm) / (_propeller.max_rpm - min_rpm) / 0.25
+		var speed = delta_angle * (rpm - min_rpm) / (_propeller.max_engine_rpm - min_rpm) / 0.25
 		rotate(axis, delta_angle + speed * delta)
 
 

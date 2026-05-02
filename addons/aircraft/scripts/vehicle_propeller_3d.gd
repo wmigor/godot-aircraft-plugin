@@ -3,7 +3,7 @@
 extends VehicleThruster3D
 class_name VehiclePropeller3D
 
-@export var max_rpm := 2700.0
+@export var max_engine_rpm := 2700.0
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 160.0
 @export var inertia := 6.5
 @export var radius := 0.953
@@ -17,11 +17,11 @@ var _power_required_factor: float
 var _pitch := 0.5
 var _debug_view: Node3D
 
-var min_rpm: float:
-	get(): return max_rpm * 0.2
+var min_engine_rpm: float:
+	get(): return max_engine_rpm * 0.2
 
-var max_torque: float:
-	get(): return max_engine_power * HP_TO_W / max_rpm * TO_RPM
+var max_engine_torque: float:
+	get(): return max_engine_power * HP_TO_W / max_engine_rpm * TO_RPM
 
 
 func _physics_process(delta: float) -> void:
@@ -61,21 +61,21 @@ func _calculate_factors(velocity: float) -> void
 
 
 func _get_engine_torque() -> float:
-	var starter_torque := max_torque * 0.2
+	var starter_torque := max_engine_torque * 0.2
 	if throttle <= 0 or not running:
 		return -starter_torque - angular_velocity * 0.1
-	if rpm >= min_rpm:
+	if rpm >= min_engine_rpm:
 		return throttle * _get_nominal_engine_torque()
 	return starter_torque
 
 
 func _get_nominal_engine_torque() -> float:
-	if rpm > max_rpm:
-		var x := clampf((rpm - max_rpm) / (max_rpm * 0.25), 0.0, 1.0)
-		return lerpf(max_torque, 0.0, x * x * (3.0 - 2.0 * x))
-	var x := 1.0 - rpm / max_rpm
+	if rpm > max_engine_rpm:
+		var x := clampf((rpm - max_engine_rpm) / (max_engine_rpm * 0.25), 0.0, 1.0)
+		return lerpf(max_engine_torque, 0.0, x * x * (3.0 - 2.0 * x))
+	var x := 1.0 - rpm / max_engine_rpm
 	x = 1.0 - x * x * x * x
-	return lerpf(0.0, max_torque, x)
+	return lerpf(0.0, max_engine_torque, x)
 
 
 func _apply_engine_torque(engine_torque: float, forward: Vector3) -> void:
@@ -90,7 +90,7 @@ func _apply_gyroscopic_torque(forward: Vector3) -> void:
 
 
 func _process_pitch(delta: float) -> void:
-	var target_rpm := lerpf(min_rpm, max_rpm, throttle)
+	var target_rpm := lerpf(min_engine_rpm, max_engine_rpm, throttle)
 	var rpm_delta := target_rpm - rpm
 	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.8)
 

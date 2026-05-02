@@ -21,7 +21,7 @@ var _tc_takeoff := 0.0
 
 func  _ready() -> void:
 	var velocity := max_rpm_velocity / TO_KMPH
-	var angular_velocity := max_rpm / TO_RPM
+	var angular_velocity := max_engine_rpm / TO_RPM
 	var power := max_engine_power * HP_TO_W
 	var v2 := pow(velocity, 2) + pow(radius * angular_velocity, 2)
 	_lambda_peak = pow(5.0, -1.0 / 4.0)
