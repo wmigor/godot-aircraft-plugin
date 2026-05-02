@@ -43,7 +43,7 @@ func _add_wing_lines(wing: VehicleWing3D, mirror: bool, lines: PackedVector3Arra
 	var mac := wing.get_mac()
 	var mac_z := wing.get_mac_forward_position()
 
-	var valid := wing.span > 0.0 and chord > 0.0 and taper >= 0.0 and wing.offset >= 0.0 and wing.get_console_length() > 0.0
+	var valid := wing.span > 0.0 and chord > 0.0 and taper >= 0.0 and wing.offset >= 0.0 and wing.get_console_span() > 0.0
 
 	base.z += mac * 0.25 - mac_z
 	tip += (mac * 0.25 - mac_z) * Vector3.BACK.rotated(Vector3.RIGHT, twist)

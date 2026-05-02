@@ -33,22 +33,20 @@ inertia = Vector3(2644, 4372, 1285)
 linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_okv22")
-brake_value = 10.0
+brake_value = 13.0
 horizontal_height = 0.332
 horizontal_rotation = 1.2
 camera_distance = 11.0
-thruster_wind_factor = 0.25
 
 [node name="Wing" type="Node3D" parent="." unique_id=461101743]
-transform = Transform3D(1, 0, 0, 0, 0.999657, -0.0261769, 0, 0.0261769, 0.999657, 0, 1.509, -0.06)
+transform = Transform3D(1, 0, 0, 0, 0.99862915, -0.05233594, 0, 0.05233594, 0.99862915, 0, 1.509, -0.06)
 script = ExtResource("5_auhpd")
 span = 5.243
 chord = 1.585
 dihedral = 0.01745329251994329
 airfoil = ExtResource("3_hwlby")
-flap_start = 0.2
+flap_start = 0.3
 flap_end = 1.0
-flap_fraction = 0.4
 flap_angle_min = 0.0
 aileron_start = 0.0
 aileron_end = 0.0
@@ -64,8 +62,8 @@ span = 11.0
 chord = 1.585
 taper = 0.73
 twist = -0.0523599
-twist_power = 3.0
-sweep = 0.04363323129985824
+twist_power = 1.5
+sweep = -0.04363323129985824
 dihedral = 0.04363323129985824
 offset = 2.6215
 airfoil = ExtResource("3_hwlby")
@@ -81,7 +79,7 @@ aileron_angle_min = -0.349066
 metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
 [node name="Elevator" type="Node3D" parent="." unique_id=721222896]
-transform = Transform3D(1, 0, 0, 0, 0.999656, 0.0261769, 0, -0.0261769, 0.999656, 0, 1, 4.82)
+transform = Transform3D(1, 0, 0, 0, 0.9999987, 0, 0, 0, 0.9999987, 0, 1, 4.82)
 script = ExtResource("5_auhpd")
 span = 3.4
 chord = 1.3

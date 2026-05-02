@@ -1,3 +1,4 @@
+@abstract
 extends Node3D
 class_name VehicleThruster3D
 
@@ -18,7 +19,7 @@ var throttle := 1.0
 var thrust := 0.0
 var torque := 0.0
 var angular_velocity := 0.0
-var wind: Vector3
+var wind_induced: Vector3
 var running := true
 var _body: RigidBody3D
 
@@ -42,6 +43,10 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if get_parent() is not RigidBody3D:
 		warnings.append("Please use it as a child of a VehicleBody3D or RigidBody3D.")
 	return warnings
+
+
+func get_radius() -> float:
+	return 0.0
 
 
 func toggle_mode() -> void:
