@@ -592,7 +592,7 @@ func get_mac() -> float:
 	var sum := 0.0
 	var base_chord := chord
 	for shape in shapes:
-		var area := shape.get_area(base_chord, mirror)
+		var area := shape.get_area(base_chord)
 		var mac := shape.get_mac(base_chord)
 		sum += area * mac
 		total_area += area
@@ -637,8 +637,8 @@ func get_mac_forward_position() -> float:
 	var base_chord := chord
 	var mac := get_mac()
 	for shape in shapes:
-		var area := shape.get_area(base_chord, mirror)
-		var pos := shape.get_mac_forward_position(base_chord, mac, mirror)
+		var area := shape.get_area(base_chord)
+		var pos := shape.get_mac_forward_position(base_chord)
 		sum += area * pos
 		total_area += area
 		base_chord = shape.chord

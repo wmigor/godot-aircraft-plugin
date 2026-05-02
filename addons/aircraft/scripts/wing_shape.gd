@@ -81,24 +81,21 @@ func get_mac(base_chord: float) -> float:
 	return 2.0 / 3.0 * base_chord * (1.0 + taper + taper * taper) / (1.0 + taper)
 
 
-func get_area(base_chord: float, mirror: bool) -> float:
+func get_area(base_chord: float) -> float:
 	var area := (base_chord + chord) * length * 0.5
-	if mirror:
-		area *= 2.0
 	return area
 
 
-func get_mac_forward_position(base_chord: float, mac: float, mirror: bool) -> float:
+func get_mac_forward_position(base_chord: float) -> float:
 	var taper := chord / base_chord
+	var mac := get_mac(base_chord)
 	var pos := mac / 4.0 * (1.0 - taper)
 	if sweep != 0.0:
-		pos += tan(sweep) * get_mac_right_position(base_chord, mirror)
+		pos += tan(sweep) * get_mac_right_position(base_chord)
 	return pos - (base_chord - mac) * 0.5
 
 
-func get_mac_right_position(base_chord: float, mirror: bool) -> float:
+func get_mac_right_position(base_chord: float) -> float:
 	var taper := chord / base_chord
-	var pos := length / 6.0 * (1.0 + 2.0 * taper) / (1.0 + taper)
-	if mirror:
-		pos *= 2.0
+	var pos := length / 3.0 * (1.0 + 2.0 * taper) / (1.0 + taper)
 	return pos

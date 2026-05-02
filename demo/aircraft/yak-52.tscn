@@ -59,7 +59,16 @@ metadata/_custom_type_script = "uid://bugtnfunnraoj"
 
 [node name="WingShape" type="Node" parent="Wing" unique_id=112923362]
 script = ExtResource("4_11t4g")
-length = 4.65
+length = 2.325
+chord = 1.571
+twist = -0.04363323129985824
+sweep = -0.01745329251994329
+dihedral = 0.03490658503988659
+metadata/_custom_type_script = "uid://b8nvjy11idm8y"
+
+[node name="WingShape2" type="Node" parent="Wing" unique_id=1703343039]
+script = ExtResource("4_11t4g")
+length = 2.325
 chord = 1.048
 twist = -0.04363323129985824
 sweep = -0.01745329251994329
