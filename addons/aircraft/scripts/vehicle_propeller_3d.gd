@@ -14,7 +14,7 @@ class_name VehiclePropeller3D
 
 var _thrust_factor: float
 var _power_required_factor: float
-var _pitch: float
+var _pitch := 0.5
 var _debug_view: Node3D
 
 var min_rpm: float:
