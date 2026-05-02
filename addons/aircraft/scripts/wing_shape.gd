@@ -87,12 +87,9 @@ func get_area(base_chord: float) -> float:
 
 
 func get_mac_forward_position(base_chord: float) -> float:
-	var taper := chord / base_chord
-	var mac := get_mac(base_chord)
-	var pos := mac / 4.0 * (1.0 - taper)
-	if sweep != 0.0:
-		pos += tan(sweep) * get_mac_right_position(base_chord)
-	return pos - (base_chord - mac) * 0.5
+	var tan_sweep_le := tan(sweep) + (base_chord - chord) / (2.0 * length)
+	var pos := tan_sweep_le * get_mac_right_position(base_chord)
+	return pos - base_chord * 0.5 + get_mac(base_chord) * 0.5
 
 
 func get_mac_right_position(base_chord: float) -> float:

@@ -22,10 +22,10 @@ func _draw_shapes(gizmo: EditorNode3DGizmo, wing: VehicleWing3D) -> void:
 
 
 func _add_shape_lines(wing: VehicleWing3D, lines: PackedVector3Array) -> void:
-	var mac := wing.get_mac()
-	var mac_z := wing.get_mac_forward_position()
+	var wing_mac := wing.get_mac()
 	var start := Vector3.RIGHT * wing.offset
-	start.z += mac * 0.25 - mac_z
+	var z_offset := wing_mac * 0.25 - wing.get_mac_forward_position()
+	start.z += z_offset
 	var wing_chord := wing.chord
 	var base := start
 	var base_chord := wing_chord
@@ -45,6 +45,12 @@ func _add_shape_lines(wing: VehicleWing3D, lines: PackedVector3Array) -> void:
 		lines.append(p4)
 		lines.append(p4)
 		lines.append(p1)
+		
+		var shape_mac := shape.get_mac(base_chord)
+		var mac_x := shape.get_mac_right_position(base_chord)
+		var mac_z := shape.get_mac_forward_position(base_chord)
+		lines.append(Vector3(base.x + mac_x, 0, base.z + mac_z - shape_mac * 0.5))
+		lines.append(Vector3(base.x + mac_x, 0, base.z + mac_z + shape_mac * 0.5))
 		base = tip
 		base_chord = tip_chord
 		base_twist = shape.twist
