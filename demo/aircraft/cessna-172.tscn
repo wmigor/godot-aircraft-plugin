@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://bd1juidqjscrp" path="res://addons/aircraft/airfoils/naca0009.tres" id="4_hwlby"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_simple_3d.gd" id="4_y66pv"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_auhpd"]
-[ext_resource type="Script" uid="uid://64y2ii50ne42" path="res://addons/aircraft/scripts/motor_simple.gd" id="6_u4lji"]
+[ext_resource type="Script" uid="uid://bneqaa55vfmad" path="res://addons/aircraft/scripts/piston_motor.gd" id="6_u4lji"]
 [ext_resource type="AudioStream" uid="uid://c53svf2cbmdh3" path="res://demo/sounds/engine.ogg" id="7_g3ctv"]
 [ext_resource type="Script" uid="uid://cmgf0tj8j3tbf" path="res://demo/aircraft/thruster_sound.gd" id="7_qx4tn"]
 
@@ -131,10 +131,10 @@ midpoint = 0.3
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
-[node name="Motor" type="Node3D" parent="." unique_id=758151268]
+[node name="Motor" type="Node3D" parent="." unique_id=1851940433]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -2.2)
 script = ExtResource("6_u4lji")
-metadata/_custom_type_script = "uid://64y2ii50ne42"
+metadata/_custom_type_script = "uid://bneqaa55vfmad"
 
 [node name="Propeller" type="Node3D" parent="Motor" unique_id=1903731296]
 script = ExtResource("4_y66pv")

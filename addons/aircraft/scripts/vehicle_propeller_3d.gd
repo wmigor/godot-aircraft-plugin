@@ -18,11 +18,6 @@ var reverse: float:
 	get: return _motor != null && _motor.reverse
 
 
-func _ready() -> void:
-	var motors := find_children("*", "PistonMotor")
-	motor = motors[0] if len(motors) > 0 else null
-
-
 func _physics_process(delta: float) -> void:
 	_process_pitch(delta)
 

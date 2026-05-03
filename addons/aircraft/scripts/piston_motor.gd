@@ -1,18 +1,14 @@
-extends Node
+extends Motor
 class_name PistonMotor
 
 @export var power_hp0 := 160.0
 @export var rpm0 := 2700.0
 @export var compression := 8.0
 @export var displacement := 0.0
-@export_range(0.0, 1.0, 0.001) var throttle := 0.0
 @export_range(0.0, 1.0, 0.001) var mixture := 1.0
 @export_range(0.0, 1.0, 0.001) var wastegate := 1.0
 @export var max_mp := 1e6
 
-const TO_RPM := 60.0 / TAU
-const TO_KMPH = 3.6
-const HP_TO_W := 745.7
 const CIN_TO_CM := 1.6387064e-5
 
 var _power0: float
@@ -38,11 +34,9 @@ var _oil_temp_target: float
 var _oil_temp_velocity: float
 var _oil_temp: float
 
-var running: bool
-var torque: float
-
 
 func _ready() -> void:
+	super._ready()
 	_angular_velocity0 = rpm0 / TO_RPM
 	_power0 = power_hp0 * HP_TO_W
 	_f0 = _power0 * 7.62e-08
@@ -54,16 +48,25 @@ func _ready() -> void:
 	_oil_temp_target = _oil_temp
 
 
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
+	integrate(delta)
+
+
+func _calculate_torque() -> float:
+	return _calculate()
+
+
 func integrate(delta: float) -> void:
 	_oil_temp += _oil_temp_velocity * delta
 	var decay := 2.3 / _turbo_lag
 	_charge = (_charge + delta * decay * _charge_target) / (1 + delta * decay)
 
 
-func calculate(angular_velocity: float, pressure := 101325.0, temperature := 288.15) -> void:
+func _calculate(pressure := 101325.0, temperature := 288.15) -> float:
 	var idle_rpm := rpm0 / 5
-	running = _fuel and angular_velocity * TO_RPM > idle_rpm
-	var starter := not running and angular_velocity * TO_RPM <= idle_rpm and throttle >= _min_throttle
+	running = _fuel and angular_velocity * TO_RPM > idle_rpm and enabled
+	var starter := enabled and not running and angular_velocity * TO_RPM <= idle_rpm and throttle >= _min_throttle
 	var rpm_norm := angular_velocity / _angular_velocity0;
 	var A := 1.795206541
 	var B := 0.55620178
@@ -112,7 +115,7 @@ func calculate(angular_velocity: float, pressure := 101325.0, temperature := 288
 		burned *= 0.9
 
 	var power := _power0 * burned / _f0
-	torque = (power / angular_velocity) if absf(angular_velocity) > 0.001 else 0.0
+	var torque := (power / angular_velocity) if absf(angular_velocity) > 0.001 else 0.0
 
 	if starter and not running:
 		torque += 0.3 * _power0 / _angular_velocity0
@@ -137,3 +140,4 @@ func calculate(angular_velocity: float, pressure := 101325.0, temperature := 288
 		tau = 1500.0
 
 	_oil_temp_velocity = (_oil_temp_target - _oil_temp) / tau
+	return torque
