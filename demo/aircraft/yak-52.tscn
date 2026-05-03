@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_simple_3d.gd" id="4_2460t"]
 [ext_resource type="Resource" uid="uid://gk0nh7m2dbd4" path="res://addons/aircraft/airfoils/naca0012.tres" id="4_l8sau"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_hocnw"]
+[ext_resource type="Script" uid="uid://64y2ii50ne42" path="res://addons/aircraft/scripts/motor_simple.gd" id="6_11t4g"]
 [ext_resource type="AudioStream" uid="uid://c53svf2cbmdh3" path="res://demo/sounds/engine.ogg" id="7_wwlae"]
 [ext_resource type="Script" uid="uid://cmgf0tj8j3tbf" path="res://demo/aircraft/thruster_sound.gd" id="8_11t4g"]
 [ext_resource type="Script" uid="uid://bneqaa55vfmad" path="res://addons/aircraft/scripts/piston_motor.gd" id="9_11t4g"]
@@ -110,17 +111,23 @@ midpoint = 0.3
 cylinder = true
 metadata/_custom_type_script = "uid://i7qb6e7eelmo"
 
-[node name="Propeller" type="Node3D" parent="." unique_id=644444044]
+[node name="Motor" type="Node3D" parent="." unique_id=302751881]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -2.3)
+script = ExtResource("6_11t4g")
+peak_rpm = 2900.0
+peak_power_hp = 360.0
+metadata/_custom_type_script = "uid://64y2ii50ne42"
+
+[node name="Propeller" type="Node3D" parent="Motor" unique_id=644444044]
 script = ExtResource("4_2460t")
-max_rpm_velocity = 240.0
 max_engine_rpm = 2900.0
 max_engine_power = 360.0
-inertia = 10.0
+max_rpm_velocity = 240.0
 radius = 1.2
+inertia = 10.0
 metadata/_custom_type_script = "uid://1ure55g3chtu"
 
-[node name="ThrusterSound" type="AudioStreamPlayer3D" parent="Propeller" unique_id=1319597233]
+[node name="ThrusterSound" type="AudioStreamPlayer3D" parent="Motor/Propeller" unique_id=1319597233]
 stream = ExtResource("7_wwlae")
 script = ExtResource("8_11t4g")
 

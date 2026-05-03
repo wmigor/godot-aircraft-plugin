@@ -50,14 +50,6 @@ class_name VehicleRotor3D
 ## Rotor brake max torque
 @export var rotor_brake_max_torque := 25000.0
 
-@export_group("Engine")
-## Max RPM
-@export var max_rpm := 192.0
-## Inertia
-@export var inertia := 25000.0
-## Max engine power
-@export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 3800.0
-
 @export_group("Tail")
 ## Tail gear ratio
 @export var tail_gear_ratio := 6.0
@@ -128,7 +120,8 @@ var _debug_view: Node3D
 
 
 func _enter_tree() -> void:
-	_body = get_parent() as RigidBody3D
+	var motor := get_parent() as Motor
+	_body = (motor.get_parent() as RigidBody3D) if motor != null else null
 
 
 func _exit_tree() -> void:
@@ -144,14 +137,18 @@ func _ready() -> void:
 		_rotor_pivot.add_child(blade)
 
 
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:
+	_rotor_pivot.rotate_y(angular_velocity * delta)
+
+
+func calculate() -> void:
 	if _body == null or not visible or Engine.is_editor_hint():
 		return
 	var state := PhysicsServer3D.body_get_direct_state(_body.get_rid())
-	calculate(delta, _body.transform * state.center_of_mass_local, state.linear_velocity, state.angular_velocity, 1.2255)
+	_calculate(_body.transform * state.center_of_mass_local, state.linear_velocity, state.angular_velocity, 1.2255)
 
 
-func calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, density: float) -> void:
+func _calculate(mass_center: Vector3, aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, density: float) -> void:
 	var rotor_force := Vector3.ZERO
 	var rotor_torque := Vector3.ZERO
 	var up := global_transform.basis.y.normalized()
@@ -166,7 +163,7 @@ func calculate(delta: float, mass_center: Vector3, aircraft_velocity: Vector3, a
 		var blade_lift := blade.get_force().dot(up)
 		blade.rotation_degrees.z = _get_blade_bend_angle(blade_lift)
 	var tail_torque := _calc_fake_tail_torque(aircraft_velocity, aircraft_angular_velocity, up)
-	_process_engine(delta, rotor_torque.dot(up))
+	torque = signf(angular_velocity) * rotor_brake * rotor_brake_max_torque - rotor_torque.dot(up)
 	rotor_torque = tail_torque + rotor_torque - rotor_torque.dot(up) * up
 	_force += (rotor_force - _force) * 0.5
 	_torque += (rotor_torque - _torque) * 0.5
@@ -183,32 +180,6 @@ func _get_blade_bend_angle(blade_lift: float) -> float:
 	if _body == null:
 		return 0.0
 	return clampf(5.0 * blade_lift / (_body.mass * 9.8 / blade_count), -20, 20)
-
-
-func _process_engine(delta: float, rotor_torque: float) -> void:
-	var engine_torque := _get_engine_torque()
-	angular_velocity += (rotor_torque + engine_torque) / inertia * delta
-	var friction_torque := -signf(angular_velocity) * rotor_brake * rotor_brake_max_torque
-	var old := angular_velocity
-	angular_velocity += friction_torque / inertia * delta
-	if old * angular_velocity < 0:
-		angular_velocity = 0.0
-	_rotor_pivot.rotate_y(angular_velocity * delta)
-
-
-func _get_engine_torque() -> float:
-	if not running:
-		return 0.0
-	var max_torque := max_engine_power * HP_TO_W / max_rpm * TO_RPM
-	var min_rpm := max_rpm * 0.1
-	if rpm <= min_rpm:
-		var starter_torque := 0.1 * max_torque
-		return starter_torque
-	if rpm > max_rpm:
-		return lerpf(max_torque, 0.0, (rpm - max_rpm))
-	var x := 1.0 - rpm / max_rpm
-	x = 1.0 - x * x * x * x
-	return lerpf(0.0, max_torque, x)
 
 
 func _calc_fake_tail_torque(aircraft_velocity: Vector3, aircraft_angular_velocity: Vector3, up: Vector3) -> Vector3:

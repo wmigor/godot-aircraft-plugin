@@ -35,13 +35,14 @@ class_name AircraftBody3D
 var _wings: Array[VehicleWing3D]
 var _elevators: Array[VehicleWing3D]
 var _rudders: Array[VehicleWing3D]
+var _motors: Array[Motor]
 var _thrusters: Array[VehicleThruster3D]
 var _rotors: Array[VehicleRotor3D]
 var _fuselages: Array[VehicleFuselage3D]
 var _flap_mode := 0
 
 var rpm: float:
-	get(): return _thrusters[0].rpm if len(_thrusters) > 0 else 0.0
+	get(): return _motors[0].rpm if len(_motors) > 0 else 0.0
 
 var has_rotor: bool:
 	get(): return len(_rotors) > 0
@@ -70,9 +71,10 @@ func _physics_process(delta: float) -> void:
 func _apply_input(delta: float) -> void:
 	var ailerons_value := clampf(input_ailerons + trim_aileron * trim_scale, -1.0, 1.0)
 	var elevator_value := clampf(input_elevator + trim_elevator * trim_scale, -1.0, 1.0)
-	for thruster in _thrusters:
-		thruster.throttle = input_throttle
-		thruster.running = input_engine_running
+	for motor in _motors:
+		if len(_rotors) <= 0:
+			motor.throttle = input_throttle
+		motor.enabled = input_engine_running
 	for rotor in _rotors:
 		rotor.pitch = input_throttle
 		rotor.tail_pitch = input_rudder
@@ -89,6 +91,8 @@ func _apply_input(delta: float) -> void:
 
 
 func _find_objects() -> void:
+	for motor in find_children("*", "Motor"):
+		_motors.append(motor)
 	for thruster in find_children("*", "VehicleThruster3D"):
 		_thrusters.append(thruster)
 		if thruster is VehicleRotor3D:
