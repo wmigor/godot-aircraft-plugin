@@ -17,6 +17,9 @@ var _power_required_factor: float
 var _pitch := 0.5
 var _debug_view: Node3D
 
+var motor: PistonMotor:
+	get: return motor
+
 var min_engine_rpm: float:
 	get(): return max_engine_rpm * 0.2
 
@@ -24,12 +27,21 @@ var max_engine_torque: float:
 	get(): return max_engine_power * HP_TO_W / max_engine_rpm * TO_RPM
 
 
+func _ready() -> void:
+	var motors := find_children("*", "PistonMotor")
+	motor = motors[0] if len(motors) > 0 else null
+
+
 func _physics_process(delta: float) -> void:
 	if _body == null or not visible or Engine.is_editor_hint():
 		return
 	var forward := -_body.basis.z
 	var velocity := _body.linear_velocity.dot(forward)
-	var engine_torque := _get_engine_torque()
+	if motor != null:
+		motor.throttle = throttle
+		motor.calculate(angular_velocity)
+		motor.integrate(delta)
+	var engine_torque := motor.torque if motor != null else 0.0
 	_calculate(velocity, forward)
 	var force := thrust * forward
 	_body.apply_force(force, global_position - _body.global_position)
@@ -58,24 +70,6 @@ func _calculate(velocity: float, forward: Vector3) -> void:
 
 @abstract
 func _calculate_factors(velocity: float) -> void
-
-
-func _get_engine_torque() -> float:
-	var starter_torque := max_engine_torque * 0.2
-	if throttle <= 0 or not running:
-		return -starter_torque - angular_velocity * 0.1
-	if rpm >= min_engine_rpm:
-		return throttle * _get_nominal_engine_torque()
-	return starter_torque
-
-
-func _get_nominal_engine_torque() -> float:
-	if rpm > max_engine_rpm:
-		var x := clampf((rpm - max_engine_rpm) / (max_engine_rpm * 0.25), 0.0, 1.0)
-		return lerpf(max_engine_torque, 0.0, x * x * (3.0 - 2.0 * x))
-	var x := 1.0 - rpm / max_engine_rpm
-	x = 1.0 - x * x * x * x
-	return lerpf(0.0, max_engine_torque, x)
 
 
 func _apply_engine_torque(engine_torque: float, forward: Vector3) -> void:

@@ -7,6 +7,8 @@ class_name PistonMotor
 @export var displacement := 0.0
 @export_range(0.0, 1.0, 0.001) var throttle := 0.0
 @export_range(0.0, 1.0, 0.001) var mixture := 1.0
+@export_range(0.0, 1.0, 0.001) var wastegate := 1.0
+@export var max_mp := 1e6
 
 const TO_RPM := 60.0 / TAU
 const TO_KMPH = 3.6
@@ -45,7 +47,7 @@ func _ready() -> void:
 	_power0 = power_hp0 * HP_TO_W
 	_f0 = _power0 * 7.62e-08
 	var real_flow := _f0 * 11.0 / 8.0
-	_mix_factor = real_flow * 1.1 / _power0
+	_mix_factor = real_flow * 1.1 / _angular_velocity0
 	if displacement <= 0.0:
 		_displacement = _power0 * (2.0 * CIN_TO_CM)
 	_oil_temp = 288.15
@@ -58,9 +60,10 @@ func integrate(delta: float) -> void:
 	_charge = (_charge + delta * decay * _charge_target) / (1 + delta * decay)
 
 
-func calculate(angular_velocity: float, pressure: float, temperature: float) -> void:
-	running = _fuel and angular_velocity * TO_RPM > 60.0
-	var starter := not running and angular_velocity * TO_RPM > rpm0 / 10.0 and throttle >= _min_throttle
+func calculate(angular_velocity: float, pressure := 101325.0, temperature := 288.15) -> void:
+	var idle_rpm := rpm0 / 5
+	running = _fuel and angular_velocity * TO_RPM > idle_rpm
+	var starter := not running and angular_velocity * TO_RPM <= idle_rpm and throttle >= _min_throttle
 	var rpm_norm := angular_velocity / _angular_velocity0;
 	var A := 1.795206541
 	var B := 0.55620178
@@ -77,9 +80,11 @@ func calculate(angular_velocity: float, pressure: float, temperature: float) -> 
 	
 	if running:
 		var min_mp := (-0.008 * _turbo ) + _min_throttle
-		_mp *= min_mp + (1.0 -min_mp) * throttle
+		_mp *= min_mp + (1.0 - min_mp) * throttle
 
-	var max_mp := _mp / _charge
+	var max_mp := wastegate * max_mp
+	if max_mp < _mp / _charge:
+		max_mp = _mp / _charge
 	_mp = minf(_mp, max_mp)
 	_boost_pressure = _mp - pressure
 
@@ -110,7 +115,7 @@ func calculate(angular_velocity: float, pressure: float, temperature: float) -> 
 	torque = (power / angular_velocity) if absf(angular_velocity) > 0.001 else 0.0
 
 	if starter and not running:
-		torque += 0.15 * _power0 / _angular_velocity0
+		torque += 0.3 * _power0 / _angular_velocity0
 
 	if angular_velocity > 0.0 and angular_velocity < _angular_velocity0:
 		var interp := 2.0 - 2.0 * angular_velocity / _angular_velocity0

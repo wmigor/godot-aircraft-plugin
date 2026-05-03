@@ -20,6 +20,7 @@ var _tc_takeoff := 0.0
 
 
 func  _ready() -> void:
+	super._ready()
 	var velocity := max_rpm_velocity / TO_KMPH
 	var angular_velocity := max_engine_rpm / TO_RPM
 	var power := max_engine_power * HP_TO_W
