@@ -4,6 +4,10 @@ class_name VehicleThruster3D
 
 ## Air density.
 @export var density := 1.2255
+## Gear
+@export var gear := 1.0
+## Inertia
+@export var inertia := 6.5
 ## Enables debug view of thruster
 @export var debug: bool:
 	set(value):
@@ -15,12 +19,11 @@ const TO_RPM := 60.0 / TAU
 const TO_KMPH = 3.6
 const HP_TO_W := 745.7
 
-var throttle := 1.0
 var thrust := 0.0
 var torque := 0.0
 var angular_velocity := 0.0
 var wind_induced: Vector3
-var running := true
+var _motor: Motor
 var _body: RigidBody3D
 
 var rpm: float:
@@ -31,7 +34,8 @@ var rps: float:
 
 
 func _enter_tree() -> void:
-	_body = get_parent() as RigidBody3D
+	_motor = get_parent() as Motor
+	_body = (_motor.get_parent() as RigidBody3D) if _motor != null else null
 
 
 func _exit_tree() -> void:
@@ -40,9 +44,13 @@ func _exit_tree() -> void:
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
-	if get_parent() is not RigidBody3D:
-		warnings.append("Please use it as a child of a VehicleBody3D or RigidBody3D.")
+	if get_parent() is not Motor:
+		warnings.append("Please use it as a child of a Motor.")
 	return warnings
+
+
+@abstract
+func calculate() -> void
 
 
 func get_radius() -> float:

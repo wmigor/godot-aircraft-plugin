@@ -1,5 +1,6 @@
 extends Node3D
 
+@export var min_rpm := 400.0
 @onready var _propeller := get_parent() as VehiclePropeller3D
 
 static var _material: Material = null
@@ -19,7 +20,6 @@ func _process(delta: float) -> void:
 		return
 	_process_feather(delta)
 	var rpm = _propeller.rpm
-	var min_rpm = _propeller.min_engine_rpm
 	var axis := Vector3.FORWARD if _propeller.reverse else Vector3.BACK
 	if rpm < min_rpm:
 		rotate(axis, _propeller.angular_velocity * delta)
@@ -32,7 +32,7 @@ func _process(delta: float) -> void:
 func _process_feather(delta: float) -> void:
 	_feater_rate = move_toward(_feater_rate, 1.0 if _propeller.feather else 0.0, delta * 2.0)
 	_blade.rotation_degrees.x = lerpf(0.0, 90.0, _feater_rate)
-	
+
 
 func _build() -> void:
 	_clear()

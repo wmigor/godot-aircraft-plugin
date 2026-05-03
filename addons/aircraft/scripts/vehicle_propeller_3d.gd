@@ -3,44 +3,36 @@
 extends VehicleThruster3D
 class_name VehiclePropeller3D
 
-@export var max_engine_rpm := 2700.0
-@export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 160.0
-@export var inertia := 6.5
 @export var radius := 0.953
-@export var reverse: bool
-@export var apply_engine_torque: bool
 @export var apply_gyroscopic_torque: bool
 @export var feather: bool
+## Target RPM of constant-speed propeller
+@export var constant_speed_rpm := 0.0
 
 var _thrust_factor: float
 var _power_required_factor: float
 var _pitch := 0.5
 var _debug_view: Node3D
 
-var min_engine_rpm: float:
-	get(): return max_engine_rpm * 0.2
-
-var max_engine_torque: float:
-	get(): return max_engine_power * HP_TO_W / max_engine_rpm * TO_RPM
+var reverse: float:
+	get: return _motor != null && _motor.reverse
 
 
 func _physics_process(delta: float) -> void:
+	_process_pitch(delta)
+
+
+func calculate() -> void:
 	if _body == null or not visible or Engine.is_editor_hint():
 		return
 	var forward := -_body.basis.z
 	var velocity := _body.linear_velocity.dot(forward)
-	var engine_torque := _get_engine_torque()
 	_calculate(velocity, forward)
 	var force := thrust * forward
 	_body.apply_force(force, global_position - _body.global_position)
-	if apply_engine_torque:
-		_apply_engine_torque(engine_torque, forward)
 	if apply_gyroscopic_torque:
 		_apply_gyroscopic_torque(forward)
-	angular_velocity += (engine_torque - torque) / inertia * delta
-	if angular_velocity	 < 0.0:
-		angular_velocity = 0.0
-
+	
 
 func _calculate(velocity: float, forward: Vector3) -> void:
 	if velocity < 0.0:
@@ -60,29 +52,6 @@ func _calculate(velocity: float, forward: Vector3) -> void:
 func _calculate_factors(velocity: float) -> void
 
 
-func _get_engine_torque() -> float:
-	var starter_torque := max_engine_torque * 0.2
-	if throttle <= 0 or not running:
-		return -starter_torque - angular_velocity * 0.1
-	if rpm >= min_engine_rpm:
-		return throttle * _get_nominal_engine_torque()
-	return starter_torque
-
-
-func _get_nominal_engine_torque() -> float:
-	if rpm > max_engine_rpm:
-		var x := clampf((rpm - max_engine_rpm) / (max_engine_rpm * 0.25), 0.0, 1.0)
-		return lerpf(max_engine_torque, 0.0, x * x * (3.0 - 2.0 * x))
-	var x := 1.0 - rpm / max_engine_rpm
-	x = 1.0 - x * x * x * x
-	return lerpf(0.0, max_engine_torque, x)
-
-
-func _apply_engine_torque(engine_torque: float, forward: Vector3) -> void:
-	var direction := -1.0 if reverse else 1.0
-	_body.apply_torque(direction * forward * engine_torque)
-
-
 func _apply_gyroscopic_torque(forward: Vector3) -> void:
 	var direction := -1.0 if reverse else 1.0
 	var gyro_torque := direction * forward * angular_velocity * inertia
@@ -90,8 +59,9 @@ func _apply_gyroscopic_torque(forward: Vector3) -> void:
 
 
 func _process_pitch(delta: float) -> void:
-	var target_rpm := lerpf(min_engine_rpm, max_engine_rpm, throttle)
-	var rpm_delta := target_rpm - rpm
+	if constant_speed_rpm <= 0.0:
+		return
+	var rpm_delta := constant_speed_rpm - rpm
 	_pitch = clampf(_pitch + (rpm_delta) * delta * delta, 0.5, 0.8)
 
 

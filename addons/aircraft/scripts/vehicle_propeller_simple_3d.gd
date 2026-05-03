@@ -2,12 +2,13 @@
 extends VehiclePropeller3D
 class_name VehiclePropellerSimple3D
 
+@export var max_engine_rpm := 2700.0
+@export_custom(PROPERTY_HINT_NONE, "suffix:hp") var max_engine_power := 160.0
 ## Velocity at maximum RPM
 @export_custom(PROPERTY_HINT_NONE, "suffix:km/h") var max_rpm_velocity := 300.0
 ## Propeller efficiency
 @export_range(0.0, 1.0) var efficiency := 0.85
-## Constant-speed propeller
-@export var constant_speed := false## takeoff rpm
+## takeoff rpm
 @export var takeoff_rpm := 0.0
 ## takeoff power
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var takeoff_power := 0.0
@@ -19,7 +20,7 @@ var _f0: float
 var _tc_takeoff := 0.0
 
 
-func  _ready() -> void:
+func _ready() -> void:
 	var velocity := max_rpm_velocity / TO_KMPH
 	var angular_velocity := max_engine_rpm / TO_RPM
 	var power := max_engine_power * HP_TO_W
