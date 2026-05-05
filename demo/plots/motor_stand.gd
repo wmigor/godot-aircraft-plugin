@@ -1,7 +1,8 @@
 extends Control
 
 @onready var _plots_view := $PlotsView as PlotsView
-@onready var _torque_ratio := $TorqueRatio as HSlider
+@onready var _torque_ratio := $HBoxContainer/TorqueRatio as HSlider
+@onready var _torque_ratio_label := $HBoxContainer/Label as Label
 
 
 func _ready() -> void:
@@ -17,7 +18,7 @@ func _ready() -> void:
 func _on_torque_ratio_changed(value: float) -> void:
 	for motor in find_children("*", "MotorSimple"):
 		motor.peak_torque_rpm_ratio = value
-		print(motor.peak_torque_rpm_ratio)
+	_torque_ratio_label.text = str(value)
 	_build_plots()
 
 

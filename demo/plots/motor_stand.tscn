@@ -17,8 +17,16 @@ script = ExtResource("1_7j5w3")
 start_rpm = 0.0
 metadata/_custom_type_script = "uid://64y2ii50ne42"
 
-[node name="TorqueRatio" type="HSlider" parent="." unique_id=939127119]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1899464740]
 layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=2145167506]
+layout_mode = 2
+text = "0.75"
+
+[node name="TorqueRatio" type="HSlider" parent="HBoxContainer" unique_id=939127119]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="PlotsView" type="Control" parent="." unique_id=422972550]
 layout_mode = 2
