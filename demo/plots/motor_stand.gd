@@ -1,19 +1,29 @@
 extends Control
 
 @onready var _plots_view := $PlotsView as PlotsView
+@onready var _torque_ratio := $TorqueRatio as HSlider
 
 
 func _ready() -> void:
 	_build_plots()
+	_torque_ratio.min_value = 0.01
+	_torque_ratio.max_value = 0.9
+	_torque_ratio.step = 0.01
+	for motor in find_children("*", "MotorSimple"):
+		_torque_ratio.value = motor.peak_torque_rpm_ratio
+	_torque_ratio.value_changed.connect(_on_torque_ratio_changed)
 
 
-func _process(_delta: float) -> void:
+func _on_torque_ratio_changed(value: float) -> void:
+	for motor in find_children("*", "MotorSimple"):
+		motor.peak_torque_rpm_ratio = value
+		print(motor.peak_torque_rpm_ratio)
 	_build_plots()
 
 
 func _build_plots() -> void:
 	_plots_view.clear()
-	for motor in find_children("*", "Motor"):
+	for motor in find_children("*", "MotorSimple"):
 		_build_plot(motor)
 		#_build_leinderman_plot(motor)
 
@@ -23,16 +33,15 @@ func _build_leinderman_plot(motor: MotorSimple) -> void:
 	var powers := PackedVector2Array()
 	for i in 125:
 		var n := (i + 1.0) / 100.0
-		var t := motor.start_rpm / motor.peak_rpm
-		var s := motor.peak_power_hp * motor.start_power_ratio / motor.peak_power_hp
-		var power := motor.get_leiderman_power_factor(n, t, s)
+		var t := motor.peak_torque_rpm_ratio
+		var power := motor.get_power_factor(n, t)
 		powers.append(Vector2(n, power))
 		torques.append(Vector2(n, power / n))
 	_plots_view.add_plot(PlotsView.Data.new(torques, Color.BLUE, 2.0))
 	_plots_view.add_plot(PlotsView.Data.new(powers, Color.RED, 2.0))
 
 
-func _build_plot(motor: Motor, rpm_min := 0, rpm_max := 3000, step := 1) -> void:
+func _build_plot(motor: Motor, rpm_min := 50, rpm_max := 3500, step := 1) -> void:
 	var torques := PackedVector2Array()
 	var powers := PackedVector2Array()
 	for rpm in range(rpm_min, rpm_max, step):

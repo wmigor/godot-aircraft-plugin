@@ -4,8 +4,7 @@
 [ext_resource type="Script" uid="uid://cjoyndyuthbuk" path="res://demo/plots/motor_stand.gd" id="1_nm556"]
 [ext_resource type="Script" uid="uid://c4vm6rto1t1mm" path="res://demo/plots/plots_view.gd" id="2_nm556"]
 
-[node name="MotorStand" type="Control" unique_id=1365847061]
-layout_mode = 3
+[node name="MotorStand" type="VBoxContainer" unique_id=335273738]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,14 +14,14 @@ script = ExtResource("1_nm556")
 
 [node name="MotorSimple" type="Node3D" parent="." unique_id=339698871]
 script = ExtResource("1_7j5w3")
+start_rpm = 0.0
 metadata/_custom_type_script = "uid://64y2ii50ne42"
 
+[node name="TorqueRatio" type="HSlider" parent="." unique_id=939127119]
+layout_mode = 2
+
 [node name="PlotsView" type="Control" parent="." unique_id=422972550]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_vertical = 3
 script = ExtResource("2_nm556")
 metadata/_custom_type_script = "uid://c4vm6rto1t1mm"
