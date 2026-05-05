@@ -8,7 +8,7 @@ class_name MotorSimple
 @export var throttle_curve_power := 0.5
 @export var static_friction := 5.0
 @export var viscosity_friction_factor := 0.01
-@export var not_running_friction := 1024.0
+@export var not_running_friction := 100.0
 
 var _angle: float
 
@@ -21,7 +21,7 @@ var peak_friction: float:
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
-	_angle += angular_velocity * delta
+	_angle = wrapf(_angle + angular_velocity * delta, 0.0, TAU)
 
 
 func _calculate_torque() -> float:
@@ -34,7 +34,10 @@ func _calculate_torque() -> float:
 
 
 func _get_not_running_friction() -> float:
-	return not_running_friction * clampf(sin(_angle * 2.0), -0.25, 1.0)
+	var friction := not_running_friction
+	if rpm < start_rpm:
+		friction *= max(10.0 * sin(_angle * 2.0), 0.0)
+	return friction
 
 
 func _get_engine_torque() -> float:
