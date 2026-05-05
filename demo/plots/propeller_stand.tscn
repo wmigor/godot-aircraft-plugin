@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://dqj8egvigexbx"]
+
+[ext_resource type="Script" uid="uid://c5lonnm6fclo5" path="res://demo/plots/propeller_stand.gd" id="1_dpk31"]
+[ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_simple_3d.gd" id="2_tbtu0"]
+[ext_resource type="Script" uid="uid://c4vm6rto1t1mm" path="res://demo/plots/plots_view.gd" id="3_ltkg5"]
+
+[node name="PropellerStand" type="Control" unique_id=1365847061]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dpk31")
+
+[node name="VehiclePropellerSimple3D" type="Node3D" parent="." unique_id=402450378]
+script = ExtResource("2_tbtu0")
+metadata/_custom_type_script = "uid://1ure55g3chtu"
+
+[node name="PlotsView" type="Control" parent="." unique_id=422972550]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_ltkg5")
+metadata/_custom_type_script = "uid://c4vm6rto1t1mm"
