@@ -35,7 +35,7 @@ func _build_leinderman_plot(motor: MotorSimple) -> void:
 	for i in 125:
 		var n := (i + 1.0) / 100.0
 		var t := motor.peak_torque_rpm_ratio
-		var power := motor.get_power_factor(n, t)
+		var power := motor.get_power_factor_exp(n, t)
 		powers.append(Vector2(n, power))
 		torques.append(Vector2(n, power / n))
 	_plots_view.add_plot(PlotsView.Data.new(torques, Color.BLUE, 2.0))

@@ -53,12 +53,25 @@ func _get_nominal_torque() -> float:
 	var peak_power := peak_power_hp * HP_TO_W
 	var peak_av := peak_rpm / TO_RPM
 	var n := rpm / peak_rpm
-	var power_factor := get_power_factor(n, peak_torque_rpm_ratio)
+	var power_factor := get_power_factor4(n, peak_torque_rpm_ratio)
 	var power := (peak_power + peak_friction * peak_av) * power_factor
 	return (power / angular_velocity) if angular_velocity > 1.0 else power
 
 
-func get_power_factor(n: float, peak_torque_n: float) -> float:
+func get_power_factor_exp(n: float, peak_torque_n: float) -> float:
+	if n <= 0.0:
+		return 0.0
+	var s := peak_torque_n
+	var a := s / (1.0 - s)
+	var peak_x := 1.0 / s
+	var torque_at_peak_power := pow(peak_x, a) * exp(a * (1.0 - peak_x))
+	var x := n / s
+	var m := pow(x, a) * exp(a * (1.0 - x))
+	return m * n / torque_at_peak_power
+
+
+
+func get_power_factor4(n: float, peak_torque_n: float) -> float:
 	var t := peak_torque_n
 	var b := 0.0
 	var d := t / (3.0 * t * t - 3.0 * t)
