@@ -10,23 +10,26 @@ func _ready() -> void:
 	_torque_ratio.min_value = 0.01
 	_torque_ratio.max_value = 0.9
 	_torque_ratio.step = 0.01
-	for motor in find_children("*", "MotorSimple"):
-		_torque_ratio.value = motor.peak_torque_rpm_ratio
+	for motor in find_children("*", "Motor"):
+		if motor is MotorSimple:
+			_torque_ratio.value = motor.peak_torque_rpm_ratio
 	_torque_ratio.value_changed.connect(_on_torque_ratio_changed)
 
 
 func _on_torque_ratio_changed(value: float) -> void:
-	for motor in find_children("*", "MotorSimple"):
-		motor.peak_torque_rpm_ratio = value
+	for motor in find_children("*", "Motor"):
+		if motor is MotorSimple:
+			motor.peak_torque_rpm_ratio = value
 	_torque_ratio_label.text = str(value)
 	_build_plots()
 
 
 func _build_plots() -> void:
 	_plots_view.clear()
-	for motor in find_children("*", "MotorSimple"):
+	for motor in find_children("*", "Motor"):
 		_build_plot(motor)
-		#_build_leinderman_plot(motor)
+		#if motor is MotorSimple:
+			#_build_leinderman_plot(motor)
 
 
 func _build_leinderman_plot(motor: MotorSimple) -> void:
@@ -52,7 +55,5 @@ func _build_plot(motor: Motor, rpm_min := 50, rpm_max := 3500, step := 1) -> voi
 		var power_hp := power / Motor.HP_TO_W
 		torques.append(Vector2(rpm, torque))
 		powers.append(Vector2(rpm, power_hp))
-		#if torque <= 0.0 and not torques.is_empty():
-			#break
 	_plots_view.add_plot(PlotsView.Data.new(torques, Color.BLUE, 2.0))
 	_plots_view.add_plot(PlotsView.Data.new(powers, Color.RED, 2.0))

@@ -8,6 +8,7 @@ class_name PistonMotor
 @export_range(0.0, 1.0, 0.001) var mixture := 1.0
 @export_range(0.0, 1.0, 0.001) var wastegate := 1.0
 @export var max_mp := 1e6
+@export var has_super := false
 
 const CIN_TO_CM := 1.6387064e-5
 
@@ -27,7 +28,6 @@ var _turbo_lag := 2.0
 var _charge_target := 2.0
 var _boost := 1.0
 var _turbo := 1.0
-var _has_super := false
 var _magnetos := 3
 var _egt: float
 var _oil_temp_target: float
@@ -74,7 +74,7 @@ func _calculate(pressure := 101325.0, temperature := 288.15) -> float:
 	var rpm_factor = A * pow(B, rpm_norm) * pow(rpm_norm, C)
 	_charge_target = 1 + (_boost * (_turbo-1) * rpm_factor)
 
-	if _has_super:
+	if has_super:
 		_charge = _charge_target
 	elif not running:
 		_charge_target = 1.0 + (_charge_target - 1.0) * 0.25

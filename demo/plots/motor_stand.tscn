@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cucxuevn4io5r"]
 
-[ext_resource type="Script" uid="uid://64y2ii50ne42" path="res://addons/aircraft/scripts/motor_simple.gd" id="1_7j5w3"]
 [ext_resource type="Script" uid="uid://cjoyndyuthbuk" path="res://demo/plots/motor_stand.gd" id="1_nm556"]
 [ext_resource type="Script" uid="uid://c4vm6rto1t1mm" path="res://demo/plots/plots_view.gd" id="2_nm556"]
+[ext_resource type="Script" uid="uid://bneqaa55vfmad" path="res://addons/aircraft/scripts/piston_motor.gd" id="3_nm556"]
 
 [node name="MotorStand" type="VBoxContainer" unique_id=335273738]
 anchors_preset = 15
@@ -11,11 +11,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_nm556")
-
-[node name="MotorSimple" type="Node3D" parent="." unique_id=339698871]
-script = ExtResource("1_7j5w3")
-start_rpm = 0.0
-metadata/_custom_type_script = "uid://64y2ii50ne42"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1899464740]
 layout_mode = 2
@@ -33,3 +28,7 @@ layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("2_nm556")
 metadata/_custom_type_script = "uid://c4vm6rto1t1mm"
+
+[node name="PistonMotor" type="Node3D" parent="." unique_id=1099467009]
+script = ExtResource("3_nm556")
+has_super = true
