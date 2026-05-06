@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dqj8egvigexbx"]
+[gd_scene format=3 uid="uid://dkifkjblqi2en"]
 
 [ext_resource type="Script" uid="uid://c5lonnm6fclo5" path="res://demo/plots/propeller_stand.gd" id="1_dpk31"]
 [ext_resource type="Script" uid="uid://1ure55g3chtu" path="res://addons/aircraft/scripts/vehicle_propeller_simple_3d.gd" id="2_tbtu0"]
