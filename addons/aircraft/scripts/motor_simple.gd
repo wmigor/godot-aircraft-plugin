@@ -1,6 +1,9 @@
 extends Motor
 class_name MotorSimple
 
+enum Type {Power3, Power4, Exp, StartPower}
+
+@export var type := Type.Power3
 @export var peak_rpm := 2700.0
 @export_custom(PROPERTY_HINT_NONE, "suffix:hp") var peak_power_hp := 160.0
 @export var start_rpm := 500.0
@@ -53,9 +56,65 @@ func _get_nominal_torque() -> float:
 	var peak_power := peak_power_hp * HP_TO_W
 	var peak_av := peak_rpm / TO_RPM
 	var n := rpm / peak_rpm
-	var power_factor := get_power_factor4(n, peak_torque_rpm_ratio)
+	var power_factor := 0.0
+	if type == Type.Power3:
+		power_factor = get_power_factor3(n, peak_torque_rpm_ratio)
+	elif type == Type.Power4:
+		power_factor = get_power_factor4(n, peak_torque_rpm_ratio)
+	elif type == Type.Exp:
+		power_factor = get_power_factor_exp(n, peak_torque_rpm_ratio)
+	else:
+		power_factor = get_power_factor_for_start_power(n, maxf(0.01, start_rpm) / peak_rpm, peak_torque_rpm_ratio)
 	var power := (peak_power + peak_friction * peak_av) * power_factor
 	return (power / angular_velocity) if angular_velocity > 1.0 else power
+
+
+## P(x) = ax + bx^2 + cx^3
+## M(x) = P(x) / x
+## Conditions:
+## P(1) = 1
+## P'(1) = 0
+## M'(t) = 0
+func get_power_factor3(n: float, peak_torque_n: float) -> float:
+	var t := peak_torque_n
+	var c := -1.0 / (2.0 * t - 2)
+	var b := 2.0 * c * t
+	var a := 1.0 - b + c
+	var factor := a * n + b * n * n - c * n * n * n
+	return factor
+	
+	
+## P(x) = ax + bx^2 + cx^3 + dx^4
+## M(x) = P(x) / x
+## Conditions:
+## P(1) = 1
+## P'(1) = 0
+## M'(t) = 0
+## M(0) = 0
+func get_power_factor4(n: float, peak_torque_n: float) -> float:
+	var t := peak_torque_n
+	var b := 0.0
+	var d := t / (3.0 * t * t - 3.0 * t)
+	var c := (-1.0 - 3 * d) / 2.0
+	var a := 1.0 - c - d
+	var factor := a * n + b * n * n + c * n * n * n + d * n * n * n * n
+	return factor
+
+
+## P(x) = ax + bx^2 + cx^3
+## M(x) = P(x) / x
+## Conditions:
+## P(1) = 1
+## P'(1) = 0
+## P(t) = s
+func get_power_factor_for_start_power(n: float, start_n: float, start_power: float) -> float:
+	var t := start_n
+	var s := start_power
+	var c := (s + t * t - 2.0 * t) / (2.0 * t * t - t * t * t - t)
+	var b := 2.0 * c - 1.0
+	var a := 1.0 - b + c
+	var factor := a * n + b * n * n - c * n * n * n
+	return factor
 
 
 func get_power_factor_exp(n: float, peak_torque_n: float) -> float:
@@ -68,33 +127,3 @@ func get_power_factor_exp(n: float, peak_torque_n: float) -> float:
 	var x := n / s
 	var m := pow(x, a) * exp(a * (1.0 - x))
 	return m * n / torque_at_peak_power
-
-
-
-func get_power_factor4(n: float, peak_torque_n: float) -> float:
-	var t := peak_torque_n
-	var b := 0.0
-	var d := t / (3.0 * t * t - 3.0 * t)
-	var c := (-1.0 - 3 * d) / 2.0
-	var a := 1.0 - c - d
-	var factor := a * n + b * n * n + c * n * n * n + d * n * n * n * n
-	return factor
-
-
-func get_power_factor2(n: float, peak_torque_n: float) -> float:
-	var t := peak_torque_n
-	var c := -1.0 / (2.0 * t - 2)
-	var b := 2.0 * c * t
-	var a := 1.0 - b + c
-	var factor := a * n + b * n * n - c * n * n * n
-	return factor
-
-
-func get_power_factor3(n: float, start_n: float, start_power: float) -> float:
-	var t := start_n
-	var s := start_power
-	var c := (s + t * t - 2.0 * t) / (2.0 * t * t - t * t * t - t)
-	var b := 2.0 * c - 1.0
-	var a := 1.0 - b + c
-	var factor := a * n + b * n * n - c * n * n * n
-	return factor

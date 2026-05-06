@@ -42,7 +42,7 @@ func _build_leinderman_plot(motor: MotorSimple) -> void:
 	_plots_view.add_plot(PlotsView.Data.new(powers, Color.RED, 2.0))
 
 
-func _build_plot(motor: Motor, rpm_min := 50, rpm_max := 3500, step := 1) -> void:
+func _build_plot(motor: Motor, rpm_min := 10, rpm_max := 3500, step := 1) -> void:
 	var torques := PackedVector2Array()
 	var powers := PackedVector2Array()
 	for rpm in range(rpm_min, rpm_max, step):
