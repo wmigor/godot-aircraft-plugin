@@ -1,5 +1,5 @@
 @tool
-extends VehiclePropeller3D
+extends VehiclePropellerBase3D
 class_name VehiclePropellerSimple3D
 
 @export var max_engine_rpm := 2700.0
@@ -70,3 +70,7 @@ func _calculate_factors(velocity: float) -> void:
 	var safe_rps := maxf(0.01, absf(rps))
 	_thrust_factor = thrust_required / (pow(safe_rps, 2.0) * pow(diameter, 4.0) * density)
 	_power_required_factor = power_required / (pow(safe_rps, 3.0) * pow(diameter, 5.0) * density)
+
+
+func _create_debug_view() -> Node3D:
+	return preload("uid://bi5f3pjnf633x").new()
