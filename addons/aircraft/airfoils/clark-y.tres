@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="AirfoilFormula" format=3 uid="uid://bwtfmjfkggnni"]
+
+[ext_resource type="Script" uid="uid://d0gf8upd1k6k6" path="res://addons/aircraft/scripts/airfoils/airfoil_formula.gd" id="1_rq5ds"]
+
+[resource]
+script = ExtResource("1_rq5ds")
+lift_slope = 5.1
+lift_drop = 0.25
+lift_power = 2.128
+zero_lift_angle = -0.0916297857297023
+restore_stall_angle = 0.33161255787892263
+metadata/_custom_type_script = "uid://d0gf8upd1k6k6"
