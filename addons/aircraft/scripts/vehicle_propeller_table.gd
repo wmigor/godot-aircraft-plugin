@@ -1,4 +1,4 @@
-extends VehiclePropeller3D
+extends VehiclePropellerBase3D
 class_name VehiclePropellerTable
 
 @export var thrust_table: Array[Vector2] = [
@@ -84,6 +84,10 @@ func _calculate_factors(velocity: float) -> void:
 	var j := velocity / (diameter * rps) if absf(rps) > 0.1 else velocity / diameter
 	_power_required_factor = _power_curve.sample_baked(j)
 	_thrust_factor = _thrust_curve.sample_baked(j)
+
+
+func _create_debug_view() -> Node3D:
+	return preload("uid://bi5f3pjnf633x").new()
 
 #
 #func _calculate(engine_torque: float, velocity: float, forward: Vector3) -> void:
