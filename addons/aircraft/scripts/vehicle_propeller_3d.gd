@@ -4,10 +4,17 @@ class_name VehiclePropeller3D
 
 @export var airfoil: Airfoil
 @export var blade_count := 2.0
+@export var root_chord := 0.102
+@export var tip_chord := 0.076
 @export var section_count := 20
 @export var hub_radius := 0.1
-@export_range(-75, 75, 0.001, "radians_as_degrees") var root_pitch := deg_to_rad(35.1)
-@export_range(-75, 75, 0.001, "radians_as_degrees") var tip_pitch := deg_to_rad(12.7)
+
+@export_range(-75, 75, 0.001, "radians_as_degrees")
+var root_pitch := deg_to_rad(50.0)
+
+@export_range(-75, 75, 0.001, "radians_as_degrees")
+var tip_pitch := deg_to_rad(9.0)
+
 @export var sound_speed := 340.3
 
 
@@ -25,32 +32,17 @@ var _sections: Array[Section]
 func _ready() -> void:
 	var blade_length := radius - hub_radius
 	var section_length := blade_length / section_count
-	var total_chord_sum := 0.0
+	var blade_area := (root_chord + tip_chord) * 0.5 * blade_length
+	var aspect_ratio := (blade_length * blade_length / blade_area) if blade_area > 0 else 1.0
 	for section_index in section_count:
 		var section := Section.new()
 		section.radius = hub_radius + section_index * section_length + section_length * 0.5
-		section.chord = _get_mc_cauley_1c160_chord(section.radius)
+		var fraction := (section.radius - hub_radius) / blade_length
+		section.chord = lerpf(root_chord, tip_chord, fraction)
 		section.area = section_length * section.chord
-		section.pitch = _get_mc_cauley_1c160_pitch(section.radius)
-		total_chord_sum += section.chord
-		_sections.append(section)
-	var avg_chord := total_chord_sum / section_count
-	var blade_area := avg_chord * blade_length
-	var aspect_ratio := (blade_length * blade_length / blade_area) if blade_area > 0 else 1.0
-	for section in _sections:
+		section.pitch = lerpf(root_pitch, tip_pitch, fraction)
 		section.aspect_ratio = aspect_ratio
-
-
-func _get_mc_cauley_1c160_chord(section_radius: float) -> float:
-	var x := section_radius / radius
-	var base_chord = 0.1286 * pow(x, 3) - 0.5597 * pow(x, 2) + 0.5061 * x - 0.0029
-	var scale_factor := radius / 0.9525
-	return maxf(0.01, base_chord * scale_factor)
-
-
-func _get_mc_cauley_1c160_pitch(section_radius: float) -> float:
-	var geometric_pitch_dist := tan(tip_pitch) * 2.0 * PI * radius
-	return atan2(geometric_pitch_dist, 2.0 * PI * section_radius)
+		_sections.append(section)
 
 
 func _calculate_factors(wind_velocity: float) -> void:
