@@ -6,10 +6,15 @@ class_name VehiclePropeller3D
 @export var blade_count := 2.0
 @export var root_chord := 0.102
 @export var tip_chord := 0.076
-@export var section_count := 10
-@export var hub_radius := 0.15
-@export_range(-75, 75, 0.001, "radians_as_degrees") var root_pitch := deg_to_rad(40.0)
-@export_range(-75, 75, 0.001, "radians_as_degrees") var tip_pitch := deg_to_rad(12.7)
+@export var section_count := 20
+@export var hub_radius := 0.1
+
+@export_range(-75, 75, 0.001, "radians_as_degrees")
+var root_pitch := deg_to_rad(50.0)
+
+@export_range(-75, 75, 0.001, "radians_as_degrees")
+var tip_pitch := deg_to_rad(9.0)
+
 @export var sound_speed := 340.3
 
 

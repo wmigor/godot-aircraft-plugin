@@ -48,28 +48,22 @@ func _calculate_factors(velocity: float) -> void:
 	if velocity < 0.0:
 		velocity = 0.0
 
-	var j0 := _base_j0 * pow(2.0, 2.0 - 4.0 * _pitch) if _pitch != 0.5 else _base_j0
-	var tipspd := radius * angular_velocity
-	var v2 := velocity * velocity + tipspd * tipspd
-	var j := velocity / angular_velocity if absf(angular_velocity) > 0.1 else velocity / 0.1
-	var lambda := j / j0
-	var l4 := lambda * lambda * lambda * lambda
-	var gamma := (efficiency * _beta / j0) * (1.0 - l4)
-	var tc := (1.0 - lambda) / (1.0 - _lambda_peak)
-	if _tc_takeoff > 0.0 and tc > _tc_takeoff:
-		tc = _tc_takeoff
-	var thrust_required := 0.5 * density * v2 * _f0 * tc
-	var torque_required := thrust_required / gamma
-	if lambda > 1.0 and not feather:
-		var tau0 := (0.25 * j0) / (efficiency * _beta * (1.0 - _lambda_peak))
-		var lambda_wm = 1.2
-		torque_required = tau0 - tau0 * (lambda - 1.0) / (lambda_wm - 1.0)
-		torque_required *= 0.5 * density * v2 * _f0
-	var power_required := torque_required * angular_velocity
-	var diameter := radius * 2.0
-	var safe_rps := maxf(0.01, absf(rps))
-	_thrust_factor = thrust_required / (pow(safe_rps, 2.0) * pow(diameter, 4.0) * density)
-	_power_required_factor = power_required / (pow(safe_rps, 3.0) * pow(diameter, 5.0) * density)
+	var cruise_velocity := max_rpm_velocity / Motor.TO_KMPH
+	var cruise_rps := max_engine_rpm / 60.0
+	var diameter := 2.0 * radius
+	var cruise_power := max_engine_power * HP_TO_W
+	var cruise_j := cruise_velocity / (cruise_rps * diameter)
+	var j0 := cruise_j * 2.0
+	var cruise_cp := cruise_power / (density * pow(cruise_rps, 3) * pow(diameter, 5))
+	var cruise_ct := efficiency * cruise_cp / cruise_j
+	var cp0 := 1.2 * cruise_cp
+	var ct0 := 1.3 * cruise_ct
+	var j := velocity / (maxf(1.0, rps) * diameter)
+	var cp := cp0 - (cp0 - cruise_cp) * pow(j / cruise_j, 3)
+	var eta := absf(4.0 * efficiency * j / cruise_j * (1.0 - j / j0))
+	var ct := eta * cp / maxf(0.001, j)
+	_power_required_factor = cp
+	_thrust_factor = ct
 
 
 func _create_debug_view() -> Node3D:
