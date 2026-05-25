@@ -1,15 +1,36 @@
 [gd_scene format=3 uid="uid://cymcchdpmb3iy"]
 
 [ext_resource type="Script" uid="uid://0fe5g35vkw11" path="res://addons/aircraft/scripts/aircraft_body_3d.gd" id="1_okv22"]
-[ext_resource type="Resource" uid="uid://cghsdosexi3lx" path="res://addons/aircraft/airfoils/naca2412.tres" id="3_hwlby"]
+[ext_resource type="Script" uid="uid://crvvhuxvy6k44" path="res://addons/aircraft/scripts/airfoils/airfoil2.gd" id="3_idiff"]
 [ext_resource type="Script" uid="uid://i7qb6e7eelmo" path="res://addons/aircraft/scripts/vehicle_fuselage_3d.gd" id="3_y66pv"]
-[ext_resource type="Resource" uid="uid://bd1juidqjscrp" path="res://addons/aircraft/airfoils/naca0009.tres" id="4_hwlby"]
 [ext_resource type="Script" uid="uid://bugtnfunnraoj" path="res://addons/aircraft/scripts/vehicle_wing_3d.gd" id="5_auhpd"]
 [ext_resource type="Script" uid="uid://64y2ii50ne42" path="res://addons/aircraft/scripts/motor_simple.gd" id="6_u4lji"]
 [ext_resource type="AudioStream" uid="uid://c53svf2cbmdh3" path="res://demo/sounds/engine.ogg" id="7_g3ctv"]
 [ext_resource type="Script" uid="uid://cmgf0tj8j3tbf" path="res://demo/aircraft/thruster_sound.gd" id="7_qx4tn"]
 [ext_resource type="Script" uid="uid://bf7ni76x3unwb" path="res://addons/aircraft/scripts/vehicle_propeller_3d.gd" id="7_u4lji"]
 [ext_resource type="Resource" uid="uid://bwtfmjfkggnni" path="res://addons/aircraft/airfoils/clark-y.tres" id="8_aq1yg"]
+
+[sub_resource type="Resource" id="Resource_dyfl4"]
+script = ExtResource("3_idiff")
+zero_lift_angle = -0.04363323129985824
+zero_pitch = -0.025
+metadata/_custom_type_script = "uid://crvvhuxvy6k44"
+
+[sub_resource type="Resource" id="Resource_aq1yg"]
+script = ExtResource("3_idiff")
+zero_lift_angle = -0.04363323129985824
+zero_pitch = -0.025
+metadata/_custom_type_script = "uid://crvvhuxvy6k44"
+
+[sub_resource type="Resource" id="Resource_u4lji"]
+script = ExtResource("3_idiff")
+zero_pitch = 0.0
+metadata/_custom_type_script = "uid://crvvhuxvy6k44"
+
+[sub_resource type="Resource" id="Resource_idiff"]
+script = ExtResource("3_idiff")
+zero_pitch = 0.0
+metadata/_custom_type_script = "uid://crvvhuxvy6k44"
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_c4w4o"]
 height = 6.02246
@@ -46,7 +67,7 @@ script = ExtResource("5_auhpd")
 span = 5.243
 chord = 1.585
 dihedral = 0.01745329251994329
-airfoil = ExtResource("3_hwlby")
+airfoil = SubResource("Resource_dyfl4")
 flap_start = 0.3
 flap_end = 1.0
 flap_angle_min = 0.0
@@ -68,7 +89,7 @@ twist_power = 1.5
 sweep = -0.04363323129985824
 dihedral = 0.04363323129985824
 offset = 2.6215
-airfoil = ExtResource("3_hwlby")
+airfoil = SubResource("Resource_aq1yg")
 flap_start = 0.0
 flap_end = 0.0
 flap_fraction = 0.0
@@ -86,7 +107,7 @@ script = ExtResource("5_auhpd")
 span = 3.4
 chord = 1.3
 taper = 0.5
-airfoil = ExtResource("4_hwlby")
+airfoil = SubResource("Resource_u4lji")
 type = 1
 flap_start = 0.0
 flap_end = 1.0
@@ -108,7 +129,7 @@ chord = 1.5
 taper = 0.4
 sweep = 0.6806784082777885
 mirror = false
-airfoil = ExtResource("4_hwlby")
+airfoil = SubResource("Resource_idiff")
 type = 2
 flap_start = 0.0
 flap_end = 1.0

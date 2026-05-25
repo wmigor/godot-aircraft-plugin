@@ -353,6 +353,8 @@ func _calculate_section_forces(section: Section, wind: Vector3) -> void:
 	var lift_direction := drag_direction.cross(right)
 	var to_local := section.global_transform.affine_inverse()
 	var local_wind := to_local * wind - to_local * Vector3.ZERO
+	var re := maxf(100.0, density * wind.length() * section.chord / 1.789e-5)
+	section.re = re
 	section.angle_of_attack = atan2(local_wind.y, local_wind.z)
 	section.control_surface_angle = get_control_surface_angle(section.type, section.mirror)
 	section.aspect_ratio = _aspect_ratio

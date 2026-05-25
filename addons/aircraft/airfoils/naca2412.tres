@@ -9,6 +9,7 @@ lift_drop = 0.18
 lift_power = 1.6
 zero_lift_angle = -0.04276056667386108
 stall_drop = 0.2
+alternative_drag = false
 alternative_pitch_min = -0.05
 alternative_pitch_max = -0.025
 metadata/_custom_type_script = "uid://d0gf8upd1k6k6"
