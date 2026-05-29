@@ -15,6 +15,9 @@ var root_pitch := deg_to_rad(50.0)
 @export_range(-75, 75, 0.001, "radians_as_degrees")
 var tip_pitch := deg_to_rad(9.0)
 
+@export_range(0.01, 10.0, 0.001)
+var pitch_power := 1.0
+
 @export var sound_speed := 340.3
 
 
@@ -41,7 +44,7 @@ func _ready() -> void:
 		section.chord = lerpf(root_chord, tip_chord, fraction)
 		section.width = section_length
 		section.area = section_length * section.chord
-		section.pitch = lerpf(root_pitch, tip_pitch, fraction)
+		section.pitch = lerpf(root_pitch, tip_pitch, pow(fraction, pitch_power))
 		section.aspect_ratio = 0
 		section.current_phi = section.pitch
 		section.sigma = blade_count * section.chord / (2 * PI * section.radius)
@@ -103,12 +106,12 @@ func forces(section: Section, phi: float, v_inf: float, omega: float, rho: float
 	var induction := induction_factors(section, phi)
 	var a := induction.x
 	var ap := induction.y
-	
+
 	var v := (1 + C * a) * v_inf
 	var vp := (1 - C * ap) * omega * r
 	var U := sqrt(v ** 2 + vp ** 2)
 	section.total_velocity = U
-	
+
 	var factors := airfoil_forces(section, phi)
 	var CT := factors.x
 	var CQ := factors.y
@@ -141,7 +144,7 @@ func _calculate_factors(wind_velocity: float) -> void:
 
 func _apply_mach_factor(section: Section, total_velocity: float) -> void:
 	var mach := minf(total_velocity / sound_speed, 0.95)
-	var mach_crit := 0.68 
+	var mach_crit := 0.68
 
 	if mach <= mach_crit:
 		var prandtl_glauert := 1.0 / sqrt(1.0 - pow(mach, 2))
