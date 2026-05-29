@@ -6,6 +6,9 @@ class_name VehiclePropeller3D
 @export var blade_count := 2.0
 @export var root_chord := 0.102
 @export var tip_chord := 0.076
+@export var mid_chord := 0.125
+@export_range(0.0, 1.0, 0.001) var mid_fraction := 0.35
+@export_range(0.0, 1.0, 0.001) var roundness := 1.0
 @export var section_count := 20
 @export var hub_radius := 0.1
 
@@ -41,11 +44,23 @@ func _ready() -> void:
 		var section := Section.new()
 		section.radius = hub_radius + section_index * section_length + section_length * 0.5
 		var fraction := (section.radius - hub_radius) / blade_length
-		section.chord = lerpf(root_chord, tip_chord, fraction)
+		section.chord = _get_chord(fraction)
 		section.area = section_length * section.chord
 		section.pitch = lerpf(root_pitch, tip_pitch, pow(fraction, pitch_power))
 		section.aspect_ratio = aspect_ratio
 		_sections.append(section)
+
+
+func _get_chord(fraction: float) -> float:
+	var chord_linear := 0.0
+	if fraction < mid_fraction:
+		chord_linear = lerpf(root_chord, mid_chord, fraction / mid_fraction)
+	else:
+		chord_linear = lerpf(mid_chord, tip_chord, (fraction - mid_fraction) / (1.0 - mid_fraction))
+	var chord_bezier := (1.0 - fraction) * (1.0 - fraction) * root_chord + \
+		 2.0 * (1.0 - fraction) * fraction * mid_chord + \
+		 fraction * fraction * tip_chord
+	return lerpf(chord_linear, chord_bezier, roundness)
 
 
 func _calculate_factors(wind_velocity: float) -> void:

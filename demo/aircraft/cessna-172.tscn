@@ -140,7 +140,7 @@ metadata/_custom_type_script = "uid://64y2ii50ne42"
 [node name="Propeller" type="Node3D" parent="Motor" unique_id=2078074212]
 script = ExtResource("7_u4lji")
 airfoil = ExtResource("8_aq1yg")
-hub_radius = 0.3
+hub_radius = 0.2
 root_pitch = 0.47123889803846897
 tip_pitch = 0.20943951023931956
 pitch_power = 2.0
