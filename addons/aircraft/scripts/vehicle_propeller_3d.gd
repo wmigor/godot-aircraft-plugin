@@ -137,7 +137,7 @@ func forces(section: Section, phi: float, v_inf: float, omega: float, rho: float
 	return Vector2(dT, dQ)
 
 
-func _calculate_factors(wind_velocity: float) -> void:
+func _calculate_factors2(wind_velocity: float) -> void:
 	if abs(wind_velocity) < 1.0:
 		wind_velocity = 1.0 * signf(wind_velocity)
 	var total_thrust := 0.0
@@ -150,6 +150,35 @@ func _calculate_factors(wind_velocity: float) -> void:
 		var f := forces(section, section.current_phi, wind_velocity, angular_velocity, density)
 		total_thrust += f.x
 		total_torque += f.y
+	var power_required := total_torque * angular_velocity
+	var diameter := radius * 2.0
+	var safe_rps := maxf(0.01, absf(rps))
+	_thrust_factor = total_thrust / (pow(safe_rps, 2.0) * pow(diameter, 4.0) * density)
+	_power_required_factor = power_required / (pow(safe_rps, 3.0) * pow(diameter, 5.0) * density)
+
+
+func _calculate_factors(wind_velocity: float) -> void:
+	if abs(wind_velocity) < 1.0:
+		wind_velocity = 1.0 * signf(wind_velocity)
+	var total_thrust := 0.0
+	var total_torque := 0.0
+	for section in _sections:
+		section.wind = 111 * Vector3.FORWARD
+		var axial_velocity := wind_velocity
+		var tangent_velocity := angular_velocity * section.radius
+		var total_velocity := sqrt(axial_velocity * axial_velocity + tangent_velocity * tangent_velocity)
+		var flow_angle := atan2(axial_velocity, tangent_velocity)
+		section.angle_of_attack = section.pitch - flow_angle
+		airfoil.update_factors(section)
+		var pressure := blade_count * 0.5 * section.area * density * absf(total_velocity) * total_velocity
+		var lift := section.lift_factor * pressure
+		var drag := section.drag_factor * pressure
+		var cos_fa := cos(flow_angle)
+		var sin_fa := sin(flow_angle)
+		var delta_thrust := lift * cos_fa - drag * sin_fa
+		var delta_torque := (lift * sin_fa + drag * cos_fa) * section.radius
+		total_thrust += delta_thrust
+		total_torque += delta_torque
 	var power_required := total_torque * angular_velocity
 	var diameter := radius * 2.0
 	var safe_rps := maxf(0.01, absf(rps))
