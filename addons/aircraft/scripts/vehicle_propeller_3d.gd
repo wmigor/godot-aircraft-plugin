@@ -22,11 +22,10 @@ class Section extends Airfoil.Data:
 	var radius: float
 	var area: float
 	var pitch : float
-	var velocity_induced: float
-	var velocity_induced_tangent: float
 	var sigma: float
 	var current_phi: float
 	var width: float
+	var total_velocity: float
 
 
 var _sections: Array[Section]
@@ -68,6 +67,7 @@ func airfoil_forces(section: Section, phi: float) -> Vector2:
 	var alpha := C * (section.pitch - phi)
 	section.angle_of_attack = alpha
 	airfoil.update_factors(section)
+	_apply_mach_factor(section, section.total_velocity)
 	var Cl = section.lift_factor
 	var Cd = section.drag_factor
 	var CT = Cl * cos(phi) - C * Cd * sin(phi)
@@ -82,8 +82,8 @@ func induction_factors(section: Section, phi: float) -> Vector2:
 	var CQ := factors.y
 	var denominator_ct := section.sigma * CT
 	var denominator_cq := section.sigma * CQ
-	var kappa := 4 * F * sin(phi) ** 2 / (denominator_ct if abs(denominator_ct) > 0.000001 else 0.000001)
-	var kappap := 4 * F * sin(phi) * cos(phi) / (denominator_cq if abs(denominator_cq) > 0.000001 else 0.000001)
+	var kappa := (4 * F * sin(phi) ** 2 / denominator_ct) if abs(denominator_ct) > 0.000001 else 0.000001
+	var kappap := (4 * F * sin(phi) * cos(phi) / denominator_cq) if abs(denominator_cq) > 0.000001 else 0.000001
 	var a := 1.0 / (kappa - C)
 	var ap := 1.0 / (kappap + C)
 	return Vector2(a, ap)
@@ -103,13 +103,15 @@ func forces(section: Section, phi: float, v_inf: float, omega: float, rho: float
 	var induction := induction_factors(section, phi)
 	var a := induction.x
 	var ap := induction.y
-	var factors := airfoil_forces(section, phi)
-	var CT := factors.x
-	var CQ := factors.y
-
+	
 	var v := (1 + C * a) * v_inf
 	var vp := (1 - C * ap) * omega * r
 	var U := sqrt(v ** 2 + vp ** 2)
+	section.total_velocity = U
+	
+	var factors := airfoil_forces(section, phi)
+	var CT := factors.x
+	var CQ := factors.y
 
 	var dT := section.sigma * PI * rho * U ** 2 * CT * r * section.width
 	var dQ := section.sigma * PI * rho * U ** 2 * CQ * r ** 2 * section.width
@@ -118,6 +120,8 @@ func forces(section: Section, phi: float, v_inf: float, omega: float, rho: float
 
 
 func _calculate_factors(wind_velocity: float) -> void:
+	if abs(wind_velocity) < 1.0:
+		wind_velocity = 1.0 * signf(wind_velocity)
 	var total_thrust := 0.0
 	var total_torque := 0.0
 	for section in _sections:
@@ -136,15 +140,22 @@ func _calculate_factors(wind_velocity: float) -> void:
 
 
 func _apply_mach_factor(section: Section, total_velocity: float) -> void:
-	var mach := total_velocity / sound_speed
-	var mach_factor := 1.0 / sqrt(1.0 - pow(minf(mach, 0.7), 2))
-	section.lift_factor *= mach_factor
-	section.drag_factor *= mach_factor
-	if mach > 0.7:
-		var wave_factor := (mach - 0.7) ** 2
-		var wave_drag := wave_factor * 20.0
-		section.drag_factor += wave_drag
-		section.lift_factor *= (1.0 - wave_factor * 10.0)
+	var mach := minf(total_velocity / sound_speed, 0.95)
+	var mach_crit := 0.68 
+
+	if mach <= mach_crit:
+		var prandtl_glauert := 1.0 / sqrt(1.0 - pow(mach, 2))
+		section.lift_factor *= prandtl_glauert
+		section.drag_factor *= prandtl_glauert
+	else:
+		var pg_at_crit := 1.0 / sqrt(1.0 - pow(mach_crit, 2))
+		var cl_subsonic = section.lift_factor * pg_at_crit
+		var cd_subsonic = section.drag_factor * pg_at_crit
+		var m_excess := mach - mach_crit
+		var wave_drag := 20.0 * pow(m_excess, 4.0)
+		section.drag_factor = cd_subsonic + wave_drag
+		var lift_drop_factor := maxf(0.1, 1.0 - 1.5 * pow(m_excess, 1.5))
+		section.lift_factor = cl_subsonic * lift_drop_factor
 
 
 func _get_tip_loss(section: Section, phi: float) -> float:
