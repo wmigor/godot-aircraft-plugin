@@ -27,4 +27,5 @@ metadata/_custom_type_script = "uid://c4vm6rto1t1mm"
 [node name="VehiclePropeller3D" type="Node3D" parent="." unique_id=549260031]
 script = ExtResource("3_dpk31")
 airfoil = ExtResource("4_tbtu0")
+radius = 1.5270000000000001
 metadata/_custom_type_script = "uid://bf7ni76x3unwb"
