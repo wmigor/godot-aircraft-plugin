@@ -8,5 +8,7 @@ lift_slope = 5.1
 lift_drop = 0.25
 lift_power = 2.128
 zero_lift_angle = -0.0916297857297023
+alternative_drag_min = 0.01
+alternative_drag_max = 0.1
 restore_stall_angle = 0.33161255787892263
 metadata/_custom_type_script = "uid://d0gf8upd1k6k6"

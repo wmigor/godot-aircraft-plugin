@@ -15,6 +15,9 @@ var root_pitch := deg_to_rad(50.0)
 @export_range(-75, 75, 0.001, "radians_as_degrees")
 var tip_pitch := deg_to_rad(9.0)
 
+@export_range(0.01, 10.0, 0.001)
+var pitch_power := 1.0
+
 @export var sound_speed := 340.3
 
 
@@ -40,7 +43,7 @@ func _ready() -> void:
 		var fraction := (section.radius - hub_radius) / blade_length
 		section.chord = lerpf(root_chord, tip_chord, fraction)
 		section.area = section_length * section.chord
-		section.pitch = lerpf(root_pitch, tip_pitch, fraction)
+		section.pitch = lerpf(root_pitch, tip_pitch, pow(fraction, pitch_power))
 		section.aspect_ratio = aspect_ratio
 		_sections.append(section)
 
