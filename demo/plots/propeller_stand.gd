@@ -38,8 +38,8 @@ func _build_plot(propeller: VehiclePropellerBase3D, velocity_min := 10, velocity
 	var powers := PackedVector2Array()
 	for velocity_kmph in range(velocity_min, velocity_max, step):
 		var velocity := velocity_kmph / VehiclePropeller3D.TO_KMPH
-		propeller.angular_velocity = 2500 / VehiclePropeller3D.TO_RPM
-		for i in range(40):
+		propeller.angular_velocity = 1100 / VehiclePropeller3D.TO_RPM
+		for i in range(100):
 			propeller._calculate_factors(velocity)
 		var d := propeller.radius * 2.0
 		var j := velocity / (d * propeller.rps) if absf(propeller.rps) > 0.001 else velocity / diameter
