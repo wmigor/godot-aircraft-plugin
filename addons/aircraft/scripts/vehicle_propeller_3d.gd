@@ -7,12 +7,12 @@ class_name VehiclePropeller3D
 @export var tip_chord := 0.076
 @export var mid_chord := 0.125
 @export_range(0.0, 1.0, 0.001) var mid_fraction := 0.35
-@export_range(0.0, 1.0, 0.001) var roundness := 1.0
+@export_range(0.0, 10.0, 0.001) var roundness := 2.0
 @export var section_count := 20
-@export var hub_radius := 0.3
+@export var hub_radius := 0.2
 
 @export_range(-75, 75, 0.001, "radians_as_degrees")
-var root_pitch := deg_to_rad(25.0)
+var root_pitch := deg_to_rad(27.0)
 
 @export_range(-75, 75, 0.001, "radians_as_degrees")
 var tip_pitch := deg_to_rad(12.0)
@@ -55,15 +55,9 @@ func _ready() -> void:
 
 
 func _get_chord(fraction: float) -> float:
-	var chord_linear := 0.0
 	if fraction < mid_fraction:
-		chord_linear = lerpf(root_chord, mid_chord, fraction / mid_fraction)
-	else:
-		chord_linear = lerpf(mid_chord, tip_chord, (fraction - mid_fraction) / (1.0 - mid_fraction))
-	var chord_bezier := (1.0 - fraction) * (1.0 - fraction) * root_chord + \
-		 2.0 * (1.0 - fraction) * fraction * mid_chord + \
-		 fraction * fraction * tip_chord
-	return lerpf(chord_linear, chord_bezier, roundness)
+		return lerpf(root_chord, mid_chord, 1.0 - pow(1.0 - fraction / mid_fraction, roundness))
+	return lerpf(mid_chord, tip_chord, pow((fraction - mid_fraction) / (1.0 - mid_fraction), roundness))
 
 
 func tip_loss(section: Section, phi: float) -> float:
